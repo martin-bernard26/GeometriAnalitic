@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengantar Geometri Analitik &amp; Sistem Koordinat Kartesius</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  :root{
+    --paper: #EDE5D0;
+    --paper-deep: #E3D9BE;
+    --ink: #1B2A45;
+    --ink-soft: #3F4E68;
+    --gold: #B8892B;
+    --gold-deep: #93691C;
+    --teal: #2C6E68;
+    --teal-deep: #1F4F4A;
+    --red: #A23E3E;
+    --line: rgba(27,42,69,0.16);
+    --card: #F6F1E3;
+    --radius: 3px;
+    --serif: 'Spectral', Georgia, 'Times New Roman', serif;
+    --sans: 'Work Sans', -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 34px 34px;
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--teal-deep);}
+  .wrap{max-width:920px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- Progress bar ---------- */
+  #progress-track{
+    position:fixed; top:0; left:0; width:100%; height:4px; background:rgba(27,42,69,0.08); z-index:200;
+  }
+  #progress-fill{
+    height:100%; width:0%; background:var(--gold); transition:width .15s ease-out;
+  }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:sticky; top:4px; z-index:150;
+    background:rgba(237,229,208,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .navbar{
+    max-width:920px; margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+  }
+  .brand{
+    font-family:var(--serif); font-weight:600; font-size:1.05rem; color:var(--ink);
+    display:flex; align-items:center; gap:10px; white-space:nowrap;
+  }
+  .brand .mark{
+    width:22px; height:22px; border:1.5px solid var(--ink); border-radius:50%; position:relative; flex-shrink:0;
+  }
+  .brand .mark::before, .brand .mark::after{
+    content:''; position:absolute; background:var(--ink);
+  }
+  .brand .mark::before{ top:50%; left:2px; right:2px; height:1px; transform:translateY(-50%); }
+  .brand .mark::after{ left:50%; top:2px; bottom:2px; width:1px; transform:translateX(-50%); }
+  .navlinks{ display:flex; gap:4px; flex-wrap:wrap; }
+  .navlinks a{
+    font-size:0.88rem; text-decoration:none; color:var(--ink-soft);
+    padding:6px 11px; border-radius:var(--radius); transition:background .15s, color .15s;
+    border:1px solid transparent;
+  }
+  .navlinks a:hover{ background:rgba(27,42,69,0.06); color:var(--ink); }
+  .navlinks a.active{
+    color:var(--ink); border-color:var(--line); background:var(--card);
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    padding:64px 0 48px;
+    border-bottom:1px solid var(--line);
+  }
+  .coord-tag{
+    font-family:var(--mono); font-size:0.72rem; letter-spacing:0.02em; color:var(--gold-deep);
+    display:inline-block; padding:3px 8px; border:1px solid var(--gold); border-radius:2px;
+    margin-bottom:22px; background:rgba(184,137,43,0.08);
+  }
+  h1.title{
+    font-family:var(--serif); font-weight:600; font-size:clamp(2.1rem, 5vw, 3.1rem);
+    margin:0 0 18px; color:var(--ink); max-width:14ch; line-height:1.12;
+  }
+  .hero .lede{
+    font-size:1.08rem; color:var(--ink-soft); max-width:56ch; margin:0 0 30px;
+  }
+  .hero-plane{
+    display:flex; justify-content:center; margin-top:10px;
+  }
+
+  /* ---------- Sections ---------- */
+  section{ padding:56px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+  .eyebrow-num{
+    font-family:var(--mono); font-size:0.78rem; color:var(--gold-deep);
+  }
+  h2.sec-title{
+    font-family:var(--serif); font-weight:600; font-size:1.9rem; margin:6px 0 20px; color:var(--ink);
+  }
+  h3.sub-title{
+    font-family:var(--serif); font-weight:600; font-size:1.25rem; margin:28px 0 12px; color:var(--ink);
+  }
+  p{ margin:0 0 16px; max-width:70ch; }
+  .lead-p{ font-size:1.02rem; color:var(--ink-soft); }
+
+  .formula-box{
+    background:var(--card); border:1px solid var(--line); border-left:3px solid var(--gold);
+    padding:20px 24px; border-radius:var(--radius); margin:20px 0; overflow-x:auto;
+  }
+  .formula-box .label{ font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); margin-bottom:8px; }
+
+  /* ---------- Quadrant explainer ---------- */
+  .quad-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:24px 0;
+  }
+  .quad-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px;
+  }
+  .quad-card .q-label{ font-family:var(--serif); font-weight:600; font-size:1.05rem; color:var(--teal-deep); }
+  .quad-card .q-sign{ font-family:var(--mono); font-size:0.85rem; color:var(--ink-soft); margin-top:4px; }
+  @media (max-width:600px){ .quad-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- Interactive canvas panels ---------- */
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px; margin:24px 0;
+  }
+  .panel-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;
+  }
+  .panel-head h4{ font-family:var(--serif); font-size:1.1rem; margin:0; color:var(--ink); }
+  .hint{ font-size:0.85rem; color:var(--ink-soft); }
+  .canvas-row{ display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  canvas{
+    background:#FAF7EE; border:1px solid var(--line); border-radius:2px; touch-action:none; cursor:crosshair;
+    max-width:100%;
+  }
+  .readout{
+    flex:1; min-width:220px; font-family:var(--sans);
+  }
+  .readout .row{
+    display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--line); font-size:0.92rem;
+  }
+  .readout .row span:first-child{ color:var(--ink-soft); }
+  .readout .row span:last-child{ font-family:var(--mono); color:var(--ink); }
+  .readout .result{
+    margin-top:14px; padding:14px 16px; background:var(--paper-deep); border-radius:2px; border:1px solid var(--line);
+  }
+  .readout .result .big{ font-family:var(--serif); font-size:1.5rem; color:var(--teal-deep); font-weight:600; }
+  .btn-row{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  button{
+    font-family:var(--sans); font-size:0.85rem; font-weight:500; color:var(--ink);
+    background:transparent; border:1px solid var(--ink); border-radius:2px; padding:8px 14px; cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  button:hover{ background:var(--ink); color:var(--paper); }
+  button.primary{ background:var(--teal-deep); border-color:var(--teal-deep); color:#fff; }
+  button.primary:hover{ background:var(--teal); border-color:var(--teal); }
+
+  /* ---------- Accordion ---------- */
+  .accordion-item{ border:1px solid var(--line); border-radius:var(--radius); margin-bottom:10px; background:var(--card); overflow:hidden; }
+  .accordion-trigger{
+    width:100%; text-align:left; background:none; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:15px 18px; font-family:var(--sans); font-weight:600; font-size:0.96rem; color:var(--ink);
+  }
+  .accordion-trigger:hover{ background:rgba(27,42,69,0.04); }
+  .accordion-trigger .plus{ font-family:var(--mono); font-size:1.1rem; color:var(--gold-deep); transition:transform .2s; flex-shrink:0; }
+  .accordion-item.open .plus{ transform:rotate(45deg); }
+  .accordion-body{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .accordion-body-inner{ padding:0 18px 18px; }
+  .accordion-item.open .accordion-body{ max-height:600px; }
+  .accordion-body-inner ol, .accordion-body-inner ul{ margin:0; padding-left:20px; }
+  .accordion-body-inner li{ margin-bottom:6px; }
+
+  /* ---------- Quiz ---------- */
+  .quiz-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 24px; margin-bottom:16px;
+  }
+  .quiz-q{ font-weight:600; margin-bottom:14px; }
+  .quiz-opts{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt{
+    text-align:left; padding:10px 14px; border:1px solid var(--line); border-radius:2px; background:var(--paper);
+    cursor:pointer; font-family:var(--sans); font-size:0.92rem; color:var(--ink);
+  }
+  .quiz-opt:hover{ border-color:var(--ink-soft); }
+  .quiz-opt.correct{ background:rgba(44,110,104,0.16); border-color:var(--teal-deep); }
+  .quiz-opt.wrong{ background:rgba(162,62,62,0.14); border-color:var(--red); }
+  .quiz-fb{ margin-top:12px; font-size:0.9rem; padding:10px 12px; border-radius:2px; display:none; }
+  .quiz-fb.show{ display:block; }
+  .quiz-fb.ok{ background:rgba(44,110,104,0.12); color:var(--teal-deep); }
+  .quiz-fb.no{ background:rgba(162,62,62,0.1); color:var(--red); }
+
+  #quiz-score{
+    text-align:center; font-family:var(--serif); font-size:1.15rem; margin-top:6px; color:var(--ink);
+  }
+
+  footer{
+    padding:34px 0 60px; text-align:center; font-size:0.82rem; color:var(--ink-soft);
+  }
+
+  ::selection{ background:var(--gold); color:#fff; }
+</style>
+</head>
+<body>
+
+<div id="progress-track"><div id="progress-fill"></div></div>
+
+<nav>
+  <div class="navbar">
+    <div class="brand"><span class="mark"></span>Geometri Analitik</div>
+    <div class="navlinks" id="navlinks">
+      <a href="#pengantar" data-sec="pengantar">Pengantar</a>
+      <a href="#koordinat" data-sec="koordinat">Koordinat</a>
+      <a href="#jarak" data-sec="jarak">Jarak Titik</a>
+      <a href="#tengah" data-sec="tengah">Titik Tengah</a>
+      <a href="#latihan" data-sec="latihan">Latihan</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <span class="coord-tag">MATEMATIKA &middot; GEOMETRI ANALITIK</span>
+  <h1 class="title">Pengantar Geometri Analitik &amp; Sistem Koordinat Kartesius</h1>
+  <p class="lede">Menjembatani aljabar dan geometri: bagaimana sepasang angka \((x, y)\) bisa menentukan lokasi sebuah titik, dan bagaimana rumus bisa menghitung jarak serta titik tengah antar titik &mdash; tanpa menggambar sama sekali.</p>
+  <div class="hero-plane">
+    <canvas id="hero-canvas" width="560" height="320"></canvas>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===================== PENGANTAR ===================== -->
+  <section id="pengantar">
+    <div class="eyebrow-num">01</div>
+    <h2 class="sec-title">Apa itu Geometri Analitik?</h2>
+    <p class="lead-p">Geometri analitik (disebut juga geometri koordinat) adalah cabang matematika yang mempelajari bentuk-bentuk geometri &mdash; titik, garis, kurva &mdash; menggunakan sistem koordinat dan aljabar. Gagasan ini pertama kali dirumuskan secara sistematis oleh <strong>Ren&eacute; Descartes</strong> pada abad ke-17, dan menjadi dasar bagi hampir seluruh matematika modern: dari kalkulus, fisika, hingga grafis komputer dan GPS.</p>
+    <p>Ide intinya sederhana: setiap titik di sebuah bidang datar bisa diwakili oleh <em>sepasang angka</em>. Sebaliknya, hubungan geometris &mdash; seberapa jauh dua titik, di mana titik tengahnya, apakah tiga titik segaris &mdash; bisa dijawab murni dengan <em>perhitungan aljabar</em>, tanpa penggaris atau jangka.</p>
+
+    <div class="accordion" id="pengantar-accordion">
+      <div class="accordion-item">
+        <button class="accordion-trigger"><span>Mengapa geometri analitik penting?</span><span class="plus">+</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <ul>
+            <li>Menjadi fondasi kalkulus (turunan, integral, grafik fungsi)</li>
+            <li>Dipakai dalam navigasi &amp; GPS untuk menghitung jarak dan posisi</li>
+            <li>Dasar grafika komputer, game, dan animasi (posisi objek di layar)</li>
+            <li>Digunakan dalam desain, arsitektur, dan pemetaan wilayah</li>
+          </ul>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-trigger"><span>Siapa Ren&eacute; Descartes?</span><span class="plus">+</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p style="margin-bottom:0;">Filsuf dan matematikawan Prancis (1596&ndash;1650). Konon idenya muncul saat ia mengamati seekor lalat bergerak di langit-langit kamar dan menyadari posisi lalat itu bisa dijelaskan dengan jaraknya dari dua dinding yang saling tegak lurus &mdash; cikal bakal sumbu-x dan sumbu-y. Sistem koordinat ini kemudian dinamai <strong>sistem koordinat Kartesius</strong>, dari nama Latinnya, Cartesius.</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KOORDINAT ===================== -->
+  <section id="koordinat">
+    <div class="eyebrow-num">02</div>
+    <h2 class="sec-title">Sistem Koordinat Kartesius</h2>
+    <p class="lead-p">Sistem ini terdiri dari dua garis bilangan yang saling tegak lurus: <strong>sumbu-x</strong> (mendatar) dan <strong>sumbu-y</strong> (tegak). Titik potong keduanya disebut <strong>titik asal (origin)</strong>, dengan koordinat \((0, 0)\). Posisi titik mana pun ditulis sebagai pasangan terurut \((x, y)\).</p>
+
+    <div class="quad-grid">
+      <div class="quad-card"><div class="q-label">Kuadran I</div><div class="q-sign">x &gt; 0, y &gt; 0</div></div>
+      <div class="quad-card"><div class="q-label">Kuadran II</div><div class="q-sign">x &lt; 0, y &gt; 0</div></div>
+      <div class="quad-card"><div class="q-label">Kuadran III</div><div class="q-sign">x &lt; 0, y &lt; 0</div></div>
+      <div class="quad-card"><div class="q-label">Kuadran IV</div><div class="q-sign">x &gt; 0, y &lt; 0</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h4>Jelajahi bidang koordinat</h4>
+        <span class="hint">Klik di mana saja pada bidang untuk menempatkan sebuah titik</span>
+      </div>
+      <div class="canvas-row">
+        <canvas id="explore-canvas" width="440" height="340"></canvas>
+        <div class="readout">
+          <div class="row"><span>Koordinat titik</span><span id="explore-coord">&mdash;</span></div>
+          <div class="row"><span>Kuadran</span><span id="explore-quad">&mdash;</span></div>
+          <div class="btn-row">
+            <button id="explore-clear">Hapus titik</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JARAK DUA TITIK ===================== -->
+  <section id="jarak">
+    <div class="eyebrow-num">03</div>
+    <h2 class="sec-title">Jarak Dua Titik</h2>
+    <p class="lead-p">Untuk mencari jarak antara dua titik \(A(x_1, y_1)\) dan \(B(x_2, y_2)\), kita bisa membentuk sebuah <strong>segitiga siku-siku</strong>: selisih absis \((x_2-x_1)\) sebagai sisi mendatar, selisih ordinat \((y_2-y_1)\) sebagai sisi tegak, dan ruas garis \(AB\) sebagai sisi miring (hipotenusa). Dengan <strong>Teorema Pythagoras</strong>, panjang \(AB\) dapat dihitung.</p>
+
+    <div class="formula-box">
+      <div class="label">RUMUS JARAK DUA TITIK</div>
+      \[ d(A,B) = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2} \]
+    </div>
+
+    <h3 class="sub-title">Coba sendiri</h3>
+    <div class="panel">
+      <div class="panel-head">
+        <h4>Kalkulator jarak interaktif</h4>
+        <span class="hint">Klik dua kali pada bidang untuk menempatkan titik A dan B</span>
+      </div>
+      <div class="canvas-row">
+        <canvas id="distance-canvas" width="440" height="340"></canvas>
+        <div class="readout">
+          <div class="row"><span>Titik A</span><span id="dist-a">&mdash;</span></div>
+          <div class="row"><span>Titik B</span><span id="dist-b">&mdash;</span></div>
+          <div class="row"><span>&Delta;x</span><span id="dist-dx">&mdash;</span></div>
+          <div class="row"><span>&Delta;y</span><span id="dist-dy">&mdash;</span></div>
+          <div class="result">
+            <div class="label" style="font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); margin-bottom:4px;">JARAK AB</div>
+            <div class="big" id="dist-result">&mdash;</div>
+          </div>
+          <div class="btn-row">
+            <button id="distance-clear">Hapus</button>
+            <button class="primary" id="distance-random">Titik acak</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">Contoh soal terselesaikan</h3>
+    <div class="accordion" id="jarak-accordion">
+      <div class="accordion-item">
+        <button class="accordion-trigger"><span>Tentukan jarak titik P(2, 3) dan Q(7, 15)</span><span class="plus">+</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p>\( d = \sqrt{(7-2)^2 + (15-3)^2} = \sqrt{5^2 + 12^2} = \sqrt{25+144} = \sqrt{169} = 13 \)</p>
+          <p style="margin-bottom:0;">Jadi jarak PQ adalah <strong>13 satuan</strong>.</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-trigger"><span>Tentukan jarak titik M(-3, 4) dan N(1, -2)</span><span class="plus">+</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p>\( d = \sqrt{(1-(-3))^2 + (-2-4)^2} = \sqrt{4^2 + (-6)^2} = \sqrt{16+36} = \sqrt{52} = 2\sqrt{13} \approx 7{,}21 \)</p>
+          <p style="margin-bottom:0;">Jadi jarak MN adalah <strong>\(2\sqrt{13}\) satuan</strong>, atau sekitar 7,21 satuan.</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TITIK TENGAH ===================== -->
+  <section id="tengah">
+    <div class="eyebrow-num">04</div>
+    <h2 class="sec-title">Titik Tengah Dua Titik</h2>
+    <p class="lead-p">Titik tengah \(M\) dari ruas garis \(AB\) adalah titik yang membagi ruas garis itu menjadi dua bagian sama panjang. Koordinat titik tengah cukup dicari dengan <strong>merata-ratakan</strong> absis dan ordinat kedua titik ujungnya.</p>
+
+    <div class="formula-box">
+      <div class="label">RUMUS TITIK TENGAH</div>
+      \[ M = \left( \dfrac{x_1+x_2}{2},\ \dfrac{y_1+y_2}{2} \right) \]
+    </div>
+
+    <h3 class="sub-title">Coba sendiri</h3>
+    <div class="panel">
+      <div class="panel-head">
+        <h4>Kalkulator titik tengah interaktif</h4>
+        <span class="hint">Klik dua kali pada bidang untuk menempatkan titik A dan B</span>
+      </div>
+      <div class="canvas-row">
+        <canvas id="midpoint-canvas" width="440" height="340"></canvas>
+        <div class="readout">
+          <div class="row"><span>Titik A</span><span id="mid-a">&mdash;</span></div>
+          <div class="row"><span>Titik B</span><span id="mid-b">&mdash;</span></div>
+          <div class="result">
+            <div class="label" style="font-family:var(--mono); font-size:0.72rem; color:var(--gold-deep); margin-bottom:4px;">TITIK TENGAH M</div>
+            <div class="big" id="mid-result">&mdash;</div>
+          </div>
+          <div class="btn-row">
+            <button id="midpoint-clear">Hapus</button>
+            <button class="primary" id="midpoint-random">Titik acak</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">Contoh soal terselesaikan</h3>
+    <div class="accordion" id="tengah-accordion">
+      <div class="accordion-item">
+        <button class="accordion-trigger"><span>Tentukan titik tengah A(2, -4) dan B(8, 6)</span><span class="plus">+</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p>\( M = \left( \dfrac{2+8}{2}, \dfrac{-4+6}{2} \right) = \left( \dfrac{10}{2}, \dfrac{2}{2} \right) = (5, 1) \)</p>
+          <p style="margin-bottom:0;">Jadi titik tengah AB adalah <strong>(5, 1)</strong>.</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-trigger"><span>Titik C adalah titik tengah PQ. Jika P(-1, 2) dan C(3, 7), tentukan Q</span><span class="plus">+</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p>Gunakan \( C = \left( \dfrac{x_P+x_Q}{2}, \dfrac{y_P+y_Q}{2} \right) \), sehingga \( x_Q = 2(3) - (-1) = 7 \) dan \( y_Q = 2(7) - 2 = 12 \).</p>
+          <p style="margin-bottom:0;">Jadi \(Q(7, 12)\).</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LATIHAN ===================== -->
+  <section id="latihan">
+    <div class="eyebrow-num">05</div>
+    <h2 class="sec-title">Latihan Pemahaman</h2>
+    <p class="lead-p">Uji pemahamanmu tentang sistem koordinat, jarak dua titik, dan titik tengah melalui lima soal berikut.</p>
+
+    <div id="quiz-container"></div>
+    <div id="quiz-score"></div>
+  </section>
+
+</main>
+
+<footer>
+  Modul Pembelajaran Interaktif &mdash; Geometri Analitik &amp; Sistem Koordinat Kartesius<br>
+  Disusun oleh Martin Bernard, M.Pd. &middot; IKIP Siliwangi
+</footer>
+
+<script>
+/* ============ PROGRESS BAR ============ */
+function updateProgress(){
+  const h = document.documentElement;
+  const scrolled = h.scrollTop || document.body.scrollTop;
+  const height = h.scrollHeight - h.clientHeight;
+  const pct = height > 0 ? (scrolled / height) * 100 : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+document.addEventListener('scroll', updateProgress);
+updateProgress();
+
+/* ============ SCROLL SPY ============ */
+const navA = document.querySelectorAll('#navlinks a');
+const secs = Array.from(navA).map(a => document.getElementById(a.dataset.sec));
+function scrollSpy(){
+  let idx = 0;
+  const y = window.scrollY + 120;
+  secs.forEach((s, i) => { if(s && s.offsetTop <= y) idx = i; });
+  navA.forEach((a,i) => a.classList.toggle('active', i === idx));
+}
+document.addEventListener('scroll', scrollSpy);
+scrollSpy();
+
+/* ============ ACCORDION ============ */
+document.querySelectorAll('.accordion-trigger').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.parentElement.classList.toggle('open');
+  });
+});
+
+/* ============ COORDINATE PLANE ENGINE ============ */
+function makePlane(canvas, opts){
+  opts = opts || {};
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const range = opts.range || 10;
+  const scale = Math.min(W, H) / (range*2) * 0.92;
+
+  function toPx(x, y){ return [cx + x*scale, cy - y*scale]; }
+  function toMath(px, py){
+    return [ Math.round((px-cx)/scale), Math.round((cy-py)/scale) ];
+  }
+
+  function drawGrid(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle = 'rgba(27,42,69,0.10)';
+    ctx.lineWidth = 1;
+    for(let i=-range;i<=range;i++){
+      let [px,] = toPx(i,0);
+      ctx.beginPath(); ctx.moveTo(px,0); ctx.lineTo(px,H); ctx.stroke();
+      let [,py] = toPx(0,i);
+      ctx.beginPath(); ctx.moveTo(0,py); ctx.lineTo(W,py); ctx.stroke();
+    }
+    // axes
+    ctx.strokeStyle = 'rgba(27,42,69,0.55)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    // labels
+    ctx.fillStyle = 'rgba(27,42,69,0.5)';
+    ctx.font = '10px "Work Sans", sans-serif';
+    ctx.fillText('x', W-14, cy-8);
+    ctx.fillText('y', cx+8, 12);
+    ctx.fillText('0', cx+5, cy+14);
+  }
+
+  function point(x, y, color, label){
+    const [px,py] = toPx(x,y);
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = '#F6F1E3'; ctx.lineWidth = 1.5; ctx.stroke();
+    if(label){
+      ctx.fillStyle = '#1B2A45';
+      ctx.font = '600 12px "Work Sans", sans-serif';
+      ctx.fillText(label + ' (' + x + ', ' + y + ')', px+9, py-8);
+    }
+  }
+
+  function segment(x1,y1,x2,y2,color,dashed){
+    const [px1,py1] = toPx(x1,y1);
+    const [px2,py2] = toPx(x2,y2);
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    if(dashed) ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(px1,py1); ctx.lineTo(px2,py2); ctx.stroke();
+    ctx.restore();
+  }
+
+  drawGrid();
+  return { ctx, toPx, toMath, drawGrid, point, segment, range };
+}
+
+/* ---------- Hero (decorative, animated once) ---------- */
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  const plane = makePlane(canvas, {range:9});
+  const pts = [[-5,3],[4,6],[6,-4],[-3,-5],[0,0],[2,2]];
+  plane.point(0,0,'#1B2A45');
+  pts.forEach(p => plane.point(p[0], p[1], '#2C6E68'));
+  plane.segment(-5,3,6,-4,'#B8892B',true);
+  plane.point(-5,3,'#A23E3E','A');
+  plane.point(6,-4,'#A23E3E','B');
+})();
+
+/* ---------- Explore canvas ---------- */
+(function(){
+  const canvas = document.getElementById('explore-canvas');
+  let plane = makePlane(canvas, {range:8});
+  const coordEl = document.getElementById('explore-coord');
+  const quadEl = document.getElementById('explore-quad');
+
+  function quadrantOf(x,y){
+    if(x===0 && y===0) return 'Titik asal (Origin)';
+    if(x===0) return 'Pada sumbu-y';
+    if(y===0) return 'Pada sumbu-x';
+    if(x>0 && y>0) return 'Kuadran I';
+    if(x<0 && y>0) return 'Kuadran II';
+    if(x<0 && y<0) return 'Kuadran III';
+    return 'Kuadran IV';
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const r = canvas.getBoundingClientRect();
+    const px = (e.clientX - r.left) * (canvas.width / r.width);
+    const py = (e.clientY - r.top) * (canvas.height / r.height);
+    const [x,y] = plane.toMath(px,py);
+    plane.drawGrid();
+    plane.point(x,y,'#2C6E68','P');
+    coordEl.textContent = '(' + x + ', ' + y + ')';
+    quadEl.textContent = quadrantOf(x,y);
+  });
+
+  document.getElementById('explore-clear').addEventListener('click', () => {
+    plane.drawGrid();
+    coordEl.textContent = '\u2014';
+    quadEl.textContent = '\u2014';
+  });
+})();
+
+/* ---------- Distance calculator ---------- */
+(function(){
+  const canvas = document.getElementById('distance-canvas');
+  let plane = makePlane(canvas, {range:8});
+  let A = null, B = null;
+  const aEl = document.getElementById('dist-a');
+  const bEl = document.getElementById('dist-b');
+  const dxEl = document.getElementById('dist-dx');
+  const dyEl = document.getElementById('dist-dy');
+  const resEl = document.getElementById('dist-result');
+
+  function render(){
+    plane.drawGrid();
+    if(A) plane.point(A[0],A[1],'#A23E3E','A');
+    if(B) plane.point(B[0],B[1],'#2C6E68','B');
+    if(A && B){
+      plane.segment(A[0],A[1],B[0],A[1],'rgba(184,137,43,0.7)',true);
+      plane.segment(B[0],A[1],B[0],B[1],'rgba(184,137,43,0.7)',true);
+      plane.segment(A[0],A[1],B[0],B[1],'#1B2A45',false);
+    }
+    aEl.textContent = A ? '(' + A[0] + ', ' + A[1] + ')' : '\u2014';
+    bEl.textContent = B ? '(' + B[0] + ', ' + B[1] + ')' : '\u2014';
+    if(A && B){
+      const dx = B[0]-A[0], dy = B[1]-A[1];
+      const d = Math.sqrt(dx*dx + dy*dy);
+      dxEl.textContent = dx;
+      dyEl.textContent = dy;
+      resEl.textContent = (Math.round(d*100)/100) + ' satuan';
+    } else {
+      dxEl.textContent = '\u2014'; dyEl.textContent = '\u2014'; resEl.textContent = '\u2014';
+    }
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const r = canvas.getBoundingClientRect();
+    const px = (e.clientX - r.left) * (canvas.width / r.width);
+    const py = (e.clientY - r.top) * (canvas.height / r.height);
+    const [x,y] = plane.toMath(px,py);
+    if(!A || (A && B)){ A = [x,y]; B = null; }
+    else { B = [x,y]; }
+    render();
+  });
+
+  document.getElementById('distance-clear').addEventListener('click', () => {
+    A = null; B = null; render();
+  });
+  document.getElementById('distance-random').addEventListener('click', () => {
+    A = [Math.floor(Math.random()*13)-6, Math.floor(Math.random()*13)-6];
+    B = [Math.floor(Math.random()*13)-6, Math.floor(Math.random()*13)-6];
+    render();
+  });
+
+  render();
+})();
+
+/* ---------- Midpoint calculator ---------- */
+(function(){
+  const canvas = document.getElementById('midpoint-canvas');
+  let plane = makePlane(canvas, {range:8});
+  let A = null, B = null;
+  const aEl = document.getElementById('mid-a');
+  const bEl = document.getElementById('mid-b');
+  const resEl = document.getElementById('mid-result');
+
+  function render(){
+    plane.drawGrid();
+    if(A) plane.point(A[0],A[1],'#A23E3E','A');
+    if(B) plane.point(B[0],B[1],'#2C6E68','B');
+    if(A && B){
+      plane.segment(A[0],A[1],B[0],B[1],'#1B2A45',false);
+      const mx = (A[0]+B[0])/2, my = (A[1]+B[1])/2;
+      plane.point(mx,my,'#B8892B','M');
+    }
+    aEl.textContent = A ? '(' + A[0] + ', ' + A[1] + ')' : '\u2014';
+    bEl.textContent = B ? '(' + B[0] + ', ' + B[1] + ')' : '\u2014';
+    if(A && B){
+      const mx = (A[0]+B[0])/2, my = (A[1]+B[1])/2;
+      resEl.textContent = '(' + mx + ', ' + my + ')';
+    } else {
+      resEl.textContent = '\u2014';
+    }
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const r = canvas.getBoundingClientRect();
+    const px = (e.clientX - r.left) * (canvas.width / r.width);
+    const py = (e.clientY - r.top) * (canvas.height / r.height);
+    const [x,y] = plane.toMath(px,py);
+    if(!A || (A && B)){ A = [x,y]; B = null; }
+    else { B = [x,y]; }
+    render();
+  });
+
+  document.getElementById('midpoint-clear').addEventListener('click', () => {
+    A = null; B = null; render();
+  });
+  document.getElementById('midpoint-random').addEventListener('click', () => {
+    A = [Math.floor(Math.random()*13)-6, Math.floor(Math.random()*13)-6];
+    B = [Math.floor(Math.random()*13)-6, Math.floor(Math.random()*13)-6];
+    render();
+  });
+
+  render();
+})();
+
+/* ============ QUIZ ============ */
+const quizData = [
+  {
+    q: 'Titik P(-4, 7) terletak pada kuadran mana?',
+    opts: ['Kuadran I', 'Kuadran II', 'Kuadran III', 'Kuadran IV'],
+    correct: 1,
+    fb: 'x negatif dan y positif berarti titik berada di Kuadran II.'
+  },
+  {
+    q: 'Jarak antara titik A(0, 0) dan B(6, 8) adalah&hellip;',
+    opts: ['14 satuan', '10 satuan', '48 satuan', '\u221A28 satuan'],
+    correct: 1,
+    fb: 'd = \u221A(6\u00B2 + 8\u00B2) = \u221A(36+64) = \u221A100 = 10.'
+  },
+  {
+    q: 'Titik tengah dari M(-2, 5) dan N(4, -1) adalah&hellip;',
+    opts: ['(1, 2)', '(2, 1)', '(-3, 3)', '(3, -3)'],
+    correct: 0,
+    fb: 'Titik tengah = ((-2+4)/2, (5+(-1))/2) = (2/2, 4/2) = (1, 2).'
+  },
+  {
+    q: 'Dalam rumus jarak dua titik, ekspresi (x\u2082 - x\u2081) dan (y\u2082 - y\u2081) mewakili apa pada segitiga siku-siku bantu?',
+    opts: ['Kedua sisi siku-siku', 'Sisi miring (hipotenusa)', 'Sudut segitiga', 'Luas segitiga'],
+    correct: 0,
+    fb: 'Selisih absis dan ordinat menjadi dua sisi siku-siku; hipotenusanya adalah jarak AB itu sendiri.'
+  },
+  {
+    q: 'Jika C(3, 7) adalah titik tengah PQ, dan P(-1, 2), maka koordinat Q adalah&hellip;',
+    opts: ['(1, 4,5)', '(7, 12)', '(5, 9)', '(4, 5)'],
+    correct: 1,
+    fb: 'x_Q = 2(3) - (-1) = 7 dan y_Q = 2(7) - 2 = 12, sehingga Q(7, 12).'
+  }
+];
+
+const quizContainer = document.getElementById('quiz-container');
+let score = 0, answered = 0;
+
+quizData.forEach((item, qi) => {
+  const card = document.createElement('div');
+  card.className = 'quiz-card';
+  const qEl = document.createElement('div');
+  qEl.className = 'quiz-q';
+  qEl.textContent = (qi+1) + '. ' + item.q.replace('&hellip;','...');
+  card.appendChild(qEl);
+
+  const optsWrap = document.createElement('div');
+  optsWrap.className = 'quiz-opts';
+  const fb = document.createElement('div');
+  fb.className = 'quiz-fb';
+
+  item.opts.forEach((optText, oi) => {
+    const b = document.createElement('button');
+    b.className = 'quiz-opt';
+    b.innerHTML = optText;
+    b.addEventListener('click', () => {
+      if(card.dataset.done) return;
+      card.dataset.done = '1';
+      answered++;
+      const buttons = optsWrap.querySelectorAll('.quiz-opt');
+      buttons.forEach((bb,i) => {
+        if(i === item.correct) bb.classList.add('correct');
+        else if(i === oi) bb.classList.add('wrong');
+      });
+      if(oi === item.correct){
+        score++;
+        fb.classList.add('ok'); fb.innerHTML = '<strong>Benar!</strong> ' + item.fb;
+      } else {
+        fb.classList.add('no'); fb.innerHTML = '<strong>Belum tepat.</strong> ' + item.fb;
+      }
+      fb.classList.add('show');
+      document.getElementById('quiz-score').textContent =
+        'Skor: ' + score + ' / ' + quizData.length + ' (' + answered + ' dari ' + quizData.length + ' soal dijawab)';
+    });
+    optsWrap.appendChild(b);
+  });
+
+  card.appendChild(optsWrap);
+  card.appendChild(fb);
+  quizContainer.appendChild(card);
+});
+document.getElementById('quiz-score').textContent = 'Skor: 0 / ' + quizData.length + ' (0 dari ' + quizData.length + ' soal dijawab)';
+</script>
+</body>
+</html>
