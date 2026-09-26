@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Rumus Jarak - Geometri Analitik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  :root{
+    --ink:#0F2E2E; --paper:#FAF7F0; --card:#FFFFFF; --accent:#E86A33;
+    --accent2:#1C7C72; --line:#E3DCCC; --muted:#5B6C6C;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:'Work Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6}
+  .progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);z-index:100;width:0%;transition:width .1s}
+  header{padding:64px 24px 48px;text-align:center;background:var(--ink);color:var(--paper)}
+  header .eyebrow{letter-spacing:3px;font-size:12px;color:var(--accent);font-weight:600;text-transform:uppercase}
+  header h1{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(28px,5vw,44px);margin:12px 0}
+  header p{color:#C9D6D6;max-width:560px;margin:0 auto;font-size:15px}
+  nav{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);display:flex;justify-content:center;gap:8px;padding:12px;flex-wrap:wrap}
+  nav a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:600;padding:8px 14px;border-radius:20px;transition:.2s}
+  nav a.active,nav a:hover{background:var(--ink);color:var(--paper)}
+  main{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+  section{margin-bottom:64px;scroll-margin-top:70px}
+  .tag{display:inline-block;background:var(--accent2);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:10px}
+  h2{font-family:'Fraunces',serif;font-size:28px;margin:0 0 14px}
+  .formula-box{background:var(--ink);color:#fff;padding:24px 28px;border-radius:14px;margin:20px 0;text-align:center;font-size:20px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  @media (max-width:640px){.grid2{grid-template-columns:1fr}}
+  svg{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
+  .acc{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:18px;background:var(--card)}
+  .acc-head{padding:16px 20px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+  .acc-head::after{content:"+";font-size:20px;color:var(--accent)}
+  .acc.open .acc-head::after{content:"–"}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 20px}
+  .acc.open .acc-body{max-height:600px;padding:0 20px 20px}
+  .quiz-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
+  .opt{display:block;width:100%;text-align:left;padding:10px 14px;margin:6px 0;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px}
+  .opt.correct{background:#DFF3EC;border-color:var(--accent2)}
+  .opt.wrong{background:#FBE3DA;border-color:var(--accent)}
+  .score{font-weight:700;color:var(--accent2)}
+  footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<header>
+  <div class="eyebrow">Geometri Analitik</div>
+  <h1>Rumus Jarak dalam Bidang Koordinat</h1>
+  <p>Titik ke titik, titik ke garis, dan garis ke garis — konsep, rumus, contoh soal, dan latihan.</p>
+</header>
+
+<nav id="nav">
+  <a href="#s1">Titik &amp; Titik</a>
+  <a href="#s2">Titik &amp; Garis</a>
+  <a href="#s3">Garis &amp; Garis</a>
+  <a href="#quiz">Latihan</a>
+</nav>
+
+<main>
+
+<section id="s1">
+  <span class="tag">01</span>
+  <h2>Jarak Antara Dua Titik</h2>
+  <p>Diberikan dua titik \(A(x_1,y_1)\) dan \(B(x_2,y_2)\) pada bidang kartesius. Jarak \(AB\) diperoleh dengan membentuk segitiga siku-siku, lalu menerapkan Teorema Pythagoras terhadap selisih absis dan ordinatnya.</p>
+  <div class="grid2">
+    <div class="formula-box">\( d(A,B)=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2} \)</div>
+    <svg viewBox="0 0 260 220"><line x1="30" y1="180" x2="230" y2="180" stroke="#ccc"/><line x1="30" y1="20" x2="30" y2="200" stroke="#ccc"/>
+      <circle cx="60" cy="150" r="4" fill="#E86A33"/><text x="66" y="150" font-size="12">A(x₁,y₁)</text>
+      <circle cx="190" cy="50" r="4" fill="#1C7C72"/><text x="196" y="50" font-size="12">B(x₂,y₂)</text>
+      <line x1="60" y1="150" x2="190" y2="50" stroke="#0F2E2E" stroke-width="2"/>
+      <line x1="60" y1="150" x2="190" y2="150" stroke="#999" stroke-dasharray="4 3"/>
+      <line x1="190" y1="150" x2="190" y2="50" stroke="#999" stroke-dasharray="4 3"/>
+      <text x="115" y="165" font-size="11" fill="#666">x₂−x₁</text><text x="196" y="105" font-size="11" fill="#666">y₂−y₁</text>
+    </svg>
+  </div>
+  <div class="acc">
+    <div class="acc-head">Contoh Soal</div>
+    <div class="acc-body"><p>Tentukan jarak titik \(A(2,3)\) dan \(B(6,6)\).</p>
+      <p>\(d=\sqrt{(6-2)^2+(6-3)^2}=\sqrt{16+9}=\sqrt{25}=5\)</p></div>
+  </div>
+</section>
+
+<section id="s2">
+  <span class="tag">02</span>
+  <h2>Jarak Titik ke Garis</h2>
+  <p>Untuk garis \(g: ax+by+c=0\) dan titik \(P(x_0,y_0)\) di luar garis, jarak terpendek adalah panjang ruas garis dari \(P\) yang tegak lurus terhadap \(g\).</p>
+  <div class="grid2">
+    <div class="formula-box">\( d(P,g)=\dfrac{|ax_0+by_0+c|}{\sqrt{a^2+b^2}} \)</div>
+    <svg viewBox="0 0 260 220"><line x1="20" y1="190" x2="240" y2="30" stroke="#1C7C72" stroke-width="2"/>
+      <circle cx="180" cy="60" r="4" fill="#E86A33"/><text x="186" y="55" font-size="12">P(x₀,y₀)</text>
+      <line x1="180" y1="60" x2="128" y2="112" stroke="#0F2E2E" stroke-dasharray="5 3"/>
+      <text x="140" y="95" font-size="11" fill="#666">d</text>
+    </svg>
+  </div>
+  <div class="acc">
+    <div class="acc-head">Contoh Soal</div>
+    <div class="acc-body"><p>Jarak titik \(P(1,2)\) terhadap garis \(3x+4y-6=0\)?</p>
+      <p>\(d=\dfrac{|3(1)+4(2)-6|}{\sqrt{3^2+4^2}}=\dfrac{|3+8-6|}{5}=\dfrac{5}{5}=1\)</p></div>
+  </div>
+</section>
+
+<section id="s3">
+  <span class="tag">03</span>
+  <h2>Jarak Antara Dua Garis Sejajar</h2>
+  <p>Dua garis sejajar \(g_1: ax+by+c_1=0\) dan \(g_2: ax+by+c_2=0\) memiliki koefisien \(a,b\) yang sama. Jaraknya dihitung dengan memilih sembarang titik pada salah satu garis lalu menerapkan rumus jarak titik ke garis.</p>
+  <div class="grid2">
+    <div class="formula-box">\( d(g_1,g_2)=\dfrac{|c_1-c_2|}{\sqrt{a^2+b^2}} \)</div>
+    <svg viewBox="0 0 260 220"><line x1="20" y1="190" x2="240" y2="30" stroke="#1C7C72" stroke-width="2"/>
+      <line x1="20" y1="140" x2="240" y2="-20" stroke="#E86A33" stroke-width="2" transform="translate(0,60)"/>
+      <text x="30" y="170" font-size="11" fill="#666">g₁</text><text x="30" y="115" font-size="11" fill="#666">g₂</text>
+    </svg>
+  </div>
+  <div class="acc">
+    <div class="acc-head">Contoh Soal</div>
+    <div class="acc-body"><p>Jarak garis \(2x+y-4=0\) dan \(2x+y+6=0\)?</p>
+      <p>\(d=\dfrac{|-4-6|}{\sqrt{2^2+1^2}}=\dfrac{10}{\sqrt5}=2\sqrt5\)</p>
+      <p style="font-size:13px;color:var(--muted)">Catatan: bila kedua garis tidak sejajar (berpotongan), jaraknya nol karena keduanya bertemu di satu titik.</p></div>
+  </div>
+</section>
+
+<section id="quiz">
+  <span class="tag">Latihan</span>
+  <h2>Uji Pemahaman</h2>
+  <p>Skor: <span class="score" id="score">0</span> / 3</p>
+  <div class="quiz-card" data-q="1">
+    <p>1. Jarak titik \(A(0,0)\) dan \(B(3,4)\) adalah...</p>
+    <button class="opt" data-c="0">4</button>
+    <button class="opt" data-c="1">5</button>
+    <button class="opt" data-c="0">7</button>
+  </div>
+  <div class="quiz-card" data-q="2">
+    <p>2. Jarak titik \(P(2,-1)\) ke garis \(x-y+1=0\) adalah...</p>
+    <button class="opt" data-c="1">2√2</button>
+    <button class="opt" data-c="0">√2</button>
+    <button class="opt" data-c="0">4</button>
+  </div>
+  <div class="quiz-card" data-q="3">
+    <p>3. Dua garis sejajar memiliki nilai a dan b yang...</p>
+    <button class="opt" data-c="1">sama</button>
+    <button class="opt" data-c="0">berbeda</button>
+    <button class="opt" data-c="0">saling berkebalikan</button>
+  </div>
+</section>
+
+</main>
+
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+  const bar=document.getElementById('progress');
+  window.addEventListener('scroll',()=>{
+    const h=document.documentElement;
+    const pct=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100;
+    bar.style.width=pct+'%';
+  });
+  document.querySelectorAll('.acc-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+  const links=[...document.querySelectorAll('nav a')];
+  const secs=['s1','s2','s3','quiz'].map(id=>document.getElementById(id));
+  new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));
+    links[secs.indexOf(e.target)].classList.add('active');}})},{rootMargin:'-40% 0px -50% 0px'}).forEach=null;
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));links[secs.indexOf(e.target)].classList.add('active');}})},{rootMargin:'-40% 0px -50% 0px'});
+  secs.forEach(s=>obs.observe(s));
+  let score=0;
+  document.querySelectorAll('.quiz-card').forEach(card=>{
+    card.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
+      if(card.dataset.answered)return;
+      card.dataset.answered='1';
+      card.querySelectorAll('.opt').forEach(b=>b.classList.add(b.dataset.c==='1'?'correct':'wrong'));
+      if(btn.dataset.c==='1'){score++;document.getElementById('score').textContent=score;}
+    }));
+  });
+</script>
+</body>
+</html>
