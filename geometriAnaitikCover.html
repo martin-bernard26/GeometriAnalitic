@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Cover - Geometri Analitik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E1B2E;
+    --panel: #0B1626;
+    --title: #F5F1E6;
+    --sub: #A9B4C4;
+    --accent: #D4AF37;
+    --grid: #1C3050;
+    --curve1: #4FB8B0;
+    --curve2: #D4AF37;
+    --curve3: #C97B63;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    background: #05070c;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  .cover{
+    width: 1000px;
+    max-width: 100%;
+    aspect-ratio: 1000 / 650;
+    margin: 40px auto;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+
+  .panel{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 7.2% 4.8%;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    z-index: 2;
+    background: linear-gradient(90deg, var(--panel) 0%, var(--panel) 82%, transparent 100%);
+  }
+
+  .eyebrow{
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .title{
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(32px, 5.4vw, 54px);
+    line-height: 1.05;
+    color: var(--title);
+    margin: 0;
+  }
+
+  .rule{
+    width: 56px;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  .subtitle{
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--sub);
+    font-style: italic;
+    max-width: 280px;
+  }
+
+  .author{
+    margin-top: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .author .name{
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--title);
+  }
+
+  .author .line{
+    font-size: 13px;
+    color: var(--sub);
+  }
+
+  .illustration{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .illustration svg{
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  @media (max-width: 720px){
+    .panel{ width: 100%; background: linear-gradient(180deg, var(--panel) 55%, transparent 100%); height: 62%; }
+    .illustration{ width: 100%; height: 55%; top: 42%; opacity: 0.9; }
+    .subtitle{ max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+
+  <div class="panel">
+    <div class="eyebrow">Modul Pembelajaran</div>
+    <h1 class="title">Geometri<br>Analitik</h1>
+    <div class="rule"></div>
+    <p class="subtitle">Garis lurus, lingkaran, parabola, elips, dan hiperbola dalam sistem koordinat kartesius.</p>
+    <div class="author">
+      <div class="name">Martin Bernard, M.Pd.</div>
+      <div class="line">Program Studi Pendidikan Matematika</div>
+      <div class="line">IKIP Siliwangi</div>
+    </div>
+  </div>
+
+  <div class="illustration">
+    <svg viewBox="0 0 600 650" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M40 0 L0 0 0 40" fill="none" stroke="var(--grid)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="600" height="650" fill="url(#grid)"/>
+
+      <line x1="30" y1="325" x2="580" y2="325" stroke="var(--accent)" stroke-width="2"/>
+      <line x1="300" y1="40" x2="300" y2="610" stroke="var(--accent)" stroke-width="2"/>
+      <path d="M580 325 L566 318 L566 332 Z" fill="var(--accent)"/>
+      <path d="M300 40 L293 54 L307 54 Z" fill="var(--accent)"/>
+      <text x="586" y="330" font-family="Work Sans" font-size="16" fill="var(--accent)">x</text>
+      <text x="306" y="38" font-family="Work Sans" font-size="16" fill="var(--accent)">y</text>
+
+      <path d="M170,190 Q300,500 430,190" fill="none" stroke="var(--curve1)" stroke-width="3"/>
+      <circle cx="440" cy="230" r="58" fill="none" stroke="var(--curve2)" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <ellipse cx="170" cy="440" rx="88" ry="46" fill="none" stroke="var(--curve3)" stroke-width="2.5" transform="rotate(-12 170 440)"/>
+
+      <circle cx="380" cy="230" r="4.5" fill="var(--title)"/>
+      <line x1="380" y1="230" x2="380" y2="325" stroke="var(--title)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="380" y1="230" x2="300" y2="230" stroke="var(--title)" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="390" y="222" font-family="Work Sans" font-size="14" fill="var(--title)">A(2, 3)</text>
+
+      <circle cx="230" cy="410" r="4.5" fill="var(--title)"/>
+      <line x1="230" y1="410" x2="230" y2="325" stroke="var(--title)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="230" y1="410" x2="300" y2="410" stroke="var(--title)" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="150" y="428" font-family="Work Sans" font-size="14" fill="var(--title)">B(&#8722;1, &#8722;2)</text>
+
+      <text x="490" y="310" font-family="Playfair Display" font-style="italic" font-size="17" fill="var(--curve1)">y = x&#178;</text>
+      <text x="500" y="180" font-family="Playfair Display" font-style="italic" font-size="15" fill="var(--curve2)">x&#178;+y&#178;=r&#178;</text>
+    </svg>
+  </div>
+
+</div>
+
+</body>
+</html>
