@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Luas Segitiga &amp; Segiempat pada Bidang Koordinat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#160E2E;--card:#221846;--ink:#F2EEFF;--muted:#A99FCC;--lime:#C6F135;--pink:#FF5FA2;--cyan:#4DE1E8;--line:#3A2E6B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.55}
+header{padding:44px 20px 20px;text-align:center}
+.eyebrow{color:var(--lime);letter-spacing:3px;font-size:12px;font-weight:700;text-transform:uppercase}
+h1{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(26px,4.6vw,40px);margin:10px 0}
+header p{color:var(--muted);max-width:620px;margin:0 auto}
+.tabs{display:flex;justify-content:center;gap:10px;margin:22px 0}
+.tabs button{font:700 15px 'DM Sans';padding:11px 26px;border-radius:30px;border:2px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--lime);color:#160E2E;border-color:var(--lime)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}}
+.stage,aside{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+canvas{width:100%;height:auto;display:block;border-radius:12px;background:#120A28;touch-action:none;cursor:grab}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px;font-size:14px;color:var(--muted)}
+.bar button,.btn{font:700 14px 'DM Sans';padding:9px 16px;border-radius:10px;border:0;background:var(--pink);color:#fff;cursor:pointer}
+.bar button.alt{background:var(--line)}
+.big{font-family:'Sora',sans-serif;font-weight:800;font-size:34px;color:var(--lime)}
+.lbl{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.step{background:#1A1238;border-radius:12px;padding:12px 14px;margin:10px 0;font-size:14px;overflow-x:auto}
+.step b{color:var(--cyan)}
+.warn{background:#4B1B3A;border:1px solid var(--pink);padding:10px 14px;border-radius:10px;font-size:14px;margin:10px 0}
+input[type=number]{font:600 16px 'DM Sans';width:120px;padding:9px;border-radius:10px;border:2px solid var(--line);background:#120A28;color:var(--ink)}
+.ok{color:var(--lime);font-weight:700}.no{color:var(--pink);font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Geometri Analitik</div>
+  <h1>Luas Segitiga &amp; Segiempat dari Titik dan Garis</h1>
+  <p>Seret titik-titik sudutnya di bidang koordinat, lalu amati bagaimana luas dihitung dengan rumus determinan (sepatu tali) dan rumus alas &times; tinggi.</p>
+</header>
+<div class="tabs">
+  <button id="tTri" class="on">Segitiga</button>
+  <button id="tQuad">Segiempat</button>
+</div>
+<div class="wrap">
+  <div class="stage">
+    <canvas id="cv" width="600" height="600"></canvas>
+    <div class="bar">
+      <label><input type="checkbox" id="snap" checked> Tempel ke bilangan bulat</label>
+      <button class="alt" id="reset">Reset</button>
+      <button id="rand">Soal acak</button>
+    </div>
+  </div>
+  <aside id="panel"></aside>
+</div>
+
+<script>
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),S=50,O=300;
+const def={tri:[[1,1],[5,2],[2,5]],quad:[[-4,-2],[3,-3],[5,3],[-2,4]]};
+let mode='tri',P={tri:def.tri.map(p=>p.slice()),quad:def.quad.map(p=>p.slice())};
+let ch=null; // challenge {answer, revealed, msg}
+const L='ABCD';
+const X=x=>O+x*S,Y=y=>O-y*S;
+const f=n=>String(Number(n.toFixed(2)));
+const p=n=>n<0?'('+f(n)+')':f(n);
+const cross=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+const segX=(a,b,c,d)=>cross(c,d,a)*cross(c,d,b)<0&&cross(a,b,c)*cross(a,b,d)<0;
+const selfX=q=>segX(q[0],q[1],q[2],q[3])||segX(q[1],q[2],q[3],q[0]);
+const shoe=q=>{let s=0;for(let i=0;i<q.length;i++){const a=q[i],b=q[(i+1)%q.length];s+=a[0]*b[1]-b[0]*a[1];}return s;};
+
+function draw(){
+  const q=P[mode];
+  ctx.clearRect(0,0,600,600);
+  ctx.lineWidth=1;
+  for(let i=-6;i<=6;i++){
+    ctx.strokeStyle=i?'#2A1F55':'#8B7FD0';ctx.lineWidth=i?1:2;
+    ctx.beginPath();ctx.moveTo(X(i),0);ctx.lineTo(X(i),600);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,Y(i));ctx.lineTo(600,Y(i));ctx.stroke();
+    if(i&&i%2==0){ctx.fillStyle='#7F73B8';ctx.font='11px DM Sans';ctx.fillText(i,X(i)-4,O+14);ctx.fillText(i,O+5,Y(i)+4);}
+  }
+  // polygon
+  ctx.beginPath();q.forEach((a,i)=>i?ctx.lineTo(X(a[0]),Y(a[1])):ctx.moveTo(X(a[0]),Y(a[1])));ctx.closePath();
+  ctx.fillStyle='rgba(198,241,53,.16)';ctx.fill();ctx.strokeStyle='#C6F135';ctx.lineWidth=3;ctx.stroke();
+  ctx.setLineDash([7,5]);ctx.lineWidth=2;
+  if(mode==='tri'){
+    const [A,B,C]=q,dx=B[0]-A[0],dy=B[1]-A[1],d2=dx*dx+dy*dy;
+    if(d2>0){const t=((C[0]-A[0])*dx+(C[1]-A[1])*dy)/d2,F=[A[0]+t*dx,A[1]+t*dy];
+      ctx.strokeStyle='#4DE1E8';ctx.beginPath();ctx.moveTo(X(C[0]),Y(C[1]));ctx.lineTo(X(F[0]),Y(F[1]));ctx.stroke();
+      ctx.fillStyle='#4DE1E8';ctx.beginPath();ctx.arc(X(F[0]),Y(F[1]),4,0,7);ctx.fill();}
+  }else{
+    ctx.strokeStyle='#4DE1E8';ctx.beginPath();ctx.moveTo(X(q[0][0]),Y(q[0][1]));ctx.lineTo(X(q[2][0]),Y(q[2][1]));ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  q.forEach((a,i)=>{
+    ctx.fillStyle='#FF5FA2';ctx.beginPath();ctx.arc(X(a[0]),Y(a[1]),8,0,7);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='700 14px DM Sans';
+    ctx.fillText(L[i]+'('+f(a[0])+', '+f(a[1])+')',X(a[0])+12,Y(a[1])-10);
+  });
+}
+
+function panel(){
+  const q=P[mode],el=document.getElementById('panel');
+  if(ch&&!ch.revealed){
+    el.innerHTML=`<div class="lbl">Tantangan</div><h3 style="font-family:Sora;margin:6px 0">Hitung luas ${mode==='tri'?'segitiga':'segiempat'} ABC${mode==='quad'?'D':''}</h3>
+    <p style="color:var(--muted)">Baca koordinat titik pada gambar, lalu masukkan luasnya (satuan persegi).</p>
+    <input type="number" id="ans" step="any" placeholder="Luas"> <button class="btn" onclick="check()">Periksa</button>
+    <p id="fb">${ch.msg||''}</p>`;return;
+  }
+  let h='';
+  if(ch&&ch.revealed)h+=`<p>${ch.msg}</p>`;
+  if(mode==='tri'){
+    const [A,B,C]=q,cr=cross(A,B,C),area=Math.abs(cr)/2;
+    const AB=Math.hypot(B[0]-A[0],B[1]-A[1]),hh=AB?Math.abs(cr)/AB:0;
+    h+=`<div class="lbl">Luas segitiga ABC</div><div class="big">${f(area)} <span style="font-size:16px">satuan²</span></div>`;
+    if(area===0)h+=`<div class="warn">Ketiga titik segaris, sehingga luasnya 0.</div>`;
+    h+=`<div class="step"><b>Metode 1 — Determinan</b><br>L = ½ |x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)|<br>
+      = ½ |${p(A[0])}(${p(B[1])}−${p(C[1])}) + ${p(B[0])}(${p(C[1])}−${p(A[1])}) + ${p(C[0])}(${p(A[1])}−${p(B[1])})|<br>
+      = ½ |${f(cr)}| = <b>${f(area)}</b></div>
+    <div class="step"><b>Metode 2 — Alas × Tinggi</b><br>Alas AB = √((${p(B[0])}−${p(A[0])})² + (${p(B[1])}−${p(A[1])})²) = ${f(AB)}<br>
+      Tinggi = jarak titik C ke garis AB = |${f(cr)}| / ${f(AB)} = ${f(hh)} <span style="color:var(--muted)">(garis putus-putus biru)</span><br>
+      L = ½ × ${f(AB)} × ${f(hh)} = <b>${f(area)}</b></div>`;
+  }else{
+    const s=shoe(q),area=Math.abs(s)/2,bad=selfX(q);
+    const t=[0,1,2,3].map(i=>{const a=q[i],b=q[(i+1)%4];return `${p(a[0])}·${p(b[1])} − ${p(b[0])}·${p(a[1])}`;});
+    h+=`<div class="lbl">Luas segiempat ABCD</div><div class="big">${f(area)} <span style="font-size:16px">satuan²</span></div>`;
+    if(bad)h+=`<div class="warn">Sisi-sisinya berpotongan, jadi bangun ini bukan segiempat sederhana. Rumus di bawah hanya memberi luas bertanda, bukan luas daerah yang sebenarnya. Geser titik agar tidak menyilang.</div>`;
+    h+=`<div class="step"><b>Metode 1 — Sepatu tali (shoelace)</b><br>L = ½ |Σ (xᵢ·yᵢ₊₁ − xᵢ₊₁·yᵢ)|<br>
+      = ½ |${t.join('<br>&nbsp;&nbsp;&nbsp;+ ')}|<br>= ½ |${f(s)}| = <b>${f(area)}</b></div>`;
+    const a1=Math.abs(cross(q[0],q[1],q[2]))/2,a2=Math.abs(cross(q[0],q[2],q[3]))/2;
+    h+=`<div class="step"><b>Metode 2 — Bagi dua segitiga</b> <span style="color:var(--muted)">(diagonal AC putus-putus biru)</span><br>
+      L(ABC) = ${f(a1)}, L(ACD) = ${f(a2)}<br>L = ${f(a1)} + ${f(a2)} = <b>${f(a1+a2)}</b>${bad||Math.abs(a1+a2-area)>1e-9?'<br><span class="no">Berbeda karena diagonal AC berada di luar bangun (segiempat cekung/menyilang).</span>':''}</div>`;
+  }
+  el.innerHTML=h;
+}
+
+function check(){
+  const v=parseFloat(document.getElementById('ans').value);
+  if(isNaN(v)){ch.msg='<span class="no">Isi jawaban dulu.</span>';return panel();}
+  if(Math.abs(v-ch.answer)<0.01){ch.revealed=true;ch.msg=`<span class="ok">Benar! Luasnya ${f(ch.answer)} satuan².</span> Berikut pembahasannya:`;}
+  else{ch.tries=(ch.tries||0)+1;
+    if(ch.tries>=2){ch.revealed=true;ch.msg=`<span class="no">Jawabanmu ${f(v)}, jawaban yang benar ${f(ch.answer)}.</span> Pelajari langkahnya:`;}
+    else ch.msg='<span class="no">Belum tepat, coba hitung lagi dengan rumus determinan.</span>';}
+  panel();
+}
+function upd(){draw();panel();}
+function setMode(m){mode=m;ch=null;tTri.classList.toggle('on',m==='tri');tQuad.classList.toggle('on',m==='quad');upd();}
+tTri.onclick=()=>setMode('tri');tQuad.onclick=()=>setMode('quad');
+reset.onclick=()=>{P[mode]=def[mode].map(a=>a.slice());ch=null;upd();};
+rand.onclick=()=>{
+  const n=mode==='tri'?3:4;let q;
+  do{q=Array.from({length:n},()=>[Math.round(Math.random()*10-5),Math.round(Math.random()*10-5)]);}
+  while(Math.abs(shoe(q))<2||(n===4&&(selfX(q)||cross(q[0],q[1],q[2])*cross(q[1],q[2],q[3])<=0||cross(q[2],q[3],q[0])*cross(q[3],q[0],q[1])<=0)));
+  P[mode]=q;ch={answer:Math.abs(shoe(q))/2};upd();
+};
+// drag
+let drag=-1;
+const pos=e=>{const r=cv.getBoundingClientRect(),k=600/r.width;return[(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+cv.addEventListener('pointerdown',e=>{
+  if(ch&&!ch.revealed)return;
+  const [mx,my]=pos(e);let best=-1,bd=22;
+  P[mode].forEach((a,i)=>{const d=Math.hypot(X(a[0])-mx,Y(a[1])-my);if(d<bd){bd=d;best=i;}});
+  if(best>=0){drag=best;cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';}
+});
+cv.addEventListener('pointermove',e=>{
+  if(drag<0)return;const [mx,my]=pos(e);
+  let x=(mx-O)/S,y=(O-my)/S;const st=snap.checked?1:10;
+  x=Math.max(-6,Math.min(6,Math.round(x*st)/st));y=Math.max(-6,Math.min(6,Math.round(y*st)/st));
+  P[mode][drag]=[x,y];upd();
+});
+cv.addEventListener('pointerup',()=>{drag=-1;cv.style.cursor='grab';});
+upd();
+</script>
+</body>
+</html>
