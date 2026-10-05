@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Soal Isian Lanjut - Persamaan Garis &amp; Gradien</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{--bg:#EFF1EC;--card:#FFFFFF;--ink:#223029;--muted:#6B7A72;--accent:#3C6E55;--accent2:#A25B3B;--line:#D7DED5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito Sans',sans-serif;line-height:1.6}
+header{padding:48px 22px 18px;text-align:center}
+.eyebrow{color:var(--accent2);letter-spacing:3px;font-size:12px;font-weight:700;text-transform:uppercase}
+h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:clamp(24px,4.4vw,36px);margin:10px 0}
+header p{color:var(--muted);max-width:620px;margin:0 auto}
+.toolbar{position:sticky;top:0;background:var(--bg);z-index:10;display:flex;justify-content:center;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.toolbar .count{font-weight:700;color:var(--accent)}
+.btn{font:700 13.5px 'Nunito Sans';padding:9px 18px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+main{max-width:760px;margin:0 auto;padding:30px 18px 70px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:20px}
+.qnum{display:inline-flex;align-items:center;gap:8px;margin-bottom:10px}
+.qnum .no{background:var(--accent);color:#fff;font-weight:800;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.qtext{font-size:15.5px}
+textarea{width:100%;margin-top:14px;min-height:90px;border-radius:10px;border:1px solid var(--line);padding:12px 14px;font:500 14px 'Nunito Sans';resize:vertical;background:#FBFCFA;color:var(--ink)}
+textarea:focus{outline:2px solid var(--accent)}
+.saved{font-size:12px;color:var(--muted);margin-top:6px;visibility:hidden}
+.saved.show{visibility:visible}
+footer{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+@media print{.toolbar,.saved{display:none}body{background:#fff}.q{break-inside:avoid;border:1px solid #ccc}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Geometri Analitik &middot; Tingkat Lanjut</div>
+  <h1>Soal Isian: Persamaan Garis &amp; Gradien</h1>
+  <p>Sepuluh soal esai/analisis untuk mahasiswa — menuntut pembuktian, penurunan rumus, dan penalaran, tanpa kunci jawaban.</p>
+</header>
+<div class="toolbar">
+  <span>Terisi: <span class="count" id="cnt">0</span>/10</span>
+  <button class="btn ghost" id="unduh">Unduh Jawaban (.txt)</button>
+  <button class="btn" id="cetak">Cetak / Simpan PDF</button>
+</div>
+<main id="main"></main>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+const Q=[
+"Diberikan titik \\(P_1(x_1,y_1)\\) dan \\(P_2(x_2,y_2)\\). Buktikan secara aljabar bahwa gradien garis \\(P_1P_2\\) tidak bergantung pada urutan kedua titik tersebut dipilih (tunjukkan hasilnya sama bila dihitung dari \\(P_1\\) ke \\(P_2\\) maupun sebaliknya).",
+"Diberikan keluarga garis \\(y=mx+(1-m)\\) dengan \\(m\\in\\mathbb{R}\\) sebagai parameter. Tunjukkan bahwa seluruh anggota keluarga garis ini melalui satu titik tetap, dan tentukan koordinat titik tersebut.",
+"Tentukan syarat pada koefisien \\(a\\), \\(b\\), \\(c\\) pada persamaan umum \\(ax+by+c=0\\) agar garis tersebut: (i) sejajar sumbu-X, (ii) sejajar sumbu-Y, dan (iii) melalui titik asal.",
+"Misalkan dua garis tidak vertikal memiliki gradien \\(m_1\\) dan \\(m_2\\). Buktikan secara geometris maupun aljabar bahwa kedua garis saling tegak lurus jika dan hanya jika \\(m_1 \\cdot m_2=-1\\).",
+"Diberikan segitiga \\(ABC\\) dengan \\(A(x_1,y_1)\\), \\(B(x_2,y_2)\\), \\(C(x_3,y_3)\\). Nyatakan syarat ketiga titik tersebut segaris dalam bentuk determinan, kemudian jelaskan keterkaitannya dengan kesamaan gradien \\(m_{AB}\\) dan \\(m_{BC}\\).",
+"Tentukan persamaan garis yang melalui titik potong garis \\(2x+3y-6=0\\) dan \\(x-y+1=0\\), serta tegak lurus terhadap garis \\(4x-y+2=0\\). Jelaskan setiap tahap penyelesaiannya.",
+"Jelaskan mengapa gradien tidak terdefinisi untuk garis vertikal. Kaitkan penjelasanmu dengan definisi gradien \\(m=\\dfrac{y_2-y_1}{x_2-x_1}\\) dan perilaku pembagi saat \\(x_2-x_1\\to 0\\).",
+"Garis \\(g:y=mx+c\\) menyinggung parabola \\(y=x^2\\) tepat di satu titik. Tentukan syarat hubungan antara \\(m\\) dan \\(c\\) agar \\(g\\) merupakan garis singgung (gunakan syarat diskriminan), kemudian nyatakan koordinat titik singgungnya dalam \\(m\\).",
+"Buktikan bahwa rumus jarak antara dua garis sejajar \\(ax+by+c_1=0\\) dan \\(ax+by+c_2=0\\) dapat diturunkan langsung dari rumus jarak titik ke garis, dengan memilih sebuah titik sembarang pada salah satu garis.",
+"Diberikan tiga garis \\(l_1, l_2, l_3\\) dengan persamaan umum \\(a_ix+b_iy+c_i=0\\) untuk \\(i=1,2,3\\). Rumuskan syarat (dalam bentuk determinan koefisien) agar ketiga garis tersebut konkuren (berpotongan di satu titik yang sama)."
+];
+const KEY='isian_persamaan_garis_lanjut';
+let data=JSON.parse(localStorage.getItem(KEY)||'{}');
+const main=document.getElementById('main');
+main.innerHTML=Q.map((q,i)=>`
+  <div class="q">
+    <div class="qnum"><span class="no">${i+1}</span></div>
+    <div class="qtext">${q}</div>
+    <textarea id="t${i}" placeholder="Tulis jawaban dan langkah penyelesaianmu di sini...">${data[i]||''}</textarea>
+    <div class="saved" id="s${i}">Tersimpan di perangkat ini.</div>
+  </div>`).join('');
+MathJax.typesetPromise&&MathJax.typesetPromise([main]);
+
+function updCount(){document.getElementById('cnt').textContent=Q.filter((_,i)=>(data[i]||'').trim().length>0).length;}
+Q.forEach((_,i)=>{
+  const ta=document.getElementById('t'+i),sv=document.getElementById('s'+i);
+  let t;
+  ta.addEventListener('input',()=>{
+    data[i]=ta.value;localStorage.setItem(KEY,JSON.stringify(data));updCount();
+    sv.classList.add('show');clearTimeout(t);t=setTimeout(()=>sv.classList.remove('show'),1500);
+  });
+});
+updCount();
+
+document.getElementById('unduh').onclick=()=>{
+  let txt='SOAL ISIAN: PERSAMAAN GARIS & GRADIEN (TINGKAT LANJUT)\n\n';
+  Q.forEach((q,i)=>{
+    txt+=`${i+1}. ${q.replace(/\\\(|\\\)/g,'')}\nJawaban:\n${(data[i]||'(belum diisi)')}\n\n`;
+  });
+  const blob=new Blob([txt],{type:'text/plain'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='jawaban-persamaan-garis.txt';a.click();
+};
+document.getElementById('cetak').onclick=()=>window.print();
+</script>
+</body>
+</html>
