@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Persamaan Garis Lurus - Geometri Analitik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{--bg:#FBF3E7;--card:#FFFFFF;--ink:#2B1B12;--muted:#8A7362;--accent:#C0472C;--accent2:#2F6E5E;--line:#E8D9C3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;line-height:1.6}
+.progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);z-index:100;width:0%}
+header{padding:56px 22px 36px;text-align:center}
+.eyebrow{letter-spacing:3px;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(26px,4.6vw,42px);margin:10px 0}
+header p{color:var(--muted);max-width:600px;margin:0 auto}
+nav{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:center;gap:6px;padding:10px;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--muted);font-size:13px;font-weight:700;padding:8px 13px;border-radius:20px}
+nav a.active,nav a:hover{background:var(--ink);color:#fff}
+main{max-width:900px;margin:0 auto;padding:44px 18px 80px}
+section{margin-bottom:60px;scroll-margin-top:66px}
+.tag{display:inline-block;background:var(--accent2);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:8px}
+h2{font-family:'Space Grotesk',sans-serif;font-size:25px;margin:0 0 12px}
+.formula-box{background:var(--ink);color:#fff;padding:20px;border-radius:14px;text-align:center;font-size:19px;margin:16px 0}
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:start}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+canvas{width:100%;height:auto;border-radius:10px;background:#FEFBF6;touch-action:none;cursor:grab}
+.readout{font-family:'Space Grotesk';font-size:16px;margin:4px 0}
+.readout b{color:var(--accent)}
+.acc{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:14px;background:#fff}
+.acc-head{padding:14px 18px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between}
+.acc-head::after{content:"+";color:var(--accent);font-size:19px}
+.acc.open .acc-head::after{content:"–"}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s;padding:0 18px}
+.acc.open .acc-body{max-height:700px;padding:0 18px 18px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+td,th{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:#F6EADB}
+.pill{display:inline-flex;gap:6px;background:#F6EADB;border-radius:30px;padding:4px;margin:10px 0}
+.pill button{border:0;background:transparent;padding:7px 15px;border-radius:30px;font:700 13px Manrope;cursor:pointer;color:var(--muted)}
+.pill button.on{background:var(--accent);color:#fff}
+.quiz-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.opt{display:block;width:100%;text-align:left;padding:9px 14px;margin:6px 0;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.opt.correct{background:#DCEFE7;border-color:var(--accent2)}
+.opt.wrong{background:#F6DED6;border-color:var(--accent)}
+.score{font-weight:800;color:var(--accent2)}
+footer{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+input[type=range]{width:100%}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header>
+  <div class="eyebrow">Geometri Analitik</div>
+  <h1>Persamaan Garis Lurus</h1>
+  <p>Gradien garis dan cara menyusun persamaan garis dari satu titik, dua titik, hingga hubungan sejajar &amp; tegak lurus.</p>
+</header>
+<nav id="nav">
+  <a href="#s1">Gradien</a>
+  <a href="#s2">Satu Titik</a>
+  <a href="#s3">Dua Titik</a>
+  <a href="#s4">Bentuk Garis</a>
+  <a href="#s5">Sejajar &amp; Tegak Lurus</a>
+  <a href="#quiz">Latihan</a>
+</nav>
+
+<main>
+
+<section id="s1">
+  <span class="tag">01</span>
+  <h2>Gradien (Kemiringan) Garis</h2>
+  <p>Gradien menyatakan seberapa curam dan ke arah mana sebuah garis miring. Geser titik A dan B pada diagram untuk melihat gradiennya berubah secara langsung.</p>
+  <div class="formula-box">\( m=\dfrac{y_2-y_1}{x_2-x_1} \)</div>
+  <div class="grid2">
+    <div class="card"><canvas id="cv" width="520" height="420"></canvas></div>
+    <div class="card">
+      <div class="readout">Titik A: <b id="rA"></b></div>
+      <div class="readout">Titik B: <b id="rB"></b></div>
+      <div class="readout">Gradien m: <b id="rM"></b></div>
+      <table style="margin-top:14px">
+        <tr><th>Nilai m</th><th>Arti garis</th></tr>
+        <tr><td>m &gt; 0</td><td>naik dari kiri ke kanan</td></tr>
+        <tr><td>m &lt; 0</td><td>turun dari kiri ke kanan</td></tr>
+        <tr><td>m = 0</td><td>mendatar (horizontal)</td></tr>
+        <tr><td>tak terdefinisi</td><td>tegak (vertikal)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan gradien garis yang melalui \(A(1,2)\) dan \(B(5,8)\).</p>
+    <p>\(m=\dfrac{8-2}{5-1}=\dfrac{6}{4}=\dfrac{3}{2}\)</p></div></div>
+</section>
+
+<section id="s2">
+  <span class="tag">02</span>
+  <h2>Persamaan Garis dari Satu Titik dan Gradien</h2>
+  <p>Jika gradien \(m\) dan satu titik \(T(x_1,y_1)\) pada garis diketahui, persamaan garis ditentukan langsung dari rumus berikut.</p>
+  <div class="formula-box">\( y-y_1=m(x-x_1) \)</div>
+  <p style="margin-top:14px">Gunakan hasil gradien dan titik A dari diagram di atas:</p>
+  <div class="card readout" id="s2live" style="font-size:16px"></div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan persamaan garis melalui \(T(2,-1)\) dengan gradien \(m=3\).</p>
+    <p>\(y-(-1)=3(x-2) \Rightarrow y+1=3x-6 \Rightarrow y=3x-7\)</p></div></div>
+</section>
+
+<section id="s3">
+  <span class="tag">03</span>
+  <h2>Persamaan Garis Melalui Dua Titik</h2>
+  <p>Jika dua titik pada garis diketahui, gradien dicari lebih dulu lalu disubstitusikan ke rumus satu titik — sehingga terbentuk rumus dua titik berikut.</p>
+  <div class="formula-box">\( \dfrac{y-y_1}{y_2-y_1}=\dfrac{x-x_1}{x_2-x_1} \)</div>
+  <p style="margin-top:14px">Dari titik A dan B pada diagram:</p>
+  <div class="card readout" id="s3live" style="font-size:16px"></div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan persamaan garis melalui \(P(1,2)\) dan \(Q(4,11)\).</p>
+    <p>\(m=\dfrac{11-2}{4-1}=3\), lalu \(y-2=3(x-1)\Rightarrow y=3x-1\)</p></div></div>
+</section>
+
+<section id="s4">
+  <span class="tag">04</span>
+  <h2>Bentuk Gradien-Intersep &amp; Bentuk Umum</h2>
+  <p>Persamaan garis yang sama bisa ditulis dalam beberapa bentuk setara, tergantung kebutuhan.</p>
+  <table>
+    <tr><th>Bentuk</th><th>Persamaan</th><th>Keterangan</th></tr>
+    <tr><td>Gradien-intersep</td><td>\(y=mx+c\)</td><td>\(c\) = titik potong sumbu-y</td></tr>
+    <tr><td>Umum</td><td>\(Ax+By+C=0\)</td><td>gradien \(m=-A/B\)</td></tr>
+  </table>
+  <div class="acc"><div class="acc-head">Contoh Soal (konversi bentuk)</div><div class="acc-body">
+    <p>Ubah \(2x+3y-6=0\) ke bentuk gradien-intersep.</p>
+    <p>\(3y=-2x+6 \Rightarrow y=-\dfrac{2}{3}x+2\), jadi \(m=-\dfrac{2}{3}\), \(c=2\)</p></div></div>
+</section>
+
+<section id="s5">
+  <span class="tag">05</span>
+  <h2>Garis Sejajar &amp; Garis Tegak Lurus</h2>
+  <div class="formula-box" style="display:flex;gap:30px;justify-content:center;flex-wrap:wrap">
+    <span>Sejajar: \(m_1=m_2\)</span><span>Tegak lurus: \(m_1 \cdot m_2=-1\)</span>
+  </div>
+  <div class="grid2">
+    <div class="card"><canvas id="cv2" width="520" height="340"></canvas></div>
+    <div class="card">
+      <label>Gradien garis 1 (m₁): <b id="m1val">1.0</b></label>
+      <input type="range" id="m1" min="-3" max="3" step="0.1" value="1">
+      <div class="pill">
+        <button class="on" id="pPar">Sejajar</button>
+        <button id="pPerp">Tegak Lurus</button>
+        <button id="pFree">Bebas</button>
+      </div>
+      <div class="readout">Gradien garis 2 (m₂): <b id="m2val"></b></div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz">
+  <span class="tag">Latihan</span>
+  <h2>Uji Pemahaman</h2>
+  <p>Skor: <span class="score" id="score">0</span> / 4</p>
+  <div class="quiz-card"><p>1. Gradien garis melalui \(A(0,0)\) dan \(B(4,8)\) adalah...</p>
+    <button class="opt" data-c="0">1</button><button class="opt" data-c="1">2</button><button class="opt" data-c="0">4</button></div>
+  <div class="quiz-card"><p>2. Persamaan garis dengan \(m=2\) melalui \((1,3)\) adalah...</p>
+    <button class="opt" data-c="1">y = 2x + 1</button><button class="opt" data-c="0">y = 2x + 3</button><button class="opt" data-c="0">y = x + 2</button></div>
+  <div class="quiz-card"><p>3. Garis \(y=4x-1\) dan \(y=4x+5\) saling...</p>
+    <button class="opt" data-c="1">sejajar</button><button class="opt" data-c="0">tegak lurus</button><button class="opt" data-c="0">berpotongan tegak lurus</button></div>
+  <div class="quiz-card"><p>4. Garis tegak lurus terhadap garis bergradien \(2\) memiliki gradien...</p>
+    <button class="opt" data-c="1">−1/2</button><button class="opt" data-c="0">2</button><button class="opt" data-c="0">1/2</button></div>
+</section>
+
+</main>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+// progress + nav scrollspy
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+document.querySelectorAll('.acc-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+const links=[...document.querySelectorAll('nav a')];
+const secs=['s1','s2','s3','s4','s5','quiz'].map(id=>document.getElementById(id));
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));links[secs.indexOf(e.target)].classList.add('active');}}),{rootMargin:'-40% 0px -50% 0px'}).apply=null;
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));links[secs.indexOf(e.target)].classList.add('active');}}),{rootMargin:'-40% 0px -50% 0px'});
+secs.forEach(s=>obs.observe(s));
+
+// main interactive canvas
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),S=36,O=260;
+let A=[-3,-2],B=[3,3];
+const X=x=>O+x*S,Y=y=>170-y*S;
+const f=n=>String(Number(n.toFixed(2)));
+function drawMain(){
+  ctx.clearRect(0,0,520,420);
+  for(let i=-7;i<=7;i++){ctx.strokeStyle=i?'#EEE2CF':'#D9C4A3';ctx.lineWidth=i?1:2;
+    ctx.beginPath();ctx.moveTo(X(i),0);ctx.lineTo(X(i),420);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,Y(i)+90);ctx.lineTo(520,Y(i)+90);ctx.stroke();}
+  ctx.save();ctx.translate(0,90);
+  const dx=B[0]-A[0];
+  ctx.strokeStyle='#C0472C';ctx.lineWidth=3;ctx.beginPath();
+  if(Math.abs(dx)<1e-6){ctx.moveTo(X(A[0]),-200);ctx.lineTo(X(A[0]),500);}
+  else{const m=(B[1]-A[1])/dx,c=A[1]-m*A[0];
+    ctx.moveTo(X(-7),Y(m*-7+c));ctx.lineTo(X(7),Y(m*7+c));}
+  ctx.stroke();ctx.restore();
+  [['A',A,'#2F6E5E'],['B',B,'#C0472C']].forEach(([lb,p,col])=>{
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(X(p[0]),Y(p[1])+90,7,0,7);ctx.fill();
+    ctx.fillStyle='#2B1B12';ctx.font='700 13px Manrope';ctx.fillText(lb+'('+f(p[0])+', '+f(p[1])+')',X(p[0])+10,Y(p[1])+84);
+  });
+}
+function mGrad(){const dx=B[0]-A[0];return Math.abs(dx)<1e-6?NaN:(B[1]-A[1])/dx;}
+function updMain(){
+  drawMain();
+  document.getElementById('rA').textContent='('+f(A[0])+', '+f(A[1])+')';
+  document.getElementById('rB').textContent='('+f(B[0])+', '+f(B[1])+')';
+  const m=mGrad();
+  document.getElementById('rM').textContent=isNaN(m)?'tidak terdefinisi (garis vertikal)':f(m);
+  if(!isNaN(m)){
+    const c=f(A[1]-m*A[0]);
+    document.getElementById('s2live').innerHTML=`Dengan m = ${f(m)} dan titik A${'('+f(A[0])+', '+f(A[1])+')'}:<br>
+      y − (${f(A[1])}) = ${f(m)}(x − (${f(A[0])})) &nbsp;⟶&nbsp; y = ${f(m)}x + (${c})`;
+    document.getElementById('s3live').innerHTML=`Melalui A${'('+f(A[0])+', '+f(A[1])+')'} dan B${'('+f(B[0])+', '+f(B[1])+')'}:<br>
+      m = (${f(B[1])} − ${f(A[1])}) / (${f(B[0])} − ${f(A[0])}) = ${f(m)} &nbsp;⟶&nbsp; y = ${f(m)}x + (${c})`;
+  }else{
+    document.getElementById('s2live').textContent='Garis vertikal, persamaannya x = '+f(A[0])+' (gradien tidak terdefinisi).';
+    document.getElementById('s3live').textContent='Garis vertikal, persamaannya x = '+f(A[0])+'.';
+  }
+}
+let dragM=-1;
+const posM=e=>{const r=cv.getBoundingClientRect(),k=520/r.width;return[(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+cv.addEventListener('pointerdown',e=>{const[mx,my]=posM(e);
+  const da=Math.hypot(X(A[0])-mx,Y(A[1])+90-my),db=Math.hypot(X(B[0])-mx,Y(B[1])+90-my);
+  if(Math.min(da,db)<20){dragM=da<db?0:1;cv.setPointerCapture(e.pointerId);}});
+cv.addEventListener('pointermove',e=>{if(dragM<0)return;const[mx,my]=posM(e);
+  let x=Math.round(((mx-O)/S)*2)/2,y=Math.round(((my-90-170)/-S)*2)/2;
+  x=Math.max(-7,Math.min(7,x));y=Math.max(-6,Math.min(6,y));
+  if(dragM===0)A=[x,y];else B=[x,y];updMain();});
+cv.addEventListener('pointerup',()=>dragM=-1);
+updMain();
+
+// parallel/perpendicular canvas
+const cv2=document.getElementById('cv2'),ctx2=cv2.getContext('2d'),S2=28,OX=260,OY=170;
+let mode2='par';
+const m1r=document.getElementById('m1');
+function m2of(m1){return mode2==='par'?m1:mode2==='perp'?(Math.abs(m1)<1e-6?NaN:-1/m1):m1*0.4+0.6;}
+function drawLine(ctx,m,c,col){
+  ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();
+  ctx.moveTo(OX-9*S2,OY-(m*-9+c)*S2);ctx.lineTo(OX+9*S2,OY-(m*9+c)*S2);ctx.stroke();
+}
+function draw2(){
+  ctx2.clearRect(0,0,520,340);
+  for(let i=-9;i<=9;i++){ctx2.strokeStyle=i?'#EEE2CF':'#D9C4A3';ctx2.lineWidth=i?1:2;
+    ctx2.beginPath();ctx2.moveTo(OX+i*S2,0);ctx2.lineTo(OX+i*S2,340);ctx2.stroke();
+    ctx2.beginPath();ctx2.moveTo(0,OY-i*0);ctx2.stroke();}
+  ctx2.beginPath();ctx2.moveTo(0,OY);ctx2.lineTo(520,OY);ctx2.strokeStyle='#D9C4A3';ctx2.stroke();
+  const m1=parseFloat(m1r.value),m2=m2of(m1);
+  drawLine(ctx2,m1,0,'#2F6E5E');
+  if(!isNaN(m2))drawLine(ctx2,m2,1.5,'#C0472C');
+  document.getElementById('m1val').textContent=f(m1);
+  document.getElementById('m2val').textContent=isNaN(m2)?'tidak terdefinisi':f(m2);
+}
+m1r.addEventListener('input',draw2);
+[['pPar','par'],['pPerp','perp'],['pFree','free']].forEach(([id,mo])=>{
+  document.getElementById(id).addEventListener('click',()=>{mode2=mo;
+    document.querySelectorAll('.pill button').forEach(b=>b.classList.remove('on'));
+    document.getElementById(id).classList.add('on');draw2();});
+});
+draw2();
+
+// quiz
+let score=0;
+document.querySelectorAll('.quiz-card').forEach(card=>{
+  card.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
+    if(card.dataset.a)return;card.dataset.a='1';
+    card.querySelectorAll('.opt').forEach(b=>b.classList.add(b.dataset.c==='1'?'correct':'wrong'));
+    if(btn.dataset.c==='1'){score++;document.getElementById('score').textContent=score;}
+  }));
+});
+</script>
+</body>
+</html>
