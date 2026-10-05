@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pengumpulan Tugas Mahasiswa</title>
+<style>
+  :root{
+    --bg:#f3f5f1; --card:#ffffff; --ink:#1d2b26; --muted:#5d6b65;
+    --line:#d5dcd6; --accent:#1f6b4f; --accent-ink:#ffffff;
+    --err:#b3261e; --ok:#1f6b4f; --focus:#e0a100;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#121714;--card:#1a211d;--ink:#e8efe9;--muted:#9aa8a0;--line:#2e3a33;--accent:#4fb58c;--accent-ink:#0c1511;--err:#ff8a80;--ok:#4fb58c}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 20px;display:grid;grid-template-columns:1fr 1.25fr;gap:40px;align-items:start}
+  h1{font:700 2rem/1.2 Georgia,"Times New Roman",serif;margin:0 0 12px}
+  .lead{color:var(--muted);margin:0 0 28px;max-width:44ch}
+  ol.steps{margin:0;padding:0;list-style:none;border-left:2px solid var(--line)}
+  ol.steps li{padding:0 0 18px 18px;position:relative}
+  ol.steps li::before{content:counter(s);counter-increment:s;position:absolute;left:-13px;top:0;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem;font-weight:700;display:grid;place-items:center}
+  ol.steps{counter-reset:s}
+  ol.steps strong{display:block}
+  ol.steps span{color:var(--muted);font-size:.92rem}
+  form{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:28px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{margin-bottom:18px}
+  label{display:block;font-weight:600;font-size:.92rem;margin-bottom:6px}
+  input[type=text],input[type=url],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);font:inherit}
+  input:focus,select:focus,button:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+  .hint{font-size:.82rem;color:var(--muted);margin-top:4px}
+  .error{font-size:.82rem;color:var(--err);margin-top:4px;min-height:1em}
+  input.invalid,select.invalid{border-color:var(--err)}
+  .check{display:flex;gap:10px;align-items:flex-start;margin-bottom:20px;font-size:.92rem}
+  .check input{margin-top:5px}
+  button{width:100%;padding:12px;border:0;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:700 1rem inherit;cursor:pointer}
+  button:disabled{opacity:.6;cursor:wait}
+  .status{margin-top:16px;padding:12px 14px;border-radius:6px;font-size:.94rem;display:none}
+  .status.ok{display:block;border:1px solid var(--ok);color:var(--ok)}
+  .status.fail{display:block;border:1px solid var(--err);color:var(--err)}
+  @media (max-width:760px){.wrap{grid-template-columns:1fr;gap:28px;padding:24px 16px}.row{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section>
+    <h1>Pengumpulan Tugas</h1>
+    <p class="lead">Unggah tugas dalam format PDF ke Google Drive, lalu kirim tautannya melalui formulir ini.</p>
+    <ol class="steps">
+      <li><strong>Simpan tugas sebagai PDF</strong><span>Beri nama file: NIM_Nama_Tugas.pdf</span></li>
+      <li><strong>Unggah ke Google Drive</strong><span>Klik kanan file, pilih Bagikan, lalu ubah akses menjadi "Siapa saja yang memiliki link" (Pelihat).</span></li>
+      <li><strong>Salin link dan kirim di sini</strong><span>Tempel link pada formulir, lalu klik Kirim tugas.</span></li>
+    </ol>
+  </section>
+
+  <form id="formTugas" novalidate>
+    <div class="row">
+      <div class="field">
+        <label for="nama">Nama lengkap</label>
+        <input type="text" id="nama" autocomplete="name" required>
+        <div class="error" data-for="nama"></div>
+      </div>
+      <div class="field">
+        <label for="nim">NIM</label>
+        <input type="text" id="nim" inputmode="numeric" required>
+        <div class="error" data-for="nim"></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="matkul">Mata kuliah</label>
+      <select id="matkul" required>
+        <option value="">Pilih mata kuliah</option>
+        <option>Geometri Analitik</option>
+        <option>Analisis Real</option>
+        <option>Struktur Aljabar</option>
+        <option>ALjabar Linear</option>
+      </select>
+      <div class="error" data-for="matkul"></div>
+    </div>
+
+    <div class="field">
+      <label for="judul">Judul tugas</label>
+      <input type="text" id="judul" required>
+      <div class="error" data-for="judul"></div>
+    </div>
+
+    <div class="field">
+      <label for="link">Link Google Drive (PDF)</label>
+      <input type="url" id="link" placeholder="https://drive.google.com/file/d/..." required>
+      <div class="hint">Pastikan akses file sudah dibuka untuk "Siapa saja yang memiliki link".</div>
+      <div class="error" data-for="link"></div>
+    </div>
+
+    <label class="check" for="setuju">
+      <input type="checkbox" id="setuju">
+      <span>Saya memastikan file yang ditautkan adalah tugas saya sendiri dan dapat dibuka.</span>
+    </label>
+    <div class="error" data-for="setuju" style="margin:-12px 0 14px"></div>
+
+    <button type="submit" id="btnKirim">Kirim tugas</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </form>
+</main>
+
+<script>
+/* ==========================================================
+   PENGATURAN GOOGLE FORM  (wajib diisi)
+   1. FORM_ID  : bagian antara /d/e/ dan /viewform pada link Google Form Anda.
+   2. entry.*  : ID tiap pertanyaan. Di Google Form klik ⋮ > "Dapatkan link
+                 isi otomatis", isi tiap kolom dengan data apa saja, klik
+                 "Dapatkan link", lalu lihat parameter entry.XXXXXXXX di link.
+   ========================================================== */
+const CONFIG = {
+  FORM_ID: "1FAIpQLSeAAUWTHEQA5KoZqeHpDBZ6DTQJ_tjW3O3ACS2oPcV8FkIXOA",
+  FIELDS: {
+    nama:   "entry.756598660",
+    nim:    "entry.893245984",
+    matkul: "entry.671245874",
+    judul:  "entry.1742249855",
+    link:   "entry.514100051"
+  }
+};
+
+const form = document.getElementById("formTugas");
+const btn = document.getElementById("btnKirim");
+const statusBox = document.getElementById("status");
+
+const rules = {
+  nama:   v => v.trim().length >= 3 || "Isi nama lengkap (minimal 3 karakter).",
+  nim:    v => /^\d{6,15}$/.test(v.trim()) || "NIM harus berupa angka, 6 sampai 15 digit.",
+  matkul: v => v !== "" || "Pilih mata kuliah.",
+  judul:  v => v.trim().length >= 3 || "Isi judul tugas.",
+  link:   v => /^https:\/\/(drive|docs)\.google\.com\/.+/i.test(v.trim()) || "Gunakan link Google Drive yang diawali https://drive.google.com/"
+};
+
+function setError(id, msg){
+  const el = document.querySelector('.error[data-for="' + id + '"]');
+  const input = document.getElementById(id);
+  if (el) el.textContent = msg || "";
+  if (input && input.type !== "checkbox") input.classList.toggle("invalid", !!msg);
+}
+
+function validate(){
+  let ok = true;
+  Object.keys(rules).forEach(id => {
+    const res = rules[id](document.getElementById(id).value);
+    if (res !== true){ setError(id, res); ok = false; } else setError(id, "");
+  });
+  if (!document.getElementById("setuju").checked){
+    setError("setuju", "Centang pernyataan ini sebelum mengirim."); ok = false;
+  } else setError("setuju", "");
+  return ok;
+}
+
+function show(type, msg){
+  statusBox.className = "status " + type;
+  statusBox.textContent = msg;
+}
+
+Object.keys(rules).forEach(id => {
+  document.getElementById(id).addEventListener("blur", e => {
+    const res = rules[id](e.target.value);
+    setError(id, res === true ? "" : res);
+  });
+});
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  statusBox.className = "status";
+  if (!validate()){ show("fail", "Periksa kembali kolom yang bertanda merah."); return; }
+  if (CONFIG.FORM_ID.startsWith("GANTI")){
+    show("fail", "Form ID belum diatur. Isi CONFIG di bagian script terlebih dahulu."); return;
+  }
+
+  const data = new URLSearchParams();
+  Object.keys(CONFIG.FIELDS).forEach(id => {
+    data.append(CONFIG.FIELDS[id], document.getElementById(id).value.trim());
+  });
+
+  btn.disabled = true; btn.textContent = "Mengirim...";
+  try{
+    // mode no-cors: respons Google Form tidak bisa dibaca, tapi data tetap terkirim
+    await fetch("https://docs.google.com/forms/d/e/" + CONFIG.FORM_ID + "/formResponse", {
+      method: "POST", mode: "no-cors",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: data.toString()
+    });
+    show("ok", "Tugas berhasil dikirim. Terima kasih, " + document.getElementById("nama").value.trim() + ".");
+    form.reset();
+  }catch(err){
+    show("fail", "Pengiriman gagal. Periksa koneksi internet lalu coba lagi.");
+  }finally{
+    btn.disabled = false; btn.textContent = "Kirim tugas";
+  }
+});
+</script>
+</body>
+</html>
