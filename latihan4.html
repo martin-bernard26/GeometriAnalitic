@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Soal HOTS - Persamaan Garis &amp; Gradien</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{--bg:#101820;--card:#1A2530;--ink:#EFEDE4;--muted:#8FA0AC;--amber:#FFB86B;--teal:#56C9B5;--bad:#FF6B6B;--line:#2A3844}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Karla',sans-serif;line-height:1.55}
+header{padding:48px 20px 20px;text-align:center}
+.eyebrow{color:var(--amber);letter-spacing:3px;font-size:12px;font-weight:700;text-transform:uppercase}
+h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(24px,4.4vw,36px);margin:10px 0}
+header p{color:var(--muted);max-width:580px;margin:0 auto}
+.wrap{max-width:680px;margin:0 auto;padding:10px 18px 70px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--muted);font:700 11px Karla;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.dot.cur{border-color:var(--amber);color:var(--amber)}
+.dot.ok{background:#1D3B33;color:var(--teal);border-color:var(--teal)}
+.dot.no{background:#3B1D1D;color:var(--bad);border-color:var(--bad)}
+.score{font-family:'Outfit';font-weight:800;color:var(--teal)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+.bloom{display:inline-block;background:#2A3844;color:var(--amber);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px}
+.qtext{font-size:17px;margin:4px 0 18px}
+.opt{display:block;width:100%;text-align:left;padding:13px 16px;margin:8px 0;border-radius:10px;border:1px solid var(--line);background:#141D27;color:var(--ink);font:500 14.5px Karla;cursor:pointer}
+.opt:hover{border-color:var(--amber)}
+.opt.correct{background:#1D3B33;border-color:var(--teal)}
+.opt.wrong{background:#3B1D1D;border-color:var(--bad)}
+.exp{margin-top:16px;padding:14px 16px;background:#141D27;border-left:3px solid var(--amber);border-radius:8px;font-size:14px;display:none}
+.exp.show{display:block}
+.nav{display:flex;justify-content:space-between;margin-top:20px}
+.btn{font:700 14px Karla;padding:10px 20px;border-radius:9px;border:0;background:var(--amber);color:#101820;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.btn:disabled{opacity:.35;cursor:default}
+.finish{text-align:center;padding:30px 10px}
+.finish .big{font-family:'Outfit';font-weight:800;font-size:46px;color:var(--amber)}
+footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Geometri Analitik &middot; HOTS</div>
+  <h1>Latihan Soal: Persamaan Garis &amp; Gradien</h1>
+  <p>10 soal berpikir tingkat tinggi — menganalisis, mengevaluasi, dan menerapkan konsep gradien pada situasi kontekstual.</p>
+</header>
+<div class="wrap">
+  <div class="top">
+    <div class="dots" id="dots"></div>
+    <div class="score">Skor: <span id="score">0</span>/10</div>
+  </div>
+  <div class="card" id="card"></div>
+</div>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+const Q=[
+{b:"C4 · Menganalisis",q:"Garis \\(k\\) melalui titik \\(A(2,3)\\) dan sejajar dengan garis \\(3x-2y+5=0\\). Persamaan garis \\(k\\) dalam bentuk umum adalah...",
+ o:["3x − 2y = 0","3x − 2y + 12 = 0","2x − 3y + 5 = 0","3x − 2y − 6 = 0"],c:0,
+ e:"Gradien garis pembanding: 3x−2y+5=0 ⟶ m=3/2. Karena sejajar, m_k=3/2. y−3=3/2(x−2) ⟶ 2y−6=3x−6 ⟶ 3x−2y=0."},
+{b:"C4 · Menganalisis",q:"Biaya taksi dimodelkan \\(C(x)=3000x+7000\\), dengan \\(x\\) jarak dalam km. Gradien 3000 pada model tersebut menyatakan...",
+ o:["tarif awal sebelum perjalanan dimulai","tambahan biaya untuk setiap 1 km perjalanan","total biaya untuk 1 km pertama","jarak maksimum yang bisa ditempuh"],c:1,
+ e:"Gradien pada model linear menyatakan laju perubahan y terhadap x — di sini, kenaikan biaya untuk setiap tambahan 1 km."},
+{b:"C5 · Mengevaluasi",q:"Garis \\(l_1: ax+3y-6=0\\) tegak lurus garis \\(l_2: 6x+(a+3)y+2=0\\). Nilai \\(a\\) yang memenuhi adalah...",
+ o:["a = 1","a = −1","a = 3","a = −3"],c:1,
+ e:"m₁=−a/3, m₂=−6/(a+3). Syarat tegak lurus: m₁·m₂=−1 ⟶ (6a)/(3(a+3))=−1 ⟶ 2a=−(a+3) ⟶ 3a=−3 ⟶ a=−1."},
+{b:"C5 · Mengevaluasi",q:"Titik \\(A(1,2)\\), \\(B(4,8)\\), dan \\(C(7,14)\\) diberikan. Apakah ketiga titik tersebut segaris? Gunakan gradien untuk menjelaskan.",
+ o:["Ya, karena m_AB = m_BC = 2","Tidak, karena m_AB ≠ m_BC","Ya, tetapi hanya berlaku untuk A dan B","Tidak dapat ditentukan tanpa titik keempat"],c:0,
+ e:"m_AB=(8−2)/(4−1)=2 dan m_BC=(14−8)/(7−4)=2. Gradien sama dan melalui titik yang sama (B) ⟶ ketiga titik segaris."},
+{b:"C6 · Mencipta",q:"Harga saham naik linear: hari ke-2 seharga Rp5.000, hari ke-5 seharga Rp11.000. Dengan pola yang sama, perkiraan harga pada hari ke-10 adalah...",
+ o:["Rp15.000","Rp18.000","Rp21.000","Rp26.000"],c:2,
+ e:"m=(11000−5000)/(5−2)=2000/hari. y−5000=2000(x−2). Pada x=10: y=5000+2000(8)=21.000."},
+{b:"C4 · Menganalisis",q:"Garis \\(g\\) memotong sumbu-x di \\((4,0)\\) dan sumbu-y di \\((0,-6)\\). Gradien dan persamaan garis \\(g\\) adalah...",
+ o:["m=−3/2, y=−3/2x−6","m=3/2, y=3/2x−6","m=2/3, y=2/3x−6","m=−2/3, y=−2/3x+4"],c:1,
+ e:"m=(−6−0)/(0−4)=3/2. Memakai titik (0,−6): y=3/2x−6. Cek: saat x=4, y=6−6=0 ✓."},
+{b:"C4 · Menganalisis",q:"Garis \\(k\\) tegak lurus terhadap sumbu-X dan melalui titik \\((5,-2)\\). Pernyataan yang benar tentang garis \\(k\\) adalah...",
+ o:["Gradiennya 0 dan persamaannya y = −2","Gradiennya tak terdefinisi dan persamaannya x = 5","Gradiennya 1 dan persamaannya y = x − 7","Gradiennya tak terdefinisi dan persamaannya y = 5"],c:1,
+ e:"Tegak lurus sumbu-X berarti garis vertikal. Garis vertikal punya gradien tak terdefinisi, berbentuk x=k. Melalui (5,−2) ⟶ x=5."},
+{b:"C5 · Mengevaluasi",q:"Garis \\(l_1\\) melalui \\((1,1)\\) dan \\((3,5)\\); garis \\(l_2\\) melalui \\((2,4)\\) dan \\((6,2)\\). Hubungan \\(l_1\\) dan \\(l_2\\) adalah...",
+ o:["Sejajar, karena gradien keduanya sama","Tegak lurus, karena hasil kali gradiennya −1","Berimpit, karena melalui titik yang sama","Tidak dapat ditentukan hubungannya"],c:1,
+ e:"m₁=(5−1)/(3−1)=2. m₂=(2−4)/(6−2)=−1/2. m₁·m₂=2×(−1/2)=−1 ⟶ tegak lurus."},
+{b:"C6 · Mencipta",q:"Biaya produksi \\(C(x)=150x+2.000.000\\) (x = jumlah unit). Agar biaya tidak melebihi Rp5.000.000, jumlah unit maksimum yang dapat diproduksi adalah...",
+ o:["15.000 unit","18.000 unit","20.000 unit","33.333 unit"],c:2,
+ e:"150x+2.000.000 ≤ 5.000.000 ⟶ 150x ≤ 3.000.000 ⟶ x ≤ 20.000. Gradien 150 adalah biaya tambahan tiap unit."},
+{b:"C4 · Menganalisis",q:"Segitiga memiliki titik sudut \\(P(0,0)\\), \\(Q(4,0)\\), \\(R(4,3)\\). Gradien sisi \\(PR\\) adalah... dan artinya terhadap alas \\(PQ\\) (horizontal) adalah...",
+ o:["m=3/4, PR naik tajam hampir vertikal","m=4/3, PR hampir sejajar alas","m=3/4, PR membentuk kemiringan positif sedang terhadap alas","m=0, PR sejajar alas PQ"],c:2,
+ e:"m_PR=(3−0)/(4−0)=3/4. Nilai positif dan kurang dari 1 menunjukkan PR naik dengan kemiringan sedang terhadap alas horizontal PQ."}
+];
+let cur=0,ans=Array(Q.length).fill(null);
+const dotsEl=document.getElementById('dots'),cardEl=document.getElementById('card'),scoreEl=document.getElementById('score');
+function renderDots(){
+  dotsEl.innerHTML=Q.map((_,i)=>{
+    let cls=i===cur?'cur':ans[i]===null?'':(ans[i].ok?'ok':'no');
+    return `<div class="dot ${cls}" onclick="go(${i})">${i+1}</div>`;
+  }).join('');
+}
+function updScore(){scoreEl.textContent=ans.filter(a=>a&&a.ok).length;}
+function go(i){cur=i;render();}
+function render(){
+  renderDots();
+  if(cur>=Q.length){
+    const s=ans.filter(a=>a&&a.ok).length;
+    cardEl.innerHTML=`<div class="finish"><div style="color:var(--muted);font-weight:700;letter-spacing:2px;font-size:12px">SELESAI</div>
+      <div class="big">${s} / 10</div>
+      <p style="color:var(--muted)">${s>=8?'Luar biasa — pemahamanmu tentang gradien sudah matang.':s>=5?'Cukup baik, tinjau kembali soal yang masih salah.':'Pelajari kembali konsep gradien dan persamaan garis, lalu coba lagi.'}</p>
+      <button class="btn" onclick="restart()">Ulangi dari Awal</button></div>`;
+    MathJax.typesetPromise&&MathJax.typesetPromise([cardEl]);
+    return;
+  }
+  const q=Q[cur],a=ans[cur];
+  cardEl.innerHTML=`<div class="bloom">${q.b} &middot; Soal ${cur+1}/10</div>
+    <div class="qtext">${q.q}</div>
+    ${q.o.map((opt,i)=>`<button class="opt${a?(i===q.c?' correct':(i===a.pick?' wrong':'')):''}" ${a?'disabled':''} onclick="pick(${i})">${opt}</button>`).join('')}
+    <div class="exp${a?' show':''}"><b>Pembahasan:</b> ${q.e}</div>
+    <div class="nav">
+      <button class="btn ghost" onclick="go(${cur-1})" ${cur===0?'disabled':''}>← Sebelumnya</button>
+      <button class="btn" onclick="go(${cur+1})" ${a?'':'disabled'}>${cur===Q.length-1?'Lihat Hasil':'Berikutnya →'}</button>
+    </div>`;
+  MathJax.typesetPromise&&MathJax.typesetPromise([cardEl]);
+}
+function pick(i){
+  if(ans[cur])return;
+  ans[cur]={pick:i,ok:i===Q[cur].c};
+  updScore();render();
+}
+function restart(){cur=0;ans=Array(Q.length).fill(null);updScore();render();}
+render();
+</script>
+</body>
+</html>
