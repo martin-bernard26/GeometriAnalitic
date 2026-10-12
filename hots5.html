@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Soal HOTS - Garis Sejajar &amp; Tegak Lurus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;700;800&family=Literata:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{--bg:#F3F0FA;--card:#FFFFFF;--ink:#241B4B;--muted:#6F6A8F;--mag:#D6336C;--gold:#F2A900;--ok:#1E9E6A;--no:#D64545;--line:#DDD6F0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Literata',serif;line-height:1.6}
+header{padding:46px 20px 16px;text-align:center}
+.eyebrow{font:700 12px 'Lexend';letter-spacing:3px;color:var(--mag);text-transform:uppercase}
+h1{font-family:'Lexend',sans-serif;font-weight:800;font-size:clamp(24px,4.4vw,36px);margin:10px 0}
+header p{color:var(--muted);max-width:600px;margin:0 auto;font-size:15px}
+.wrap{max-width:700px;margin:0 auto;padding:12px 18px 70px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.segs{display:flex;gap:5px;flex:1}
+.seg{flex:1;height:8px;border-radius:5px;background:var(--line);cursor:pointer}
+.seg.cur{background:var(--gold)}.seg.ok{background:var(--ok)}.seg.no{background:var(--no)}
+.score{font:800 15px 'Lexend';color:var(--mag);white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:0 8px 30px rgba(36,27,75,.07)}
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font:600 12.5px 'Lexend';color:var(--muted)}
+.bloom{background:#FFF1D2;color:#9A6500;padding:4px 11px;border-radius:20px}
+.qt{font-size:17px;font-weight:500;margin-bottom:16px}
+.opt{display:block;width:100%;text-align:left;padding:13px 16px;margin:8px 0;border-radius:11px;border:1.5px solid var(--line);background:#FBFAFF;color:var(--ink);font:500 15px 'Literata';cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--mag)}
+.opt.ok{background:#E3F6EE;border-color:var(--ok)}
+.opt.no{background:#FBE7E7;border-color:var(--no)}
+.opt:disabled{cursor:default}
+.hint,.exp{display:none;margin-top:14px;padding:13px 16px;border-radius:10px;font-size:14.5px}
+.hint{background:#FFF6DC;border:1px solid #F2D58A}
+.exp{background:#EFEAFB;border:1px solid var(--line)}
+.hint.show,.exp.show{display:block}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px}
+.btn{font:700 14px 'Lexend';padding:11px 20px;border-radius:10px;border:0;background:var(--mag);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--muted)}
+.btn:disabled{opacity:.35;cursor:default}
+.fin{text-align:center}
+.big{font:800 52px 'Lexend';color:var(--mag)}
+.rev{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0}
+.rev button{padding:10px 4px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font:700 13px 'Lexend';cursor:pointer}
+.rev .ok{border-color:var(--ok);color:var(--ok)}.rev .no{border-color:var(--no);color:var(--no)}
+footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Geometri Analitik &middot; HOTS</div>
+  <h1>Garis Sejajar &amp; Tegak Lurus</h1>
+  <p>10 soal berpikir tingkat tinggi. Urutan pilihan jawaban diacak setiap kali memulai, dan petunjuk tersedia bila dibutuhkan.</p>
+</header>
+<div class="wrap">
+  <div class="top"><div class="segs" id="segs"></div><div class="score">Skor <span id="sc">0</span>/10</div></div>
+  <div class="card" id="card"></div>
+</div>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+// o[0] adalah jawaban benar (urutan diacak saat ditampilkan)
+const Q=[
+{b:"C4 · Menganalisis",q:"Garis \\(g:(k+1)x+2y-5=0\\) sejajar dengan garis \\(h:3x-y+4=0\\). Nilai \\(k\\) adalah...",
+ o:["k = −7","k = −5","k = 5","k = 7"],
+ h:"Sejajar berarti gradien sama. Gradien dari ax + by + c = 0 adalah −a/b.",
+ e:"m<sub>g</sub> = −(k+1)/2 dan m<sub>h</sub> = 3. Sejajar ⟹ −(k+1)/2 = 3 ⟹ k + 1 = −6 ⟹ k = −7."},
+{b:"C4 · Menganalisis",q:"Segitiga \\(ABC\\) memiliki titik sudut \\(A(0,0)\\), \\(B(4,2)\\), dan \\(C(-1,2)\\). Sudut siku-siku segitiga tersebut terletak di titik...",
+ o:["A","B","C","Tidak ada, bukan segitiga siku-siku"],
+ h:"Hitung gradien ketiga sisi, lalu cari dua sisi yang hasil kali gradiennya −1.",
+ e:"m<sub>AB</sub> = 2/4 = 1/2 dan m<sub>AC</sub> = 2/(−1) = −2. Karena m<sub>AB</sub> · m<sub>AC</sub> = −1, sisi AB ⟂ AC sehingga siku-siku di A."},
+{b:"C5 · Mengevaluasi",q:"Garis \\(l\\) melalui titik potong garis \\(x+y-4=0\\) dan \\(2x-y-2=0\\), serta tegak lurus garis \\(3x-2y+1=0\\). Persamaan \\(l\\) adalah...",
+ o:["2x + 3y − 10 = 0","3x + 2y − 10 = 0","2x − 3y + 2 = 0","3x − 2y − 2 = 0"],
+ h:"Cari titik potong dengan eliminasi, lalu gunakan gradien yang tegak lurus.",
+ e:"Eliminasi: 3x − 6 = 0 ⟹ x = 2, y = 2. Gradien garis yang diketahui 3/2, jadi m<sub>l</sub> = −2/3. y − 2 = −2/3 (x − 2) ⟹ 2x + 3y − 10 = 0. Ketiga pilihan lain juga melalui (2,2) tetapi gradiennya salah (−3/2, 2/3, atau 3/2)."},
+{b:"C4 · Menganalisis",q:"Garis \\(g\\) melalui \\(A(2,3)\\) dan sejajar dengan garis yang menghubungkan \\(P(1,-1)\\) dan \\(Q(4,5)\\). Garis \\(g\\) memotong sumbu-X di titik...",
+ o:["(½, 0)","(−½, 0)","(1, 0)","(2, 0)"],
+ h:"Cari gradien PQ, susun persamaan g, lalu substitusikan y = 0.",
+ e:"m<sub>PQ</sub> = (5+1)/(4−1) = 2. g: y − 3 = 2(x − 2) ⟹ y = 2x − 1. Pada sumbu-X, y = 0 ⟹ x = ½."},
+{b:"C5 · Mengevaluasi",q:"Jalan A melalui titik \\((0,2)\\) dan \\((4,0)\\). Jalan B dibangun tegak lurus jalan A dan melalui \\((0,-1)\\). Koordinat persimpangan kedua jalan adalah...",
+ o:["(6/5, 7/5)","(1, 1)","(3/2, 2)","(4/5, 3/5)"],
+ h:"Susun persamaan kedua jalan, lalu selesaikan sebagai sistem persamaan.",
+ e:"m<sub>A</sub> = (0−2)/(4−0) = −1/2, jadi A: y = −x/2 + 2. m<sub>B</sub> = 2, jadi B: y = 2x − 1. Samakan: −x/2 + 2 = 2x − 1 ⟹ 3 = 5x/2 ⟹ x = 6/5 dan y = 7/5."},
+{b:"C6 · Mencipta",q:"Garis \\(l_1:ax+2y-1=0\\) dan \\(l_2:(a+1)x+ay+4=0\\) saling tegak lurus. Semua nilai \\(a\\) yang memenuhi adalah...",
+ o:["a = 0 atau a = −3","a = −3 saja","a = 0 saja","a = 3 atau a = 0"],
+ h:"Gunakan syarat a₁a₂ + b₁b₂ = 0 agar kasus garis mendatar/vertikal tidak terlewat.",
+ e:"a(a+1) + 2a = 0 ⟹ a² + 3a = 0 ⟹ a(a+3) = 0 ⟹ a = 0 atau a = −3. Untuk a = 0, l₁ mendatar (y = ½) dan l₂ vertikal (x = −4), tegak lurus, tetapi kasus ini terlewat bila memakai m₁·m₂ = −1 karena gradien l₂ tak terdefinisi."},
+{b:"C5 · Mengevaluasi",q:"Garis \\(3x-4y+5=0\\) dan \\(6x-8y-10=0\\) adalah garis sejajar. Jarak antara keduanya adalah...",
+ o:["2 satuan","1 satuan","2,5 satuan","4 satuan"],
+ h:"Samakan koefisien x dan y lebih dulu, lalu pakai |c₁ − c₂| / √(a² + b²).",
+ e:"Bagi persamaan kedua dengan 2 ⟹ 3x − 4y − 5 = 0. Jarak = |5 − (−5)| / √(3² + 4²) = 10/5 = 2 satuan."},
+{b:"C6 · Mencipta",q:"Titik \\(P(x,y)\\) selalu berjarak sama terhadap \\(A(-1,3)\\) dan \\(B(5,-1)\\). Himpunan semua titik \\(P\\) adalah garis dengan persamaan...",
+ o:["3x − 2y − 4 = 0","2x + 3y − 7 = 0","3x − 2y + 4 = 0","2x + 3y − 2 = 0"],
+ h:"Himpunan titik yang berjarak sama dari A dan B adalah sumbu ruas garis AB: tegak lurus AB di titik tengahnya.",
+ e:"Titik tengah M(2, 1). m<sub>AB</sub> = (−1−3)/(5+1) = −2/3, sehingga gradien sumbu = 3/2. y − 1 = 3/2 (x − 2) ⟹ 3x − 2y − 4 = 0. Pilihan 2x + 3y − 7 = 0 melalui M tetapi sejajar AB, bukan tegak lurus."},
+{b:"C5 · Mengevaluasi",q:"Segitiga \\(ABC\\) dengan \\(A(0,4)\\), \\(B(-2,0)\\), \\(C(4,2)\\). Persamaan garis tinggi dari titik \\(A\\) ke sisi \\(BC\\) adalah...",
+ o:["3x + y − 4 = 0","x − 3y + 12 = 0","3x − y + 4 = 0","x + 3y − 12 = 0"],
+ h:"Garis tinggi tegak lurus sisi di hadapannya dan melalui titik sudut.",
+ e:"m<sub>BC</sub> = (2−0)/(4+2) = 1/3, sehingga gradien garis tinggi = −3. y − 4 = −3x ⟹ 3x + y − 4 = 0. Pilihan lain juga melalui A, tetapi gradiennya 1/3 (sejajar BC), 3, atau −1/3."},
+{b:"C5 · Mengevaluasi",q:"Seorang mahasiswa menyimpulkan: “Garis \\(y=3x+2\\) dan \\(y=-3x+5\\) saling tegak lurus karena gradiennya berlawanan tanda.” Evaluasi kesimpulan tersebut.",
+ o:["Salah, karena m₁·m₂ = −9 (bukan −1); kedua garis hanya berpotongan","Benar, karena gradiennya berlawanan tanda","Salah, karena kedua garis sejajar","Benar, karena keduanya berpotongan di satu titik"],
+ h:"Tegak lurus menuntut m₁ · m₂ = −1, bukan sekadar berlawanan tanda.",
+ e:"m₁·m₂ = 3·(−3) = −9 ≠ −1. Gradien keduanya berbeda sehingga berpotongan (di x = ½), tetapi tidak membentuk sudut siku-siku. Gradien tegak lurus terhadap 3 adalah kebalikan negatifnya, yaitu −1/3."}
+];
+const $=id=>document.getElementById(id);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let cur=0,S=[];
+function init(){S=Q.map(()=>({ord:shuffle([0,1,2,3]),pick:null,hint:false}));cur=0;render();}
+function typeset(){window.MathJax&&MathJax.typesetPromise&&MathJax.typesetPromise([$('card')]);}
+function go(i){cur=i;render();}
+function pick(i){if(S[cur].pick!==null)return;S[cur].pick=i;render();}
+function hint(){S[cur].hint=true;render();}
+function head(){
+  $('segs').innerHTML=S.map((s,i)=>`<div class="seg ${i===cur?'cur':s.pick===null?'':s.pick===0?'ok':'no'}" onclick="go(${i})"></div>`).join('');
+  $('sc').textContent=S.filter(s=>s.pick===0).length;
+}
+function render(){
+  head();
+  if(cur>=Q.length)return finish();
+  const q=Q[cur],s=S[cur],done=s.pick!==null;
+  $('card').innerHTML=`<div class="meta"><span class="bloom">${q.b}</span><span>Soal ${cur+1} dari ${Q.length}</span></div>
+    <div class="qt">${q.q}</div>
+    ${s.ord.map(i=>`<button class="opt ${done?(i===0?'ok':i===s.pick?'no':''):''}" ${done?'disabled':''} onclick="pick(${i})">${q.o[i]}</button>`).join('')}
+    <div class="hint ${s.hint&&!done?'show':''}"><b>Petunjuk:</b> ${q.h}</div>
+    <div class="exp ${done?'show':''}"><b>${s.pick===0?'Tepat.':'Kurang tepat.'}</b> ${q.e}</div>
+    <div class="nav">
+      <button class="btn ghost" onclick="go(${cur-1})" ${cur===0?'disabled':''}>← Sebelumnya</button>
+      ${done?'':`<button class="btn ghost" onclick="hint()" ${s.hint?'disabled':''}>Petunjuk</button>`}
+      <button class="btn" onclick="go(${cur+1})" ${done?'':'disabled'}>${cur===Q.length-1?'Lihat Hasil':'Berikutnya →'}</button>
+    </div>`;
+  typeset();
+}
+function finish(){
+  const ok=S.filter(s=>s.pick===0).length,hints=S.filter(s=>s.hint).length,skipped=S.filter(s=>s.pick===null).length;
+  $('card').innerHTML=`<div class="fin"><div class="meta" style="justify-content:center">HASIL AKHIR</div>
+    <div class="big">${ok} / 10</div>
+    <p style="color:var(--muted)">${ok>=8?'Sangat baik. Penalaranmu tentang sejajar dan tegak lurus sudah kuat.':ok>=5?'Cukup baik. Tinjau kembali soal yang masih salah.':'Pelajari ulang syarat gradien sejajar dan tegak lurus, lalu coba lagi.'}<br>Petunjuk dipakai pada ${hints} soal${skipped?`; ${skipped} soal belum dijawab`:''}.</p>
+    <div class="rev">${S.map((s,i)=>`<button class="${s.pick===null?'':s.pick===0?'ok':'no'}" onclick="go(${i})">${i+1}</button>`).join('')}</div>
+    <p style="font-size:13px;color:var(--muted)">Klik nomor untuk meninjau soal dan pembahasannya.</p>
+    <button class="btn" onclick="init()">Ulangi dengan Urutan Baru</button></div>`;
+}
+init();
+</script>
+</body>
+</html>
