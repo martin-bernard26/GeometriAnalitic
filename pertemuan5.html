@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Garis Sejajar &amp; Tegak Lurus - Geometri Analitik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{--bg:#082038;--card:#0E2F50;--ink:#E8F1FA;--muted:#8FB0CF;--line:#1F4E7D;--cyan:#6EE7F9;--yel:#FFD166;--red:#FF7A7A;--grn:#7CF29C}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);background-image:linear-gradient(rgba(120,180,240,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,240,.06) 1px,transparent 1px);background-size:32px 32px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;line-height:1.6}
+.progress{position:fixed;top:0;left:0;height:4px;background:var(--yel);z-index:100;width:0}
+header{padding:56px 22px 30px;text-align:center}
+.eyebrow{letter-spacing:3px;font-size:12px;font-weight:700;color:var(--yel);text-transform:uppercase}
+h1{font-weight:700;font-size:clamp(26px,4.6vw,42px);margin:10px 0}
+header p{color:var(--muted);max-width:620px;margin:0 auto}
+nav{position:sticky;top:0;z-index:30;background:#0A2744;border-bottom:1px solid var(--line);display:flex;justify-content:center;gap:6px;padding:10px;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--muted);font-size:13px;font-weight:600;padding:7px 13px;border-radius:20px}
+nav a.active,nav a:hover{background:var(--yel);color:#082038}
+main{max-width:940px;margin:0 auto;padding:44px 18px 80px}
+section{margin-bottom:64px;scroll-margin-top:66px}
+.tag{display:inline-block;background:var(--cyan);color:#082038;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:8px}
+h2{font-size:26px;margin:0 0 12px}
+.fbox{border:1.5px dashed var(--yel);background:#0A2A47;border-radius:12px;padding:18px;text-align:center;font-size:19px;margin:16px 0}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+@media(max-width:780px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+canvas{width:100%;height:auto;border-radius:10px;background:#0A2A47;touch-action:none;cursor:crosshair;display:block}
+.out{font:400 13.5px 'IBM Plex Mono',monospace;line-height:1.7;margin-top:12px}
+.out div{margin:3px 0}
+.k{display:inline-block;padding:1px 8px;border-radius:5px;font-weight:600;color:#082038}
+.k.g{background:var(--cyan)}.k.h{background:var(--yel)}.k.p{background:var(--red)}
+.warn{background:#4A2A2A;border:1px solid var(--red);border-radius:8px;padding:8px 12px}
+label{font-size:13.5px;color:var(--muted);display:block;margin-top:10px}
+label b{color:var(--yel);font-family:'IBM Plex Mono'}
+input[type=range]{width:100%;accent-color:var(--yel)}
+input[type=number]{width:70px;padding:7px;border-radius:8px;border:1px solid var(--line);background:#082038;color:var(--ink);font:500 14px 'IBM Plex Mono'}
+.eqrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:14px}
+.btn{font:600 12.5px 'IBM Plex Sans';padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:#082038;color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--yel);color:var(--yel)}
+.verdict{display:inline-block;font-weight:700;padding:5px 14px;border-radius:20px;background:var(--grn);color:#082038;margin:6px 0}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+td,th{border:1px solid var(--line);padding:9px 11px;text-align:left}
+th{background:#0A2744;color:var(--yel)}
+.acc{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:14px;background:var(--card)}
+.acc-head{padding:14px 18px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between}
+.acc-head::after{content:"+";color:var(--yel);font-size:19px}
+.acc.open .acc-head::after{content:"–"}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s;padding:0 18px}
+.acc.open .acc-body{max-height:800px;padding:0 18px 18px}
+.qc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.opt{display:block;width:100%;text-align:left;padding:9px 14px;margin:6px 0;border-radius:8px;border:1px solid var(--line);background:#082038;color:var(--ink);cursor:pointer;font:500 14px 'IBM Plex Sans'}
+.opt.ok{background:#12452F;border-color:var(--grn)}
+.opt.no{background:#4A2A2A;border-color:var(--red)}
+.exp{display:none;margin-top:10px;font-size:13.5px;color:var(--muted)}
+.score{font-weight:700;color:var(--grn)}
+footer{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header>
+  <div class="eyebrow">Geometri Analitik</div>
+  <h1>Garis Sejajar &amp; Tegak Lurus</h1>
+  <p>Hubungan dua garis lurus pada bidang koordinat: syarat gradien, bentuk umum, menyusun persamaan garis, hingga sumbu ruas garis.</p>
+</header>
+<nav>
+  <a href="#konsep">Konsep</a><a href="#sejajar">Sejajar</a><a href="#tegak">Tegak Lurus</a>
+  <a href="#hubungan">Uji Hubungan</a><a href="#sumbu">Sumbu Ruas</a><a href="#quiz">Latihan</a>
+</nav>
+<main>
+
+<section id="konsep">
+  <span class="tag">01</span><h2>Hubungan Dua Garis</h2>
+  <p>Dua garis \(g_1: a_1x+b_1y+c_1=0\) dan \(g_2: a_2x+b_2y+c_2=0\) pada bidang hanya memiliki empat kemungkinan hubungan:</p>
+  <table>
+    <tr><th>Hubungan</th><th>Syarat gradien</th><th>Syarat koefisien</th></tr>
+    <tr><td>Sejajar</td><td>\(m_1=m_2\), \(c_1\neq c_2\)</td><td>\(\frac{a_1}{a_2}=\frac{b_1}{b_2}\neq\frac{c_1}{c_2}\)</td></tr>
+    <tr><td>Berimpit</td><td>\(m_1=m_2\), \(c_1=c_2\)</td><td>\(\frac{a_1}{a_2}=\frac{b_1}{b_2}=\frac{c_1}{c_2}\)</td></tr>
+    <tr><td>Berpotongan</td><td>\(m_1\neq m_2\)</td><td>\(a_1b_2-a_2b_1\neq0\)</td></tr>
+    <tr><td>Tegak lurus</td><td>\(m_1\cdot m_2=-1\)</td><td>\(a_1a_2+b_1b_2=0\)</td></tr>
+  </table>
+  <p style="color:var(--muted);font-size:14px">Tegak lurus adalah kasus khusus berpotongan. Gradien dari bentuk umum: \(m=-\dfrac{a}{b}\).</p>
+</section>
+
+<section id="sejajar">
+  <span class="tag">02</span><h2>Garis Sejajar</h2>
+  <p>Garis yang sejajar memiliki kemiringan yang sama. Atur gradien dan intersep garis \(g\) (biru), lalu seret titik \(T\): garis \(h\) (kuning) otomatis dibuat sejajar \(g\) dan melalui \(T\).</p>
+  <div class="fbox">\( h\parallel g \;\Rightarrow\; m_h=m_g,\qquad h:\; y-y_T=m_g\,(x-x_T) \)</div>
+  <div class="grid2">
+    <div class="card"><canvas id="cv1" width="560" height="420"></canvas></div>
+    <div class="card">
+      <label>Gradien m = <b id="mv1"></b></label><input type="range" id="s1m" min="-3" max="3" step="0.5" value="1">
+      <label>Intersep c = <b id="cvv1"></b></label><input type="range" id="s1c" min="-4" max="4" step="1" value="-1">
+      <div class="out" id="out1"></div>
+    </div>
+  </div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan persamaan garis melalui \(T(3,-2)\) yang sejajar \(2x-3y+6=0\).</p>
+    <p>\(m=\frac{2}{3}\). Maka \(y+2=\frac{2}{3}(x-3)\Rightarrow 3y+6=2x-6\Rightarrow 2x-3y-12=0\).</p>
+    <p style="color:var(--muted)">Cara cepat: koefisien \(x\) dan \(y\) tetap, konstanta diganti: \(2x-3y=2(3)-3(-2)=12\).</p>
+  </div></div>
+</section>
+
+<section id="tegak">
+  <span class="tag">03</span><h2>Garis Tegak Lurus</h2>
+  <p>Jika \(g\) bergradien \(m\), garis yang tegak lurus \(g\) bergradien \(-\dfrac{1}{m}\). Atur garis \(g\) (biru) dan seret titik \(P\): garis merah dibuat tegak lurus \(g\) melalui \(P\), dengan \(F\) sebagai kaki tegak lurus.</p>
+  <div class="fbox">\( m_1\cdot m_2=-1 \;\Longleftrightarrow\; a_1a_2+b_1b_2=0 \)</div>
+  <div class="grid2">
+    <div class="card"><canvas id="cv2" width="560" height="420"></canvas></div>
+    <div class="card">
+      <label>Gradien m<sub>g</sub> = <b id="mv2"></b></label><input type="range" id="s2m" min="-4" max="4" step="0.5" value="2">
+      <label>Intersep c = <b id="cvv2"></b></label><input type="range" id="s2c" min="-4" max="4" step="1" value="1">
+      <div class="out" id="out2"></div>
+    </div>
+  </div>
+  <div class="acc"><div class="acc-head">Mengapa \(m_1\cdot m_2=-1\)?</div><div class="acc-body">
+    <p>Vektor arah garis bergradien \(m\) adalah \((1,m)\). Dua garis tegak lurus jika hasil kali titik vektor arahnya nol:</p>
+    <p>\((1,m_1)\cdot(1,m_2)=1+m_1m_2=0\;\Rightarrow\;m_1m_2=-1\).</p>
+    <p style="color:var(--muted)">Garis mendatar (\(m=0\)) tegak lurus garis vertikal (gradien tak terdefinisi), kasus ini tidak tercakup rumus di atas.</p>
+  </div></div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan persamaan garis melalui \(P(1,4)\) yang tegak lurus \(3x+2y-5=0\).</p>
+    <p>\(m_g=-\frac{3}{2}\Rightarrow m=\frac{2}{3}\). Maka \(y-4=\frac{2}{3}(x-1)\Rightarrow 2x-3y+10=0\).</p>
+    <p style="color:var(--muted)">Cara cepat: tukar koefisien dan ubah satu tanda: \(2x-3y=2(1)-3(4)=-10\).</p>
+  </div></div>
+</section>
+
+<section id="hubungan">
+  <span class="tag">04</span><h2>Uji Hubungan Dua Garis</h2>
+  <p>Masukkan koefisien bentuk umum \(ax+by+c=0\) untuk dua garis. Modul menentukan hubungannya, langkah pengujiannya, dan titik potongnya.</p>
+  <div class="grid2">
+    <div class="card"><canvas id="cv3" width="560" height="420"></canvas></div>
+    <div class="card">
+      <div class="eqrow"><span class="k g">g₁</span><input type="number" id="ia1" value="2">x +<input type="number" id="ib1" value="-1">y +<input type="number" id="ic1" value="3"> = 0</div>
+      <div class="eqrow"><span class="k p">g₂</span><input type="number" id="ia2" value="1">x +<input type="number" id="ib2" value="2">y +<input type="number" id="ic2" value="-4"> = 0</div>
+      <div class="eqrow">
+        <button class="btn" data-p="2,-1,3,4,-2,-5">Sejajar</button><button class="btn" data-p="2,-1,3,4,-2,6">Berimpit</button>
+        <button class="btn" data-p="2,-1,3,1,2,-4">Tegak lurus</button><button class="btn" data-p="2,-1,3,1,1,-6">Berpotongan</button>
+      </div>
+      <div class="out" id="out3"></div>
+    </div>
+  </div>
+  <div class="acc"><div class="acc-head">Contoh Soal (mencari parameter)</div><div class="acc-body">
+    <p>Tentukan \(k\) agar \(kx+2y-1=0\) (i) sejajar, (ii) tegak lurus \(3x-y+4=0\).</p>
+    <p>(i) \(-\frac{k}{2}=3\Rightarrow k=-6\). (ii) \(a_1a_2+b_1b_2=3k-2=0\Rightarrow k=\frac{2}{3}\).</p>
+  </div></div>
+</section>
+
+<section id="sumbu">
+  <span class="tag">05</span><h2>Aplikasi: Sumbu Ruas Garis</h2>
+  <p>Sumbu ruas garis \(AB\) adalah garis yang tegak lurus \(AB\) di titik tengahnya. Seret titik \(A\) dan \(B\) untuk melihat persamaannya.</p>
+  <div class="fbox">\( (x_B-x_A)\,x+(y_B-y_A)\,y=\tfrac12\left(x_B^2+y_B^2-x_A^2-y_A^2\right) \)</div>
+  <div class="grid2">
+    <div class="card"><canvas id="cv4" width="560" height="420"></canvas></div>
+    <div class="card"><div class="out" id="out4" style="margin-top:0"></div></div>
+  </div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan sumbu ruas garis \(A(1,2)\) dan \(B(5,6)\).</p>
+    <p>Titik tengah \(M(3,4)\), \(m_{AB}=1\Rightarrow m=-1\). Maka \(y-4=-(x-3)\Rightarrow x+y-7=0\).</p>
+  </div></div>
+</section>
+
+<section id="quiz">
+  <span class="tag">Latihan</span><h2>Uji Pemahaman</h2>
+  <p>Skor: <span class="score" id="score">0</span> / 5</p>
+  <div class="qc"><p>1. Garis melalui \((0,1)\) dan sejajar \(y=3x-5\) adalah...</p>
+    <button class="opt" data-c="1">y = 3x + 1</button><button class="opt" data-c="0">y = −x/3 + 1</button><button class="opt" data-c="0">y = 3x − 5</button>
+    <div class="exp">Sejajar berarti m = 3. Melalui (0,1) → c = 1.</div></div>
+  <div class="qc"><p>2. Gradien garis yang tegak lurus \(2x+y-3=0\) adalah...</p>
+    <button class="opt" data-c="0">−2</button><button class="opt" data-c="1">1/2</button><button class="opt" data-c="0">2</button>
+    <div class="exp">m = −2, maka gradien tegak lurusnya −1/(−2) = 1/2.</div></div>
+  <div class="qc"><p>3. Agar \(px+3y-2=0\) tegak lurus \(2x-y+5=0\), nilai \(p\) adalah...</p>
+    <button class="opt" data-c="0">−3/2</button><button class="opt" data-c="1">3/2</button><button class="opt" data-c="0">6</button>
+    <div class="exp">a₁a₂ + b₁b₂ = 2p − 3 = 0 → p = 3/2.</div></div>
+  <div class="qc"><p>4. Garis \(x-2y+4=0\) dan \(2x-4y-3=0\) saling...</p>
+    <button class="opt" data-c="1">sejajar</button><button class="opt" data-c="0">berimpit</button><button class="opt" data-c="0">tegak lurus</button>
+    <div class="exp">1/2 = (−2)/(−4) = 1/2, tetapi 4/(−3) berbeda → sejajar.</div></div>
+  <div class="qc"><p>5. Sumbu ruas garis \(A(0,0)\) dan \(B(4,2)\) adalah...</p>
+    <button class="opt" data-c="0">x + 2y = 5</button><button class="opt" data-c="1">2x + y = 5</button><button class="opt" data-c="0">2x − y = 5</button>
+    <div class="exp">M(2,1), m_AB = 1/2 → m = −2: y − 1 = −2(x − 2) → 2x + y − 5 = 0.</div></div>
+</section>
+
+</main>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const f=n=>String(+Number(n).toFixed(2)).replace('-','−');
+const sg=n=>n<0?'('+f(n)+')':f(n);
+const eq=(m,c)=>{let s='y = ';if(Math.abs(m)<1e-9)return s+f(c);s+=(m===1?'':m===-1?'−':f(m))+'x';if(Math.abs(c)>1e-9)s+=(c>0?' + ':' − ')+f(Math.abs(c));return s;};
+
+// progress, accordion, scrollspy
+addEventListener('scroll',()=>{const h=document.documentElement;$('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+document.querySelectorAll('.acc-head').forEach(h=>h.onclick=()=>h.parentElement.classList.toggle('open'));
+const links=[...document.querySelectorAll('nav a')],secs=['konsep','sejajar','tegak','hubungan','sumbu','quiz'].map($);
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));links[secs.indexOf(e.target)].classList.add('active');}}),{rootMargin:'-40% 0px -50% 0px'});
+secs.forEach(s=>obs.observe(s));
+
+// reusable coordinate board
+function Board(id,xr,yr,S,onMove){
+  const cv=$(id),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,ox=W/2,oy=H/2;
+  const b={ctx,pts:[],X:x=>ox+x*S,Y:y=>oy-y*S};
+  b.grid=()=>{ctx.clearRect(0,0,W,H);ctx.font='11px IBM Plex Mono';
+    for(let i=-xr;i<=xr;i++){ctx.strokeStyle=i?'rgba(140,190,240,.14)':'rgba(190,225,255,.7)';ctx.lineWidth=i?1:1.8;
+      ctx.beginPath();ctx.moveTo(b.X(i),0);ctx.lineTo(b.X(i),H);ctx.stroke();
+      if(i&&i%2==0){ctx.fillStyle='rgba(190,225,255,.55)';ctx.fillText(i,b.X(i)-4,oy+14);}}
+    for(let j=-yr;j<=yr;j++){ctx.strokeStyle=j?'rgba(140,190,240,.14)':'rgba(190,225,255,.7)';ctx.lineWidth=j?1:1.8;
+      ctx.beginPath();ctx.moveTo(0,b.Y(j));ctx.lineTo(W,b.Y(j));ctx.stroke();
+      if(j&&j%2==0){ctx.fillStyle='rgba(190,225,255,.55)';ctx.fillText(j,ox+5,b.Y(j)+4);}}};
+  b.line=(A,B,C,col,w=3,dash=[])=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.setLineDash(dash);ctx.beginPath();
+    if(Math.abs(B)>1e-9){ctx.moveTo(b.X(-xr),b.Y((A*xr-C)/B));ctx.lineTo(b.X(xr),b.Y((-A*xr-C)/B));}
+    else{const x=-C/A;ctx.moveTo(b.X(x),b.Y(-yr));ctx.lineTo(b.X(x),b.Y(yr));}
+    ctx.stroke();ctx.setLineDash([]);};
+  b.seg=(x1,y1,x2,y2,col,w)=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(b.X(x1),b.Y(y1));ctx.lineTo(b.X(x2),b.Y(y2));ctx.stroke();};
+  b.dot=(x,y,col,t)=>{ctx.fillStyle=col;ctx.beginPath();ctx.arc(b.X(x),b.Y(y),6,0,7);ctx.fill();
+    if(t){ctx.fillStyle='#E8F1FA';ctx.font='600 12px IBM Plex Sans';ctx.fillText(t,b.X(x)+10,b.Y(y)-9);}};
+  b.ra=(fx,fy,u,v,s)=>{const x0=b.X(fx),y0=b.Y(fy);ctx.strokeStyle='#7CF29C';ctx.lineWidth=2;ctx.beginPath();
+    ctx.moveTo(x0+s*u[0],y0-s*u[1]);ctx.lineTo(x0+s*(u[0]+v[0]),y0-s*(u[1]+v[1]));ctx.lineTo(x0+s*v[0],y0-s*v[1]);ctx.stroke();};
+  let d=-1;
+  const pos=e=>{const r=cv.getBoundingClientRect(),k=W/r.width;return[(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  cv.addEventListener('pointerdown',e=>{const[mx,my]=pos(e);let best=-1,bd=24;
+    b.pts.forEach((p,i)=>{const q=Math.hypot(b.X(p.x)-mx,b.Y(p.y)-my);if(q<bd){bd=q;best=i;}});
+    if(best>=0){d=best;cv.setPointerCapture(e.pointerId);}});
+  cv.addEventListener('pointermove',e=>{if(d<0)return;const[mx,my]=pos(e);
+    let x=Math.round((mx-ox)/S*2)/2,y=Math.round((oy-my)/S*2)/2;
+    b.pts[d].x=Math.max(-xr+1,Math.min(xr-1,x));b.pts[d].y=Math.max(-yr+1,Math.min(yr-1,y));onMove();});
+  cv.addEventListener('pointerup',()=>d=-1);
+  return b;
+}
+
+// 1. sejajar
+const B1=Board('cv1',10,7,28,()=>d1());B1.pts=[{x:-2,y:3}];
+function d1(){
+  const m=+$('s1m').value,c=+$('s1c').value,T=B1.pts[0];B1.grid();
+  const c2=T.y-m*T.x,same=Math.abs(c2-c)<1e-9;
+  B1.line(m,-1,c,'#6EE7F9');B1.line(m,-1,c2,'#FFD166',3,same?[6,5]:[]);
+  B1.dot(T.x,T.y,'#FFD166','T('+f(T.x)+', '+f(T.y)+')');
+  $('mv1').textContent=f(m);$('cvv1').textContent=f(c);
+  $('out1').innerHTML=`<div><span class="k g">g</span> ${eq(m,c)}</div>
+   <div><span class="k h">h</span> y − ${sg(T.y)} = ${f(m)}(x − ${sg(T.x)})</div>
+   <div>⟹ ${eq(m,c2)}</div><div>m<sub>g</sub> = m<sub>h</sub> = ${f(m)}</div>
+   <div>${same?'T terletak pada g, sehingga h <b>berimpit</b> dengan g.':'Jarak g ke h = |c₂ − c₁| / √(1+m²) = '+f(Math.abs(c2-c)/Math.hypot(1,m))+' satuan'}</div>`;
+}
+['s1m','s1c'].forEach(i=>$(i).oninput=d1);d1();
+
+// 2. tegak lurus
+const B2=Board('cv2',10,7,28,()=>d2());B2.pts=[{x:3,y:-2}];
+function d2(){
+  const m=+$('s2m').value,c=+$('s2c').value,P=B2.pts[0];B2.grid();B2.line(m,-1,c,'#6EE7F9');
+  $('mv2').textContent=f(m);$('cvv2').textContent=f(c);
+  let F,u,v,info;
+  if(m===0){
+    B2.line(1,0,-P.x,'#FF7A7A');F=[P.x,c];u=[1,0];v=[0,P.y>=c?1:-1];
+    info=`<div>g mendatar (m = 0), maka garis tegak lurusnya <b>vertikal</b>: x = ${f(P.x)} (gradien tak terdefinisi).</div>`;
+  }else{
+    const mp=-1/m,c3=P.y-mp*P.x;B2.line(mp,-1,c3,'#FF7A7A');
+    const x=(c3-c)/(m-mp);F=[x,m*x+c];const n=Math.hypot(1,m);u=[1/n,m/n];
+    const dx=P.x-F[0],dy=P.y-F[1],dd=Math.hypot(dx,dy);v=dd>1e-9?[dx/dd,dy/dd]:[-m/n,1/n];
+    info=`<div>m<sub>g</sub> = ${f(m)}, &nbsp;m<sub>⊥</sub> = −1/m = ${f(mp)}</div><div>m<sub>g</sub> × m<sub>⊥</sub> = ${f(m*mp)}</div>
+      <div><span class="k p">⊥</span> y − ${sg(P.y)} = ${f(mp)}(x − ${sg(P.x)})</div><div>⟹ ${eq(mp,c3)}</div>`;
+  }
+  B2.ra(F[0],F[1],u,v,14);B2.dot(F[0],F[1],'#7CF29C','F');B2.dot(P.x,P.y,'#FF7A7A','P('+f(P.x)+', '+f(P.y)+')');
+  $('out2').innerHTML=`<div><span class="k g">g</span> ${eq(m,c)}</div>${info}<div>Kaki tegak lurus F(${f(F[0])}, ${f(F[1])}); jarak P ke g = ${f(Math.hypot(P.x-F[0],P.y-F[1]))}</div>`;
+}
+['s2m','s2c'].forEach(i=>$(i).oninput=d2);d2();
+
+// 3. uji hubungan
+const B3=Board('cv3',10,7,28,()=>{});
+const ids=['ia1','ib1','ic1','ia2','ib2','ic2'];
+function d3(){
+  const [a1,b1,k1,a2,b2,k2]=ids.map(i=>parseFloat($(i).value));B3.grid();
+  if([a1,b1,k1,a2,b2,k2].some(isNaN)||(a1===0&&b1===0)||(a2===0&&b2===0)){
+    $('out3').innerHTML='<div class="warn">Isi semua koefisien; a dan b pada tiap garis tidak boleh sama-sama 0.</div>';return;}
+  B3.line(a1,b1,k1,'#6EE7F9');B3.line(a2,b2,k2,'#FF7A7A');
+  const e=1e-9,det=a1*b2-a2*b1,gr=(a,b)=>Math.abs(b)<e?'tak terdefinisi':f(-a/b);
+  let verdict,detail;
+  if(Math.abs(det)<e){
+    const same=Math.abs(a1*k2-a2*k1)<e&&Math.abs(b1*k2-b2*k1)<e;
+    verdict=same?'BERIMPIT':'SEJAJAR';
+    detail=same?'a₁/a₂ = b₁/b₂ = c₁/c₂ (ketiganya sebanding)':'a₁/a₂ = b₁/b₂, tetapi c₁/c₂ berbeda';
+  }else{
+    const x=(b1*k2-b2*k1)/det,y=(k1*a2-k2*a1)/det,dot=a1*a2+b1*b2,perp=Math.abs(dot)<e;
+    B3.dot(x,y,'#FFD166','('+f(x)+', '+f(y)+')');
+    verdict=perp?'TEGAK LURUS':'BERPOTONGAN';
+    detail=`a₁a₂ + b₁b₂ = ${f(dot)} ${perp?'= 0':'≠ 0'}<br>Titik potong: (${f(x)}, ${f(y)})`;
+  }
+  $('out3').innerHTML=`<div><span class="verdict">${verdict}</span></div><div>m₁ = ${gr(a1,b1)}, m₂ = ${gr(a2,b2)}</div><div>a₁b₂ − a₂b₁ = ${f(det)}</div><div>${detail}</div>`;
+}
+ids.forEach(i=>$(i).oninput=d3);
+document.querySelectorAll('[data-p]').forEach(bt=>bt.onclick=()=>{bt.dataset.p.split(',').forEach((v,i)=>$(ids[i]).value=v);d3();});
+d3();
+
+// 4. sumbu ruas
+const B4=Board('cv4',10,7,28,()=>d4());B4.pts=[{x:-3,y:-2},{x:5,y:4}];
+function d4(){
+  const [A,B]=B4.pts,dx=B.x-A.x,dy=B.y-A.y;B4.grid();
+  if(dx===0&&dy===0){B4.dot(A.x,A.y,'#6EE7F9','A = B');$('out4').innerHTML='<div class="warn">A dan B berimpit; sumbu ruas tidak terdefinisi. Geser salah satu titik.</div>';return;}
+  const rhs=(B.x**2+B.y**2-A.x**2-A.y**2)/2,M=[(A.x+B.x)/2,(A.y+B.y)/2],L=Math.hypot(dx,dy);
+  B4.seg(A.x,A.y,B.x,B.y,'#6EE7F9',3);B4.line(dx,dy,-rhs,'#FFD166');
+  B4.ra(M[0],M[1],[dx/L,dy/L],[-dy/L,dx/L],14);
+  B4.dot(M[0],M[1],'#7CF29C','M');B4.dot(A.x,A.y,'#6EE7F9','A('+f(A.x)+', '+f(A.y)+')');B4.dot(B.x,B.y,'#6EE7F9','B('+f(B.x)+', '+f(B.y)+')');
+  $('out4').innerHTML=`<div>A(${f(A.x)}, ${f(A.y)}), B(${f(B.x)}, ${f(B.y)})</div>
+   <div>Titik tengah M = (${f(M[0])}, ${f(M[1])})</div>
+   <div>m<sub>AB</sub> = ${dx===0?'tak terdefinisi':f(dy/dx)}</div>
+   <div>m<sub>sumbu</sub> = ${dy===0?'tak terdefinisi':f(-dx/dy)}</div>
+   <div><span class="k h">sumbu</span> ${f(dx)}x ${dy<0?'−':'+'} ${f(Math.abs(dy))}y = ${f(rhs)}</div>
+   <div>|AM| = |MB| = ${f(L/2)}</div>`;
+}
+d4();
+
+// quiz
+let sc=0;
+document.querySelectorAll('.qc').forEach(q=>q.querySelectorAll('.opt').forEach(bt=>bt.onclick=()=>{
+  if(q.dataset.a)return;q.dataset.a=1;
+  q.querySelectorAll('.opt').forEach(o=>o.classList.add(o.dataset.c==='1'?'ok':'no'));
+  q.querySelector('.exp').style.display='block';
+  if(bt.dataset.c==='1')$('score').textContent=++sc;
+}));
+</script>
+</body>
+</html>
