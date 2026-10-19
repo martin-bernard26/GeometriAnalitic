@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Latihan - Garis Bagi Sudut &amp; Berkas Garis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C1B17;--card:#132A24;--ink:#EAF5F0;--muted:#8DB1A5;--em:#34D399;--coral:#FF7A66;--amber:#FBBF24;--vio:#A78BFA;--line:#1F3D35}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Figtree',sans-serif;line-height:1.6}
+header{padding:46px 20px 14px;text-align:center}
+.eyebrow{font:700 12px 'Figtree';letter-spacing:3px;color:var(--em);text-transform:uppercase}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(24px,4.6vw,38px);margin:10px 0}
+header p{color:var(--muted);max-width:600px;margin:0 auto;font-size:15px}
+.tabs{display:flex;justify-content:center;gap:8px;margin:20px 0 6px;flex-wrap:wrap}
+.tabs button{font:700 14px 'Figtree';padding:10px 22px;border-radius:30px;border:2px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--em);border-color:var(--em);color:#06231A}
+.wrap{max-width:720px;margin:0 auto;padding:12px 18px 70px}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.segs{display:flex;gap:5px;flex:1;min-width:200px}
+.seg{flex:1;height:9px;border-radius:5px;background:var(--line);cursor:pointer}
+.seg.cur{background:var(--amber)}.seg.ok{background:var(--em)}.seg.half{background:#7DD3A8;opacity:.7}.seg.no{background:var(--coral)}
+.stat{font:700 14px 'Bricolage Grotesque';color:var(--em);white-space:nowrap}
+.rtop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+select{font:600 14px 'Figtree';padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font:600 12.5px 'Figtree';color:var(--muted)}
+.lv{padding:4px 12px;border-radius:20px;font-weight:700;color:#0C1B17}
+.lv.Dasar{background:var(--em)}.lv.Menengah{background:var(--amber)}.lv.Lanjut{background:var(--coral)}.lv.Acak{background:var(--vio)}
+.qt{font-size:17px;font-weight:500;margin-bottom:16px;white-space:pre-line}
+.opt{display:block;width:100%;text-align:left;padding:13px 16px;margin:8px 0;border-radius:11px;border:1.5px solid var(--line);background:#0F221D;color:var(--ink);font:500 15px 'Figtree';cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--em)}
+.opt.ok{background:#12402F;border-color:var(--em)}
+.opt.no{background:#4A2420;border-color:var(--coral)}
+.opt:disabled{cursor:default}
+.numrow{display:flex;gap:10px;flex-wrap:wrap}
+.numrow input{flex:1 1 160px;font:600 17px 'Figtree';padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:#0F221D;color:var(--ink)}
+.numrow input:focus{outline:2px solid var(--em)}
+.fb{margin-top:12px;font-weight:600;min-height:22px}
+.fb.ok{color:var(--em)}.fb.no{color:var(--coral)}
+.hint,.exp{display:none;margin-top:14px;padding:13px 16px;border-radius:10px;font-size:14.5px}
+.hint{background:#3A3217;border:1px solid #6B5A1F}
+.exp{background:#0F221D;border:1px solid var(--line)}
+.hint.show,.exp.show{display:block}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap}
+.btn{font:700 14px 'Figtree';padding:11px 20px;border-radius:10px;border:0;background:var(--em);color:#06231A;cursor:pointer}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--muted)}
+.btn:disabled{opacity:.35;cursor:default}
+.fin{text-align:center}
+.big{font:800 52px 'Bricolage Grotesque';color:var(--em)}
+.break{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.break div{background:#0F221D;border:1px solid var(--line);border-radius:12px;padding:12px}
+.break b{display:block;font:800 22px 'Bricolage Grotesque'}
+.rev{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0}
+.rev button{padding:10px 4px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font:700 13px 'Figtree';cursor:pointer}
+.rev .ok{border-color:var(--em);color:var(--em)}.rev .half{border-color:#7DD3A8;color:#7DD3A8}.rev .no{border-color:var(--coral);color:var(--coral)}
+footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Geometri Analitik &middot; Latihan</div>
+  <h1>Garis Bagi Sudut &amp; Berkas Garis</h1>
+  <p>Latihan bertingkat (dasar, menengah, lanjut) dengan pilihan ganda dan isian angka, plus soal acak yang tidak habis.</p>
+</header>
+<div class="tabs">
+  <button id="tTetap" class="on">Latihan Bertingkat (10 soal)</button>
+  <button id="tAcak">Soal Acak</button>
+</div>
+<div class="wrap">
+  <div id="topFx" class="top"><div class="segs" id="segs"></div><div class="stat">Skor <span id="sc">0</span>/10</div></div>
+  <div id="topRd" class="rtop" style="display:none">
+    <select id="jenis"><option value="mix">Campuran</option><option value="bagi">Garis bagi sudut</option><option value="berkas">Berkas garis (isian λ)</option></select>
+    <button class="btn" id="baru">Soal baru</button>
+    <div class="stat" id="rstat"></div>
+  </div>
+  <div class="card" id="card"></div>
+</div>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const EPS=1e-9;
+const f=n=>String(+Number(n).toFixed(2)).replace('-','−');
+const f3=n=>String(+Number(n).toFixed(3)).replace('-','−');
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const ambil=arr=>arr[rnd(0,arr.length-1)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+function eqText(A,B,C){
+  let s='';
+  if(A!==0)s+=(A===1?'':A===-1?'−':f(A))+'x';
+  if(B!==0){const co=Math.abs(B)===1?'':f(Math.abs(B));s+=s?(B<0?' − ':' + ')+co+'y':(B<0?'−':'')+co+'y';}
+  if(C!==0)s+=s?(C<0?' − ':' + ')+f(Math.abs(C)):f(C);
+  return (s||'0')+' = 0';
+}
+function norm3(t){
+  const g=gcd(gcd(t[0],t[1]),t[2])||1;let r=t.map(v=>v/g);
+  if(r[0]<0||(r[0]===0&&r[1]<0))r=r.map(v=>-v);
+  return r.map(v=>v===0?0:v);
+}
+function frac(n,d){const g=gcd(n,d)||1;n/=g;d/=g;if(d<0){n=-n;d=-d;}return d===1?f(n):f(n)+'/'+d;}
+function parseNum(s){
+  s=String(s).trim().replace(/,/g,'.').replace(/−/g,'-').replace(/\s+/g,'');
+  if(/^-?\d+(\.\d+)?\/-?\d+(\.\d+)?$/.test(s)){const [a,b]=s.split('/').map(Number);return b?a/b:NaN;}
+  if(/^-?(\d+\.?\d*|\.\d+)$/.test(s))return parseFloat(s);
+  return NaN;
+}
+
+// ------------------------- 10 soal bertingkat -------------------------
+// untuk pilihan ganda: o[0] adalah jawaban benar (urutan diacak saat tampil)
+const Q=[
+{lv:'Dasar',type:'mc',q:'Titik-titik pada garis bagi sudut dua garis yang berpotongan memiliki sifat...',
+ o:['berjarak sama terhadap kedua garis','berjarak sama terhadap titik asal dan titik potong','selalu terletak pada salah satu garis','selalu memiliki absis dan ordinat sama'],
+ h:'Ingat definisi garis bagi sebagai tempat kedudukan titik.',
+ e:'Garis bagi sudut adalah tempat kedudukan titik yang jaraknya ke kedua garis sama (d₁ = d₂), sehingga g₁/n₁ = ± g₂/n₂.'},
+{lv:'Dasar',type:'num',q:'Pada garis 8x + 15y − 7 = 0, nilai n = √(a² + b²) adalah ...',ans:17,tol:0.001,
+ h:'Hitung 8² + 15² lebih dulu.',
+ e:'n = √(8² + 15²) = √(64 + 225) = √289 = 17.'},
+{lv:'Dasar',type:'mc',q:'Garis bagi sudut antara garis 4x − 3y = 0 dan 3x − 4y = 0 adalah...',
+ o:['x + y = 0 dan x − y = 0','x = 0 dan y = 0','7x − 7y = 0 saja','x + 7y = 0 dan 7x + y = 0'],
+ h:'Kedua norma sama-sama 5, sehingga penyebutnya saling menghapus.',
+ e:'(4x − 3y)/5 = ±(3x − 4y)/5. Tanda +: x + y = 0. Tanda −: 7x − 7y = 0 ⟹ x − y = 0.'},
+{lv:'Dasar',type:'num',q:'Garis anggota berkas (x + y − 4) + λ(x − y) = 0 melalui titik (3, 0). Nilai λ = ...\n(boleh pecahan a/b atau desimal)',ans:1/3,tol:0.01,
+ h:'Substitusikan x = 3 dan y = 0 ke persamaan berkas.',
+ e:'(3 + 0 − 4) + λ(3 − 0) = 0 ⟹ −1 + 3λ = 0 ⟹ λ = 1/3 ≈ 0,33.'},
+{lv:'Menengah',type:'mc',q:'Garis dalam berkas melalui titik potong 2x + y − 5 = 0 dan x − y − 1 = 0 yang sejajar sumbu-Y adalah...',
+ o:['x = 2','y = 1','x = 1','y = 2'],
+ h:'Garis sejajar sumbu-Y tidak memuat suku y.',
+ e:'(2x + y − 5) + λ(x − y − 1) = 0 ⟹ (2 + λ)x + (1 − λ)y − 5 − λ = 0. Koefisien y = 0 ⟹ λ = 1, sehingga 3x − 6 = 0 ⟹ x = 2.'},
+{lv:'Menengah',type:'num',q:'Gradien garis bagi sudut LANCIP dari 3x + 4y − 10 = 0 dan 5x + 12y − 22 = 0 adalah ...\n(boleh pecahan a/b atau desimal)',ans:-4/7,tol:0.01,
+ h:'n₁ = 5, n₂ = 13, dan a₁a₂ + b₁b₂ = 63 > 0, jadi sudut lancip memakai tanda −.',
+ e:'13(3x + 4y − 10) + 5(5x + 12y − 22) = 0 ⟹ 64x + 112y − 240 = 0 ⟹ 4x + 7y − 15 = 0. Gradien = −4/7 ≈ −0,57.'},
+{lv:'Menengah',type:'mc',q:'Garis bagi sudut lancip dari 3x + 4y + 5 = 0 dan 12x − 5y − 22 = 0 adalah...',
+ o:['11x + 3y − 5 = 0','3x − 11y − 25 = 0','11x − 3y − 5 = 0','3x + 11y − 25 = 0'],
+ h:'Hitung a₁a₂ + b₁b₂ untuk menentukan tanda yang memberi sudut lancip.',
+ e:'n₁ = 5, n₂ = 13. a₁a₂ + b₁b₂ = 36 − 20 = 16 > 0, jadi lancip memakai tanda −: 13(3x + 4y + 5) + 5(12x − 5y − 22) = 0 ⟹ 99x + 27y − 45 = 0 ⟹ 11x + 3y − 5 = 0. (3x − 11y − 25 = 0 adalah garis bagi sudut tumpul.)'},
+{lv:'Menengah',type:'num',q:'Garis (x − 2y + 1) + λ(3x + y − 4) = 0 sejajar sumbu-X. Nilai λ = ...\n(boleh pecahan a/b atau desimal)',ans:-1/3,tol:0.01,
+ h:'Sejajar sumbu-X berarti koefisien x sama dengan 0.',
+ e:'Koefisien x: 1 + 3λ = 0 ⟹ λ = −1/3. Garisnya menjadi −(7/3)y + 7/3 = 0, yaitu y = 1.'},
+{lv:'Lanjut',type:'num',q:'Garis bagi sudut lancip dari 3x + 4y − 10 = 0 dan 5x + 12y − 22 = 0 termasuk berkas (3x + 4y − 10) + λ(5x + 12y − 22) = 0. Nilai λ = ...\n(boleh pecahan a/b atau desimal)',ans:5/13,tol:0.01,
+ h:'Dari n₂·g₁ + n₁·g₂ = 0 diperoleh λ = n₁/n₂ (tanda − pada rumus d₁ = ±d₂).',
+ e:'λ = −s·n₁/n₂ dengan n₁ = 5, n₂ = 13. Karena a₁a₂ + b₁b₂ = 63 > 0, sudut lancip memakai s = −1, sehingga λ = 5/13 ≈ 0,385. Cek: 13(3x + 4y − 10) + 5(5x + 12y − 22) = 0 ⟹ 4x + 7y − 15 = 0.'},
+{lv:'Lanjut',type:'num',q:'Garis (k + 1)x + 2y − 3 = 0 merupakan anggota berkas yang dibentuk oleh x + y − 1 = 0 dan x − y − 3 = 0. Nilai k = ...\n(boleh pecahan a/b atau desimal)',ans:1.5,tol:0.01,
+ h:'Anggota berkas harus melalui titik potong kedua garis pembentuknya.',
+ e:'Titik potong: x + y = 1 dan x − y = 3 ⟹ (2, −1). Substitusi: 2(k + 1) + 2(−1) − 3 = 0 ⟹ 2k − 3 = 0 ⟹ k = 3/2.'}
+];
+
+// ------------------------- generator soal acak -------------------------
+function genBerkas(){
+  for(;;){
+    const a1=rnd(-4,4),b1=rnd(-4,4),a2=rnd(-4,4),b2=rnd(-4,4);
+    if((a1===0&&b1===0)||(a2===0&&b2===0)||a1*b2-a2*b1===0)continue;
+    const P=[rnd(-3,3),rnd(-3,3)],T=[rnd(-5,5),rnd(-5,5)];
+    const c1=-(a1*P[0]+b1*P[1]),c2=-(a2*P[0]+b2*P[1]);
+    const g1T=a1*T[0]+b1*T[1]+c1,g2T=a2*T[0]+b2*T[1]+c2;
+    if(g1T===0||g2T===0)continue;
+    const lam=-g1T/g2T;if(Math.abs(lam)>10)continue;
+    return {lv:'Acak',type:'num',ans:lam,tol:0.01,
+      q:`Garis anggota berkas (${eqText(a1,b1,c1).replace(' = 0','')}) + λ(${eqText(a2,b2,c2).replace(' = 0','')}) = 0 melalui titik T(${T[0]}, ${T[1]}). Nilai λ = ...\n(boleh pecahan a/b atau desimal)`,
+      h:'Substitusikan koordinat T ke persamaan berkas, lalu selesaikan untuk λ.',
+      e:`g₁(T) = ${g1T} dan g₂(T) = ${g2T}. Karena g₁(T) + λ·g₂(T) = 0, maka λ = −g₁(T)/g₂(T) = ${frac(-g1T,g2T)} ≈ ${f3(lam)}.`};
+  }
+}
+const PAIRS=[[3,4],[4,3],[5,12],[12,5],[8,15],[15,8],[6,8],[8,6],[1,0],[0,1],[9,12],[12,9]];
+function genBagi(){
+  for(;;){
+    const p1=ambil(PAIRS),p2=ambil(PAIRS);
+    const a1=p1[0]*ambil([1,-1]),b1=p1[1]*ambil([1,-1]),a2=p2[0]*ambil([1,-1]),b2=p2[1]*ambil([1,-1]);
+    if(a1*b2-a2*b1===0)continue;
+    const dot=a1*a2+b1*b2;if(dot===0)continue;
+    const P=[rnd(-3,3),rnd(-3,3)],c1=-(a1*P[0]+b1*P[1]),c2=-(a2*P[0]+b2*P[1]);
+    const n1=Math.round(Math.hypot(a1,b1)),n2=Math.round(Math.hypot(a2,b2));
+    const bis=s=>norm3([n2*a1-s*n1*a2,n2*b1-s*n1*b2,n2*c1-s*n1*c2]);
+    const acuteS=dot>0?-1:1,ask=Math.random()<.5?'lancip':'tumpul',sC=ask==='lancip'?acuteS:-acuteS;
+    const good=bis(sC),other=bis(-sC),key=t=>norm3(t).join(',');
+    const used=new Set([key(good),key(other)]),extra=[];
+    [[good[0],-good[1],good[2]],[-good[0],good[1],good[2]],[good[0],good[1],-good[2]],[good[1],good[0],good[2]],[good[0],good[1],good[2]+1],[other[0],-other[1],other[2]]].forEach(t=>{
+      if(t[0]===0&&t[1]===0)return;const k=key(t);if(!used.has(k)){used.add(k);extra.push(norm3(t));}});
+    if(extra.length<2)continue;
+    const T=t=>eqText(t[0],t[1],t[2]);
+    const sg1=sC===1?'+':'−';
+    return {lv:'Acak',type:'mc',
+      q:`g₁: ${eqText(a1,b1,c1)}\ng₂: ${eqText(a2,b2,c2)}\n\nGaris bagi sudut ${ask.toUpperCase()} dari g₁ dan g₂ adalah...`,
+      o:[T(good),T(other),T(extra[0]),T(extra[1])],
+      h:'Hitung a₁a₂ + b₁b₂. Jika positif, sudut lancip memakai tanda −; jika negatif, tanda +.',
+      e:`n₁ = ${n1}, n₂ = ${n2}. a₁a₂ + b₁b₂ = ${dot} ${dot>0?'&gt; 0: lancip memakai tanda −, tumpul tanda +':'&lt; 0: lancip memakai tanda +, tumpul tanda −'}. Untuk sudut ${ask}, pakai tanda ${sg1}: ${n2}(${T([a1,b1,c1]).replace(' = 0','')}) ${sg1} ${n1}(${T([a2,b2,c2]).replace(' = 0','')}) = 0 ⟹ ${T(good)}. (Garis bagi lainnya: ${T(other)}.)`};
+  }
+}
+function genAcak(){
+  const j=$('jenis').value;
+  return j==='bagi'?genBagi():j==='berkas'?genBerkas():(Math.random()<.5?genBagi():genBerkas());
+}
+
+// ------------------------- keadaan & tampilan -------------------------
+let mode='tetap',idx=0,FX=[],RD=null,stats={b:0,t:0,streak:0,best:0};
+const mkState=q=>({ord:q.type==='mc'?shuffle([0,1,2,3]):null,pick:null,tries:0,done:false,pts:0,hint:false,msg:'',cls:'',val:''});
+const mk=q=>({q,st:mkState(q)});
+function initFx(){FX=Q.map(mk);idx=0;}
+function cur(){return mode==='tetap'?FX[idx]:RD;}
+
+function head(){
+  if(mode==='tetap'){
+    $('segs').innerHTML=FX.map((it,i)=>`<div class="seg ${i===idx?'cur':!it.st.done?'':it.st.pts===1?'ok':it.st.pts>0?'half':'no'}" onclick="go(${i})"></div>`).join('');
+    const s=FX.reduce((a,it)=>a+it.st.pts,0);$('sc').textContent=Number.isInteger(s)?s:s.toFixed(1);
+  }else{
+    $('rstat').textContent=`Benar ${f(stats.b)}/${stats.t} · Beruntun ${stats.streak} · Terbaik ${stats.best}`;
+  }
+}
+function render(){
+  head();const card=$('card');
+  if(mode==='tetap'&&idx>=FX.length)return finish();
+  const it=cur(),q=it.q,st=it.st;
+  const right=mode==='tetap'?`Soal ${idx+1} dari ${FX.length}`:'Soal acak';
+  let body='';
+  if(q.type==='mc'){
+    body=st.ord.map(i=>`<button class="opt ${st.done?(i===0?'ok':i===st.pick?'no':''):''}" ${st.done?'disabled':''} onclick="pickMC(${i})">${q.o[i]}</button>`).join('');
+  }else{
+    body=`<div class="numrow"><input id="ans" type="text" inputmode="decimal" placeholder="Jawaban angka" value="${st.val}" ${st.done?'disabled':''}>
+      ${st.done?'':'<button class="btn" onclick="cek()">Periksa</button>'}</div>
+      <div class="fb ${st.cls}">${st.msg}</div>`;
+  }
+  const nextTxt=mode==='tetap'?(idx===FX.length-1?'Lihat Hasil':'Berikutnya →'):'Soal berikutnya →';
+  card.innerHTML=`<div class="meta"><span class="lv ${q.lv}">${q.lv}</span><span>${right}</span></div>
+    <div class="qt">${q.q}</div>${body}
+    <div class="hint ${st.hint&&!st.done?'show':''}"><b>Petunjuk:</b> ${q.h}</div>
+    <div class="exp ${st.done?'show':''}"><b>${st.pts===1?'Tepat.':st.pts>0?'Benar pada percobaan kedua.':'Kurang tepat.'}</b> ${q.e}</div>
+    <div class="nav">
+      ${mode==='tetap'?`<button class="btn ghost" onclick="go(${idx-1})" ${idx===0?'disabled':''}>← Sebelumnya</button>`:'<span></span>'}
+      ${st.done?'':`<button class="btn ghost" onclick="hint()" ${st.hint?'disabled':''}>Petunjuk</button>`}
+      <button class="btn" onclick="next()" ${st.done?'':'disabled'}>${nextTxt}</button>
+    </div>`;
+  const inp=$('ans');if(inp&&!st.done){inp.addEventListener('keydown',e=>{if(e.key==='Enter')cek();});inp.focus();}
+}
+function record(st){
+  if(mode!=='acak')return;
+  stats.t++;stats.b+=st.pts;
+  if(st.pts===1){stats.streak++;stats.best=Math.max(stats.best,stats.streak);}else stats.streak=0;
+}
+function pickMC(i){const st=cur().st;if(st.done)return;st.pick=i;st.done=true;st.pts=i===0?1:0;record(st);render();}
+function cek(){
+  const it=cur(),st=it.st,q=it.q;if(st.done)return;
+  const raw=$('ans').value;st.val=raw;const v=parseNum(raw);
+  if(isNaN(v)){st.msg='Masukkan angka, desimal, atau pecahan a/b.';st.cls='no';render();return;}
+  st.tries++;
+  if(Math.abs(v-q.ans)<=q.tol){st.done=true;st.pts=st.tries===1?1:0.5;st.msg='Benar.';st.cls='ok';record(st);}
+  else if(st.tries>=2){st.done=true;st.pts=0;st.msg='Jawaban yang benar: '+f3(q.ans)+'.';st.cls='no';record(st);}
+  else{st.msg='Belum tepat. Coba sekali lagi (periksa langkahmu atau buka petunjuk).';st.cls='no';}
+  render();
+}
+function hint(){cur().st.hint=true;render();}
+function go(i){if(i<0)return;idx=i;render();}
+function next(){
+  if(mode==='tetap'){idx++;render();}
+  else{RD=mk(genAcak());render();}
+}
+function finish(){
+  const lv=['Dasar','Menengah','Lanjut'],tot=FX.reduce((a,it)=>a+it.st.pts,0),done=FX.filter(it=>it.st.done).length;
+  const per=lv.map(l=>{const arr=FX.filter(it=>it.q.lv===l);return `<div>${l}<b>${f(arr.reduce((a,it)=>a+it.st.pts,0))}/${arr.length}</b></div>`;}).join('');
+  $('card').innerHTML=`<div class="fin"><div class="meta" style="justify-content:center">HASIL AKHIR</div>
+    <div class="big">${Number.isInteger(tot)?tot:tot.toFixed(1)} / 10</div>
+    <p style="color:var(--muted)">${tot>=8?'Sangat baik. Pemahamanmu tentang garis bagi sudut dan berkas garis sudah kuat.':tot>=5?'Cukup baik. Tinjau kembali soal yang masih salah.':'Pelajari ulang rumus d₁ = ±d₂ dan persamaan berkas, lalu coba lagi.'}${done<FX.length?`<br>${FX.length-done} soal belum dijawab.`:''}</p>
+    <div class="break">${per}</div>
+    <div class="rev">${FX.map((it,i)=>`<button class="${!it.st.done?'':it.st.pts===1?'ok':it.st.pts>0?'half':'no'}" onclick="go(${i})">${i+1}</button>`).join('')}</div>
+    <p style="font-size:13px;color:var(--muted)">Klik nomor untuk meninjau soal dan pembahasannya. Benar pada percobaan kedua bernilai 0,5.</p>
+    <button class="btn" onclick="initFx();render()">Ulangi dari Awal</button></div>`;
+}
+function setMode(m){
+  mode=m;$('tTetap').classList.toggle('on',m==='tetap');$('tAcak').classList.toggle('on',m==='acak');
+  $('topFx').style.display=m==='tetap'?'flex':'none';$('topRd').style.display=m==='acak'?'flex':'none';
+  if(m==='acak'&&!RD)RD=mk(genAcak());
+  render();
+}
+$('tTetap').onclick=()=>setMode('tetap');$('tAcak').onclick=()=>setMode('acak');
+$('baru').onclick=()=>{RD=mk(genAcak());render();};
+$('jenis').onchange=()=>{RD=mk(genAcak());render();};
+initFx();render();
+</script>
+</body>
+</html>
