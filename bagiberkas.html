@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Garis Bagi Sudut &amp; Berkas Garis - Geometri Analitik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{--bg:#F4F8FF;--card:#FFFFFF;--ink:#14213D;--muted:#5C6B8A;--blue:#2F6BFF;--sun:#FF9F1C;--pink:#E63977;--green:#16A34A;--violet:#7C3AED;--line:#DCE5F7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;line-height:1.65}
+.progress{position:fixed;top:0;left:0;height:4px;background:var(--sun);z-index:100;width:0}
+header{padding:58px 22px 34px;text-align:center;background:var(--ink);color:#fff}
+.eyebrow{letter-spacing:3px;font-size:12px;font-weight:700;color:var(--sun);text-transform:uppercase}
+h1{font-weight:800;font-size:clamp(26px,4.8vw,44px);margin:10px 0}
+header p{color:#B8C4E0;max-width:640px;margin:0 auto}
+nav{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:center;gap:6px;padding:10px;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--muted);font-size:13px;font-weight:700;padding:8px 14px;border-radius:20px}
+nav a.active,nav a:hover{background:var(--blue);color:#fff}
+main{max-width:960px;margin:0 auto;padding:44px 18px 80px}
+section{margin-bottom:68px;scroll-margin-top:66px}
+.tag{display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:8px}
+h2{font-size:27px;margin:0 0 12px;font-weight:800}
+.fbox{background:var(--ink);color:#fff;border-radius:14px;padding:18px;text-align:center;font-size:18px;margin:16px 0;overflow-x:auto}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+canvas{width:100%;height:auto;border-radius:10px;background:#fff;touch-action:none;cursor:crosshair;display:block;border:1px solid var(--line)}
+.out{font:400 13px 'JetBrains Mono',monospace;line-height:1.75;margin-top:12px}
+.out div{margin:3px 0}
+.k{display:inline-block;padding:0 8px;border-radius:5px;font-weight:600;color:#fff}
+.k.g1{background:var(--blue)}.k.g2{background:var(--pink)}.k.b1{background:var(--sun)}.k.b2{background:var(--green)}.k.m{background:var(--violet)}
+.warn{background:#FDE8EF;border:1px solid var(--pink);border-radius:8px;padding:8px 12px}
+label{font-size:13px;color:var(--muted);display:block;margin-top:10px;font-weight:600}
+label b{color:var(--blue);font-family:'JetBrains Mono'}
+input[type=range]{width:100%;accent-color:var(--blue)}
+input[type=number]{width:64px;padding:6px;border-radius:8px;border:1px solid var(--line);font:500 13px 'JetBrains Mono';color:var(--ink)}
+.eqrow{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:13px}
+.btn{font:700 12px 'Plus Jakarta Sans';padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.pill{display:flex;gap:4px;background:#EAF0FC;border-radius:30px;padding:4px;margin-bottom:6px;flex-wrap:wrap}
+.pill button{flex:1;border:0;background:transparent;padding:7px 10px;border-radius:30px;font:700 12px 'Plus Jakarta Sans';cursor:pointer;color:var(--muted)}
+.pill button.on{background:var(--blue);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+td,th{border:1px solid var(--line);padding:9px 11px;text-align:left;background:#fff}
+th{background:#EAF0FC}
+.acc{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:14px;background:#fff}
+.acc-head{padding:14px 18px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between}
+.acc-head::after{content:"+";color:var(--blue);font-size:19px}
+.acc.open .acc-head::after{content:"–"}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s;padding:0 18px}
+.acc.open .acc-body{max-height:900px;padding:0 18px 18px}
+.qc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.opt{display:block;width:100%;text-align:left;padding:9px 14px;margin:6px 0;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font:500 14px 'Plus Jakarta Sans'}
+.opt.ok{background:#DCF5E5;border-color:var(--green)}
+.opt.no{background:#FDE8EF;border-color:var(--pink)}
+.exp{display:none;margin-top:10px;font-size:13.5px;color:var(--muted)}
+.score{font-weight:800;color:var(--green)}
+footer{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header>
+  <div class="eyebrow">Geometri Analitik</div>
+  <h1>Garis Bagi Sudut &amp; Berkas Garis</h1>
+  <p>Menyusun persamaan garis yang membagi sudut dua garis, dan keluarga garis (berkas) yang dibangun dari satu parameter.</p>
+</header>
+<nav>
+  <a href="#bagi">Garis Bagi Sudut</a><a href="#berkas">Berkas Garis</a><a href="#hubungan">Bagi &amp; Berkas</a><a href="#quiz">Latihan</a>
+</nav>
+<main>
+
+<!-- ========== 1. GARIS BAGI SUDUT ========== -->
+<section id="bagi">
+  <span class="tag">01</span><h2>Persamaan Garis Bagi Sudut</h2>
+  <p>Dua garis yang berpotongan membentuk dua pasang sudut. <b>Garis bagi sudut</b> adalah tempat kedudukan titik-titik yang berjarak sama terhadap kedua garis, sehingga ada <b>dua</b> garis bagi dan keduanya saling tegak lurus. Dari rumus jarak titik ke garis, syarat \(d_1=d_2\) menghasilkan:</p>
+  <div class="fbox">\( \dfrac{a_1x+b_1y+c_1}{\sqrt{a_1^2+b_1^2}}=\pm\dfrac{a_2x+b_2y+c_2}{\sqrt{a_2^2+b_2^2}} \)</div>
+  <p><b>Mana yang lancip?</b> Jika \(a_1a_2+b_1b_2>0\), tanda <b>−</b> memberi garis bagi sudut lancip dan tanda <b>+</b> memberi garis bagi sudut tumpul. Jika \(a_1a_2+b_1b_2<0\), berlaku sebaliknya.</p>
+  <div class="grid2">
+    <div class="card"><canvas id="cvA" width="560" height="420"></canvas></div>
+    <div class="card">
+      <div class="eqrow"><span class="k g1">g₁</span><input type="number" id="Aa1" value="3">x +<input type="number" id="Ab1" value="4">y +<input type="number" id="Ac1" value="-10"> = 0</div>
+      <div class="eqrow"><span class="k g2">g₂</span><input type="number" id="Aa2" value="5">x +<input type="number" id="Ab2" value="12">y +<input type="number" id="Ac2" value="-22"> = 0</div>
+      <div class="eqrow">
+        <button class="btn" data-pa="3,4,-10,5,12,-22">Contoh 1</button>
+        <button class="btn" data-pa="1,0,0,0,1,0">Sumbu X &amp; Y</button>
+        <button class="btn" data-pa="3,4,-10,4,3,-11">Norma sama</button>
+        <button class="btn" data-pa="1,-1,0,1,-1,4">Sejajar</button>
+      </div>
+      <div class="eqrow">Titik Q pada: <button class="btn on" id="selP">b₁ (+)</button><button class="btn" id="selM">b₂ (−)</button></div>
+      <label>Posisi Q: t = <b id="tQv">1.5</b></label><input type="range" id="tQ" min="-6" max="6" step="0.1" value="1.5">
+      <div class="out" id="outA"></div>
+    </div>
+  </div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan garis bagi sudut antara \(3x+4y-10=0\) dan \(5x+12y-22=0\).</p>
+    <p>\(\dfrac{3x+4y-10}{5}=\pm\dfrac{5x+12y-22}{13}\Rightarrow 13(3x+4y-10)=\pm5(5x+12y-22)\).</p>
+    <p>Tanda +: \(14x-8y-20=0\Rightarrow 7x-4y-10=0\). Tanda −: \(64x+112y-240=0\Rightarrow 4x+7y-15=0\).</p>
+    <p style="color:var(--muted)">Karena \(a_1a_2+b_1b_2=63>0\), tanda − (\(4x+7y-15=0\)) membagi sudut lancip. Gradiennya \(\tfrac74\) dan \(-\tfrac47\) memenuhi \(m_1m_2=-1\).</p>
+  </div></div>
+</section>
+
+<!-- ========== 2. BERKAS GARIS ========== -->
+<section id="berkas">
+  <span class="tag">02</span><h2>Berkas Garis</h2>
+  <p><b>Berkas garis</b> adalah himpunan garis-garis yang memenuhi suatu sifat bersama dan dapat ditulis dengan satu parameter.</p>
+  <table>
+    <tr><th>Jenis berkas</th><th>Persamaan</th><th>Parameter</th></tr>
+    <tr><td>Melalui titik potong \(g_1\) dan \(g_2\)</td><td>\((a_1x+b_1y+c_1)+\lambda(a_2x+b_2y+c_2)=0\)</td><td>\(\lambda\)</td></tr>
+    <tr><td>Melalui satu titik \(T(x_0,y_0)\)</td><td>\(y-y_0=m(x-x_0)\)</td><td>\(m\)</td></tr>
+    <tr><td>Sejajar (gradien tetap)</td><td>\(y=mx+c\) atau \(ax+by+\lambda=0\)</td><td>\(c\) atau \(\lambda\)</td></tr>
+  </table>
+  <p style="font-size:14px;color:var(--muted)">Catatan: pada berkas pertama, \(g_2\) sendiri tidak diperoleh untuk \(\lambda\) berhingga (ia muncul saat \(\lambda\to\infty\)). Pada berkas kedua, garis vertikal \(x=x_0\) perlu ditambahkan secara terpisah.</p>
+  <div class="grid2">
+    <div class="card"><canvas id="cvB" width="560" height="420"></canvas></div>
+    <div class="card">
+      <div class="pill"><button id="tabp" class="on">Titik potong</button><button id="tabt">Satu titik</button><button id="tabs">Sejajar</button></div>
+
+      <div id="ctlp">
+        <div style="font-size:13px">\(g_1: 2x-y-3=0\) (biru), \(g_2: x+3y-5=0\) (merah muda), seret titik T.</div>
+        <label>Parameter λ = <b id="lamv">0.00</b></label><input type="range" id="lam" min="-8" max="8" step="0.01" value="1">
+        <div class="eqrow">
+          <button class="btn" id="bG1">g₁ (λ=0)</button><button class="btn" id="bAcute">Garis bagi lancip</button>
+          <button class="btn" id="bObt">Garis bagi tumpul</button><button class="btn" id="bT">Pas ke T</button>
+        </div>
+        <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="manyP" checked> tampilkan banyak anggota</label>
+      </div>
+
+      <div id="ctlt" style="display:none">
+        <div style="font-size:13px">Semua garis melalui titik T (seret T). Putar garis dengan sudut θ.</div>
+        <label>Sudut θ = <b id="thv">45</b>°</label><input type="range" id="th" min="0" max="179" step="1" value="45">
+        <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="manyT" checked> tampilkan banyak anggota</label>
+      </div>
+
+      <div id="ctls" style="display:none">
+        <div style="font-size:13px">Garis sejajar dengan gradien tetap; hanya intersep c yang berubah. Seret titik T.</div>
+        <label>Gradien m = <b id="msv">1</b></label><input type="range" id="ms" min="-3" max="3" step="0.5" value="1">
+        <label>Intersep c = <b id="csv">0</b></label><input type="range" id="cs" min="-6" max="6" step="0.5" value="0">
+        <div class="eqrow"><button class="btn" id="bTs">Pas ke T</button></div>
+        <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="manyS" checked> tampilkan banyak anggota</label>
+      </div>
+
+      <div class="out" id="outB"></div>
+    </div>
+  </div>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Tentukan garis melalui titik potong \(2x-y-3=0\) dan \(x+3y-5=0\), serta melalui titik asal.</p>
+    <p>\((2x-y-3)+\lambda(x+3y-5)=0\). Substitusi \((0,0)\): \(-3-5\lambda=0\Rightarrow\lambda=-\tfrac35\).</p>
+    <p>\(5(2x-y-3)-3(x+3y-5)=0\Rightarrow 7x-14y=0\Rightarrow x-2y=0\).</p>
+  </div></div>
+</section>
+
+<!-- ========== 3. HUBUNGAN ========== -->
+<section id="hubungan">
+  <span class="tag">03</span><h2>Garis Bagi Sebagai Anggota Berkas</h2>
+  <p>Kedua garis bagi sudut dari \(g_1\) dan \(g_2\) melalui titik potong \(g_1\) dan \(g_2\), sehingga keduanya adalah <b>anggota berkas</b> \(g_1+\lambda g_2=0\) dengan nilai \(\lambda\) khusus. Dari \(\dfrac{g_1}{n_1}=\pm\dfrac{g_2}{n_2}\) dengan \(n_i=\sqrt{a_i^2+b_i^2}\):</p>
+  <div class="fbox">\( \lambda=\mp\dfrac{n_1}{n_2}\;=\;\mp\dfrac{\sqrt{a_1^2+b_1^2}}{\sqrt{a_2^2+b_2^2}} \)</div>
+  <p>Cobalah pada bagian Berkas Garis (tab <i>Titik potong</i>): tombol “Garis bagi lancip” dan “Garis bagi tumpul” mengatur \(\lambda\) ke nilai ini, dan garis ungu tepat membagi sudut antara kedua garis. Pada bagian Garis Bagi Sudut, nilai \(\lambda\) untuk setiap garis bagi juga dihitung otomatis.</p>
+  <div class="acc"><div class="acc-head">Contoh Soal</div><div class="acc-body">
+    <p>Untuk \(3x+4y-10=0\) dan \(5x+12y-22=0\): \(n_1=5,\ n_2=13\), sehingga \(\lambda=\mp\tfrac{5}{13}\).</p>
+    <p>\(\lambda=-\tfrac5{13}\): \(13(3x+4y-10)-5(5x+12y-22)=0\Rightarrow 7x-4y-10=0\).</p>
+    <p>\(\lambda=+\tfrac5{13}\): \(13(3x+4y-10)+5(5x+12y-22)=0\Rightarrow 4x+7y-15=0\).</p>
+    <p style="color:var(--muted)">Hasilnya sama dengan cara \(d_1=\pm d_2\) pada contoh sebelumnya.</p>
+  </div></div>
+</section>
+
+<!-- ========== LATIHAN ========== -->
+<section id="quiz">
+  <span class="tag">Latihan</span><h2>Uji Pemahaman</h2>
+  <p>Skor: <span class="score" id="score">0</span> / 5</p>
+  <div class="qc"><p>1. Garis bagi sudut antara sumbu-X dan sumbu-Y adalah...</p>
+    <button class="opt" data-c="1">y = x dan y = −x</button><button class="opt" data-c="0">x = 1 dan y = 1</button><button class="opt" data-c="0">y = 2x dan y = −2x</button>
+    <div class="exp">x/1 = ±y/1 ⟹ y = x atau y = −x.</div></div>
+  <div class="qc"><p>2. Salah satu garis bagi sudut antara \(3x+4y-10=0\) dan \(5x+12y-22=0\) adalah...</p>
+    <button class="opt" data-c="1">7x − 4y − 10 = 0</button><button class="opt" data-c="0">7x + 4y − 10 = 0</button><button class="opt" data-c="0">4x − 7y − 15 = 0</button>
+    <div class="exp">13(3x+4y−10) = 5(5x+12y−22) ⟹ 14x − 8y − 20 = 0 ⟹ 7x − 4y − 10 = 0.</div></div>
+  <div class="qc"><p>3. Garis dari berkas \(x+y-3=0\) dan \(2x-y=0\) yang melalui \((2,0)\) adalah...</p>
+    <button class="opt" data-c="0">x + 2y − 2 = 0</button><button class="opt" data-c="1">2x + y − 4 = 0</button><button class="opt" data-c="0">2x − y − 4 = 0</button>
+    <div class="exp">(x+y−3) + λ(2x−y) = 0 di (2,0): −1 + 4λ = 0 ⟹ λ = 1/4. Kalikan 4: 6x + 3y − 12 = 0 ⟹ 2x + y − 4 = 0.</div></div>
+  <div class="qc"><p>4. Himpunan garis \(y=3x+c\) dengan \(c\in\mathbb{R}\) merupakan berkas garis...</p>
+    <button class="opt" data-c="0">melalui satu titik</button><button class="opt" data-c="1">sejajar</button><button class="opt" data-c="0">tegak lurus</button>
+    <div class="exp">Gradien tetap (3), hanya intersep c yang berubah, jadi berkas sejajar.</div></div>
+  <div class="qc"><p>5. Jika \(a_1a_2+b_1b_2>0\), garis bagi sudut lancip diperoleh dari persamaan dengan tanda...</p>
+    <button class="opt" data-c="0">+ (d₁ = d₂)</button><button class="opt" data-c="1">− (d₁ = −d₂)</button><button class="opt" data-c="0">keduanya sama-sama lancip</button>
+    <div class="exp">Normal-normal garis membentuk sudut lancip bila hasil kali titiknya positif; garis bagi sudut lancip memakai g₁/n₁ + g₂/n₂ = 0, yaitu tanda −.</div></div>
+</section>
+
+</main>
+<footer>Martin Bernard, M.Pd. &middot; Program Studi Pendidikan Matematika &middot; IKIP Siliwangi</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const EPS=1e-9;
+const f=n=>String(+Number(n).toFixed(2)).replace('-','−');
+const f3=n=>String(+Number(n).toFixed(3)).replace('-','−');
+const sg=n=>n<0?'('+f(n)+')':f(n);
+const COL={g1:'#2F6BFF',g2:'#E63977',b1:'#FF9F1C',b2:'#16A34A',mem:'#7C3AED'};
+
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+// ubah koefisien ke bentuk bilangan bulat terkecil bila mungkin
+function rapi(A,B,C){
+  const skala=[1];
+  if(Math.abs(A)>EPS)skala.push(1/Math.abs(A));
+  if(Math.abs(B)>EPS)skala.push(1/Math.abs(B));
+  for(const sc of skala){
+    for(let k=1;k<=2000;k++){
+      const a=A*sc*k,b=B*sc*k,c=C*sc*k;
+      if([a,b,c].every(v=>Math.abs(v-Math.round(v))<1e-7)){
+        const g=gcd(gcd(Math.round(a),Math.round(b)),Math.round(c))||1;
+        let r=[Math.round(a)/g,Math.round(b)/g,Math.round(c)/g];
+        if(r[0]<0||(r[0]===0&&r[1]<0))r=r.map(v=>-v);
+        return {r,int:true};
+      }
+    }
+  }
+  const n=Math.hypot(A,B);let r=[A/n,B/n,C/n];
+  if(r[0]<-EPS||(Math.abs(r[0])<EPS&&r[1]<0))r=r.map(v=>-v);
+  return {r,int:false};
+}
+function eqText(A,B,C,fm=f){
+  let s='';
+  if(Math.abs(A)>EPS)s+=(Math.abs(A-1)<EPS?'':Math.abs(A+1)<EPS?'−':fm(A))+'x';
+  if(Math.abs(B)>EPS){const co=Math.abs(Math.abs(B)-1)<EPS?'':fm(Math.abs(B));
+    s+=s?(B<0?' − ':' + ')+co+'y':(B<0?'−':'')+co+'y';}
+  if(Math.abs(C)>EPS)s+=s?(C<0?' − ':' + ')+fm(Math.abs(C)):fm(C);
+  return (s||'0')+' = 0';
+}
+function foot(a,b,c,p){const t=(a*p[0]+b*p[1]+c)/(a*a+b*b);return [p[0]-a*t,p[1]-b*t];}
+
+// progress, accordion, scrollspy
+addEventListener('scroll',()=>{const h=document.documentElement;$('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+document.querySelectorAll('.acc-head').forEach(h=>h.onclick=()=>h.parentElement.classList.toggle('open'));
+const links=[...document.querySelectorAll('nav a')],secs=['bagi','berkas','hubungan','quiz'].map($);
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));links[secs.indexOf(e.target)].classList.add('active');}}),{rootMargin:'-40% 0px -50% 0px'});
+secs.forEach(s=>obs.observe(s));
+
+// papan koordinat
+function Board(id,xr,yr,S,onMove){
+  const cv=$(id),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,ox=W/2,oy=H/2;
+  const b={ctx,pts:[],X:x=>ox+x*S,Y:y=>oy-y*S};
+  b.grid=()=>{ctx.clearRect(0,0,W,H);ctx.font='11px JetBrains Mono';
+    for(let i=-xr;i<=xr;i++){ctx.strokeStyle=i?'#E6ECF8':'#8FA3C8';ctx.lineWidth=i?1:1.8;
+      ctx.beginPath();ctx.moveTo(b.X(i),0);ctx.lineTo(b.X(i),H);ctx.stroke();
+      if(i&&i%2==0){ctx.fillStyle='#8FA3C8';ctx.fillText(i,b.X(i)-4,oy+14);}}
+    for(let j=-yr;j<=yr;j++){ctx.strokeStyle=j?'#E6ECF8':'#8FA3C8';ctx.lineWidth=j?1:1.8;
+      ctx.beginPath();ctx.moveTo(0,b.Y(j));ctx.lineTo(W,b.Y(j));ctx.stroke();
+      if(j&&j%2==0){ctx.fillStyle='#8FA3C8';ctx.fillText(j,ox+5,b.Y(j)+4);}}};
+  b.line=(A,B,C,col,w=3,dash=[])=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.setLineDash(dash);ctx.beginPath();
+    if(Math.abs(B)>EPS){ctx.moveTo(b.X(-xr),b.Y((A*xr-C)/B));ctx.lineTo(b.X(xr),b.Y((-A*xr-C)/B));}
+    else{const x=-C/A;ctx.moveTo(b.X(x),b.Y(-yr));ctx.lineTo(b.X(x),b.Y(yr));}
+    ctx.stroke();ctx.setLineDash([]);};
+  b.seg=(p,q,col,w=2,dash=[])=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.setLineDash(dash);ctx.beginPath();
+    ctx.moveTo(b.X(p[0]),b.Y(p[1]));ctx.lineTo(b.X(q[0]),b.Y(q[1]));ctx.stroke();ctx.setLineDash([]);};
+  b.dot=(x,y,col,t,r=6)=>{ctx.fillStyle=col;ctx.beginPath();ctx.arc(b.X(x),b.Y(y),r,0,7);ctx.fill();
+    if(t){ctx.fillStyle='#14213D';ctx.font='600 12px Plus Jakarta Sans';ctx.fillText(t,b.X(x)+10,b.Y(y)-9);}};
+  let d=-1;
+  const pos=e=>{const r=cv.getBoundingClientRect(),k=W/r.width;return[(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  cv.addEventListener('pointerdown',e=>{const[mx,my]=pos(e);let best=-1,bd=24;
+    b.pts.forEach((p,i)=>{const q=Math.hypot(b.X(p.x)-mx,b.Y(p.y)-my);if(q<bd){bd=q;best=i;}});
+    if(best>=0){d=best;cv.setPointerCapture(e.pointerId);}});
+  cv.addEventListener('pointermove',e=>{if(d<0)return;const[mx,my]=pos(e);
+    const x=Math.round((mx-ox)/S*2)/2,y=Math.round((oy-my)/S*2)/2;
+    b.pts[d].x=Math.max(-xr+1,Math.min(xr-1,x));b.pts[d].y=Math.max(-yr+1,Math.min(yr-1,y));onMove();});
+  cv.addEventListener('pointerup',()=>d=-1);
+  return b;
+}
+
+// ============ BAGIAN 1: garis bagi sudut ============
+const BA=Board('cvA',10,7,28,()=>{});
+const idsA=['Aa1','Ab1','Ac1','Aa2','Ab2','Ac2'];
+let selB=1;
+function bisect(a1,b1,c1,a2,b2,c2,s){const n1=Math.hypot(a1,b1),n2=Math.hypot(a2,b2);
+  return [a1/n1-s*a2/n2,b1/n1-s*b2/n2,c1/n1-s*c2/n2];}
+function dA(){
+  const v=idsA.map(i=>parseFloat($(i).value)),[a1,b1,c1,a2,b2,c2]=v,out=$('outA');
+  BA.grid();
+  if(v.some(isNaN)||(a1===0&&b1===0)||(a2===0&&b2===0)){
+    out.innerHTML='<div class="warn">Isi semua koefisien; a dan b pada tiap garis tidak boleh sama-sama 0.</div>';return;}
+  const n1=Math.hypot(a1,b1),n2=Math.hypot(a2,b2),det=a1*b2-a2*b1,dot=a1*a2+b1*b2,para=Math.abs(det)<EPS;
+  BA.line(a1,b1,c1,COL.g1);BA.line(a2,b2,c2,COL.g2);
+  const list=[];
+  [1,-1].forEach(s=>{const [A,B,C]=bisect(a1,b1,c1,a2,b2,c2,s);if(Math.hypot(A,B)>1e-9)list.push({s,A,B,C});});
+  list.forEach(L=>BA.line(L.A,L.B,L.C,L.s===1?COL.b1:COL.b2,3));
+  let html=`<div>n₁ = √(${f(a1)}²+${f(b1)}²) = ${f3(n1)}, n₂ = ${f3(n2)}</div>`;
+  if(!list.length){out.innerHTML=html+'<div class="warn">Kedua garis berimpit: tidak ada sudut yang dibagi.</div>';return;}
+  let P=null;
+  if(!para){P=[(b1*c2-b2*c1)/det,(c1*a2-c2*a1)/det];BA.dot(P[0],P[1],'#14213D','P('+f(P[0])+', '+f(P[1])+')',5);
+    html+=`<div>Titik potong P(${f3(P[0])}, ${f3(P[1])})</div>`;}
+  const acuteS=Math.abs(dot)<EPS?0:(dot>0?-1:1);
+  list.forEach(L=>{
+    const rr=rapi(L.A,L.B,L.C),fm=rr.int?f:f3,nm=L.s===1?'b₁ (+)':'b₂ (−)';
+    const kind=para?'garis tengah (kedua garis sejajar)':acuteS===0?'membagi sudut siku-siku':(L.s===acuteS?'bagi sudut lancip':'bagi sudut tumpul');
+    const lam=-L.s*n1/n2;
+    html+=`<div><span class="k ${L.s===1?'b1':'b2'}">${nm}</span> ${eqText(...rr.r,fm)}<br>&nbsp;&nbsp;${kind}${para?'':'; λ = '+f3(lam)}</div>`;
+  });
+  if(list.length===2&&!para){const m=L=>Math.abs(L.B)<EPS?null:-L.A/L.B;const m1=m(list[0]),m2=m(list[1]);
+    html+=`<div>${m1===null||m2===null?'Salah satu garis bagi vertikal, yang lain mendatar.':'m₁·m₂ = '+f3(m1)+' × '+f3(m2)+' = '+f3(m1*m2)}</div>`;}
+  // titik Q pada garis bagi terpilih
+  const L=list.find(x=>x.s===selB)||list[0],t=parseFloat($('tQ').value);$('tQv').textContent=f(t);
+  const base=P||[-L.A*L.C/(L.A*L.A+L.B*L.B),-L.B*L.C/(L.A*L.A+L.B*L.B)],nL=Math.hypot(L.A,L.B);
+  const Q=[base[0]+t*L.B/nL,base[1]-t*L.A/nL];
+  const F1=foot(a1,b1,c1,Q),F2=foot(a2,b2,c2,Q);
+  BA.seg(Q,F1,COL.g1,2,[5,4]);BA.seg(Q,F2,COL.g2,2,[5,4]);
+  BA.dot(F1[0],F1[1],COL.g1,'',3.5);BA.dot(F2[0],F2[1],COL.g2,'',3.5);
+  BA.dot(Q[0],Q[1],L.s===1?COL.b1:COL.b2,'Q',7);
+  const d1=Math.abs(a1*Q[0]+b1*Q[1]+c1)/n1,d2=Math.abs(a2*Q[0]+b2*Q[1]+c2)/n2;
+  html+=`<div>Di Q: d₁ = ${f3(d1)}, d₂ = ${f3(d2)}</div>`;
+  out.innerHTML=html;
+}
+idsA.forEach(i=>$(i).oninput=dA);$('tQ').oninput=dA;
+document.querySelectorAll('[data-pa]').forEach(bt=>bt.onclick=()=>{bt.dataset.pa.split(',').forEach((v,i)=>$(idsA[i]).value=v);dA();});
+$('selP').onclick=()=>{selB=1;$('selP').classList.add('on');$('selM').classList.remove('on');dA();};
+$('selM').onclick=()=>{selB=-1;$('selM').classList.add('on');$('selP').classList.remove('on');dA();};
+dA();
+
+// ============ BAGIAN 2: berkas garis ============
+const BB=Board('cvB',10,7,28,()=>dB());
+const PTS={p:[{x:-3,y:2}],t:[{x:1,y:1}],s:[{x:-2,y:3}]};
+let mB='p',lamExact=null;
+const G1=[2,-1,-3],G2=[1,3,-5],N1=Math.hypot(2,-1),N2=Math.hypot(1,3),DOT12=G1[0]*G2[0]+G1[1]*G2[1];
+const ACUTE_S=DOT12>0?-1:1;
+const lamAcute=-ACUTE_S*N1/N2,lamObt=ACUTE_S*N1/N2;
+const getLam=()=>lamExact!==null?lamExact:parseFloat($('lam').value);
+function setMode(m){mB=m;BB.pts=PTS[m];
+  ['p','t','s'].forEach(k=>{$('ctl'+k).style.display=k===m?'block':'none';$('tab'+k).classList.toggle('on',k===m);});dB();}
+function dB(){
+  BB.grid();const out=$('outB');let html='';
+  if(mB==='p'){
+    const lam=getLam(),T=PTS.p[0];$('lamv').textContent=f3(lam);
+    const A=G1[0]+lam*G2[0],B=G1[1]+lam*G2[1],C=G1[2]+lam*G2[2];
+    if($('manyP').checked)for(let k=-8;k<=8;k++)BB.line(G1[0]+k*.5*G2[0],G1[1]+k*.5*G2[1],G1[2]+k*.5*G2[2],'#7C3AED2E',1.5);
+    BB.line(...G1,COL.g1,3);BB.line(...G2,COL.g2,3);
+    BB.line(A,B,C,COL.mem,4);
+    BB.dot(2,1,'#14213D','P(2, 1)',5);BB.dot(T.x,T.y,'#14213D','T('+f(T.x)+', '+f(T.y)+')',6);
+    let tag='';
+    if(Math.abs(lam)<0.005)tag=' = g₁';
+    else if(Math.abs(lam-lamAcute)<0.004)tag=' → garis bagi sudut lancip';
+    else if(Math.abs(lam-lamObt)<0.004)tag=' → garis bagi sudut tumpul';
+    const g1T=G1[0]*T.x+G1[1]*T.y+G1[2],g2T=G2[0]*T.x+G2[1]*T.y+G2[2];
+    html=`<div><span class="k m">anggota</span> (2x − y − 3) + λ(x + 3y − 5) = 0</div>
+      <div>λ = ${f3(lam)}${tag}</div><div>⟹ ${eqText(A,B,C,f3)}</div>
+      <div>${Math.abs(B)<EPS?'garis vertikal':'gradien = '+f3(-A/B)}</div>
+      <div>Semua anggota melalui P(2, 1).</div>
+      <div>${Math.abs(g2T)<EPS?'T terletak pada g₂ (λ → ∞).':'Agar melalui T: λ = −g₁(T)/g₂(T) = '+f3(-g1T/g2T)}</div>
+      <div style="color:#5C6B8A">λ bagi sudut: lancip ${f3(lamAcute)}, tumpul ${f3(lamObt)}</div>`;
+  }else if(mB==='t'){
+    const th=parseFloat($('th').value),T=PTS.t[0];$('thv').textContent=th;
+    const rad=th*Math.PI/180,A=Math.sin(rad),B=-Math.cos(rad),C=-(A*T.x+B*T.y);
+    if($('manyT').checked)for(let k=0;k<180;k+=15){const r=k*Math.PI/180,a=Math.sin(r),bb=-Math.cos(r);BB.line(a,bb,-(a*T.x+bb*T.y),'#7C3AED2E',1.5);}
+    BB.line(A,B,C,COL.mem,4);BB.dot(T.x,T.y,'#14213D','T('+f(T.x)+', '+f(T.y)+')',7);
+    const vert=th===90,m=Math.tan(rad);
+    html=`<div><span class="k m">anggota</span> y − y₀ = m(x − x₀)</div>
+      <div>${vert?'θ = 90°: garis vertikal, m tak terdefinisi':'m = tan '+th+'° = '+f3(m)}</div>
+      <div>${vert?'x = '+f(T.x):'y − '+sg(T.y)+' = '+f3(m)+'(x − '+sg(T.x)+')'}</div>
+      <div>${vert?'':'⟹ '+eqText(-m,1,-(T.y-m*T.x),f3).replace(/^/,'')}</div>`;
+  }else{
+    const m=parseFloat($('ms').value),c=parseFloat($('cs').value),T=PTS.s[0];
+    $('msv').textContent=f(m);$('csv').textContent=f(c);
+    if($('manyS').checked)for(let k=-12;k<=12;k++)BB.line(m,-1,k*.5,'#7C3AED2E',1.5);
+    BB.line(m,-1,c,COL.mem,4);BB.dot(T.x,T.y,'#14213D','T('+f(T.x)+', '+f(T.y)+')',7);
+    const cT=T.y-m*T.x;
+    const mx=Math.abs(m)<EPS?'':(m===1?'':m===-1?'−':f(m))+'x';
+    html=`<div><span class="k m">anggota</span> y = ${mx?mx+' + c':'c'}</div>
+      <div>c = ${f(c)} ⟹ ${eqText(m,-1,c,f)}</div>
+      <div>Semua anggota bergradien m = ${f(m)} (saling sejajar).</div>
+      <div>Agar melalui T: c = y_T − m·x_T = ${f(cT)}</div>`;
+  }
+  out.innerHTML=html;
+}
+$('tabp').onclick=()=>setMode('p');$('tabt').onclick=()=>setMode('t');$('tabs').onclick=()=>setMode('s');
+$('lam').oninput=()=>{lamExact=null;dB();};
+const setLam=v=>{lamExact=v;$('lam').value=Math.max(-8,Math.min(8,v));dB();};
+$('bG1').onclick=()=>setLam(0);$('bAcute').onclick=()=>setLam(lamAcute);$('bObt').onclick=()=>setLam(lamObt);
+$('bT').onclick=()=>{const T=PTS.p[0],g1T=G1[0]*T.x+G1[1]*T.y+G1[2],g2T=G2[0]*T.x+G2[1]*T.y+G2[2];
+  if(Math.abs(g2T)>EPS)setLam(-g1T/g2T);};
+$('bTs').onclick=()=>{const T=PTS.s[0],m=parseFloat($('ms').value);
+  $('cs').value=Math.max(-6,Math.min(6,Math.round((T.y-m*T.x)*2)/2));dB();};
+['th','ms','cs','manyP','manyT','manyS'].forEach(i=>$(i).oninput=dB);
+['manyP','manyT','manyS'].forEach(i=>$(i).onchange=dB);
+setMode('p');
+
+// ============ latihan ============
+let sc=0;
+document.querySelectorAll('.qc').forEach(q=>q.querySelectorAll('.opt').forEach(bt=>bt.onclick=()=>{
+  if(q.dataset.a)return;q.dataset.a=1;
+  q.querySelectorAll('.opt').forEach(o=>o.classList.add(o.dataset.c==='1'?'ok':'no'));
+  q.querySelector('.exp').style.display='block';
+  if(bt.dataset.c==='1')$('score').textContent=++sc;
+}));
+</script>
+</body>
+</html>
