@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latihan HOTS: Garis Bagi Sudut dan Berkas Garis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fcfcfa;
+    --ink: #1d2433;
+    --muted: #5b6477;
+    --blue: #1f4fd8;
+    --blue-soft: #e8eefc;
+    --grid: #c9d6f2;
+    --rule: #d9deea;
+    --sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+    --serif: "Literata", Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: #eef0f5;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .sheet {
+    max-width: 52rem;
+    margin: 2rem auto;
+    background: var(--paper);
+    box-shadow: 0 1px 0 var(--rule), 0 12px 40px rgba(29, 36, 51, .08);
+  }
+
+  /* ---------- Kepala: kertas berpetak ---------- */
+  header {
+    padding: 2.5rem 2.5rem 2rem;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-color: #f4f7ff;
+    border-bottom: 3px solid var(--blue);
+    position: relative;
+  }
+  header::after { /* sumbu koordinat */
+    content: "";
+    position: absolute; right: 2.5rem; top: 1.5rem; bottom: 1.5rem; width: 9rem;
+    background:
+      linear-gradient(var(--blue), var(--blue)) center / 100% 2px no-repeat,
+      linear-gradient(var(--blue), var(--blue)) center / 2px 100% no-repeat,
+      linear-gradient(33deg,  transparent 49.4%, #d9480f 49.4% 50.6%, transparent 50.6%),
+      linear-gradient(-58deg, transparent 49.4%, #0b7285 49.4% 50.6%, transparent 50.6%),
+      linear-gradient(-12deg, transparent 49.4%, #2f9e44 49.4% 50.6%, transparent 50.6%);
+    opacity: .85;
+  }
+  header h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(1.7rem, 4.5vw, 2.5rem);
+    line-height: 1.15;
+    margin: 0 0 .5rem;
+    max-width: 24ch;
+  }
+  header p { margin: 0; color: var(--muted); font-family: var(--sans); max-width: 40ch; }
+
+  .identitas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem 2rem;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: .95rem;
+  }
+  .identitas span { display: block; border-bottom: 1px solid var(--ink); padding-bottom: .1rem; min-height: 1.9rem; color: var(--muted); }
+
+  main { padding: 0 2.5rem 2rem; }
+
+  /* ---------- Bekal rumus & petunjuk ---------- */
+  .catatan {
+    margin: 2rem 0 .5rem;
+    padding: 1.1rem 1.4rem;
+    background: var(--blue-soft);
+    border-left: 4px solid var(--blue);
+    font-size: .98rem;
+  }
+  .catatan h2 { font-family: var(--sans); font-size: 1.05rem; margin: 0 0 .5rem; }
+  .catatan ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+  .catatan li { margin: .35rem 0; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .2rem; line-height: 1.3; }
+  .frac > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 .3rem; }
+  .frac > span:last-child { padding: 0 .3rem; }
+  i.v { font-style: italic; }
+
+  /* ---------- Bagian ---------- */
+  .bagian { margin-top: 2.5rem; }
+  .bagian > h2 {
+    font-family: var(--sans);
+    font-size: 1.35rem;
+    margin: 0 0 .25rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .bagian > p.ket { margin: .4rem 0 0; color: var(--muted); font-family: var(--sans); font-size: .95rem; }
+
+  /* ---------- Soal ---------- */
+  ol.soal { list-style: none; counter-reset: no; margin: 0; padding: 0; }
+  ol.soal > li {
+    counter-increment: no;
+    position: relative;
+    margin-top: 2rem;
+    padding-left: 3.2rem;
+    break-inside: avoid;
+  }
+  ol.soal > li::before {
+    content: counter(no);
+    position: absolute; left: 0; top: .05rem;
+    width: 2.2rem; height: 2.2rem;
+    display: grid; place-items: center;
+    font-family: var(--sans); font-weight: 700; font-size: 1.05rem;
+    color: #fff; background: var(--blue);
+    border-radius: 50%;
+  }
+  .tingkat {
+    display: inline-block;
+    font-family: var(--sans); font-size: .82rem; font-weight: 600;
+    color: var(--blue); background: var(--blue-soft);
+    padding: .05rem .6rem; border-radius: 99px; margin-bottom: .4rem;
+  }
+  li p { margin: .3rem 0; }
+  li ol.sub { list-style: lower-alpha; margin: .4rem 0 0; padding-left: 1.4rem; }
+  li ol.sub li { margin: .35rem 0; padding: 0; }
+  .m { font-family: "Cambria Math", "STIX Two Math", var(--serif); font-style: italic; white-space: nowrap; }
+  .pers { display: block; margin: .5rem 0 .5rem 0; padding: .35rem .9rem; background: #f1f3f8; border-radius: 4px; font-family: "Cambria Math", "STIX Two Math", var(--serif); }
+
+  /* ruang jawab berpetak */
+  .ruang {
+    margin-top: .9rem;
+    height: 9rem;
+    border: 1px solid var(--grid);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-color: #fbfcff;
+  }
+  .ruang.tinggi { height: 13rem; }
+
+  footer {
+    padding: 1.2rem 2.5rem 2rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--sans); font-size: .9rem; color: var(--muted);
+  }
+
+  @media (max-width: 36rem) {
+    header, main, footer, .identitas { padding-left: 1.2rem; padding-right: 1.2rem; }
+    header::after { display: none; }
+    ol.soal > li { padding-left: 2.8rem; }
+  }
+  @media print {
+    body { background: #fff; font-size: 11pt; }
+    .sheet { margin: 0; box-shadow: none; max-width: none; }
+    header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    ol.soal > li::before, .catatan, .tingkat, .ruang { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .bagian > h2 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <h1>Latihan HOTS: Garis Bagi Sudut dan Berkas Garis</h1>
+    <p>Delapan soal penalaran untuk kelas XI. Kerjakan dengan runtut dan sertakan alasan di setiap langkah.</p>
+  </header>
+
+  <div class="identitas">
+    <div>Nama <span></span></div>
+    <div>Kelas <span></span></div>
+    <div>Tanggal <span></span></div>
+  </div>
+
+  <main>
+
+    <section class="catatan">
+      <h2>Petunjuk dan bekal rumus</h2>
+      <ul>
+        <li>Tuliskan apa yang diketahui, apa yang ditanyakan, dan strategi penyelesaian sebelum menghitung.</li>
+        <li>Kalimat “jelaskan”, “selidiki”, atau “buktikan” menuntut alasan matematis, bukan hanya hasil akhir.</li>
+        <li>Garis bagi sudut dari <span class="m">g₁ : a₁x + b₁y + c₁ = 0</span> dan <span class="m">g₂ : a₂x + b₂y + c₂ = 0</span> memenuhi
+          <span class="m">
+            <span class="frac"><span>a₁x + b₁y + c₁</span><span>√(a₁² + b₁²)</span></span> = ±
+            <span class="frac"><span>a₂x + b₂y + c₂</span><span>√(a₂² + b₂²)</span></span>
+          </span>
+        </li>
+        <li>Berkas garis melalui titik potong <span class="m">g₁</span> dan <span class="m">g₂</span> berbentuk <span class="m">g₁ + λ g₂ = 0</span>.</li>
+        <li>Jarak titik <span class="m">(x₀, y₀)</span> ke garis <span class="m">ax + by + c = 0</span> adalah
+          <span class="m"><span class="frac"><span>|ax₀ + by₀ + c|</span><span>√(a² + b²)</span></span></span>.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== BAGIAN A ===================== -->
+    <section class="bagian">
+      <h2>Bagian A. Garis bagi sudut</h2>
+      <ol class="soal">
+
+        <li>
+          <span class="tingkat">Menganalisis</span>
+          <p>Diberikan dua garis
+            <span class="m">g₁ : 3x + 4y − 10 = 0</span> dan
+            <span class="m">g₂ : 4x − 3y − 5 = 0</span>.
+            Dina menyatakan bahwa garis bagi sudutnya cukup diperoleh dengan menjumlahkan dan mengurangkan kedua persamaan, yaitu <span class="m">g₁ + g₂ = 0</span> dan <span class="m">g₁ − g₂ = 0</span>.</p>
+          <ol class="sub">
+            <li>Tentukan titik potong <span class="m">g₁</span> dan <span class="m">g₂</span>.</li>
+            <li>Tentukan persamaan kedua garis bagi sudut dengan rumus jarak, lalu periksa apakah hasilnya sama dengan cara Dina.</li>
+            <li>Jelaskan mengapa cara Dina berlaku untuk pasangan garis ini, dan beri contoh pasangan garis yang membuat cara itu salah.</li>
+          </ol>
+          <div class="ruang tinggi"></div>
+        </li>
+
+        <li>
+          <span class="tingkat">Menganalisis dan mengevaluasi</span>
+          <p>Sebuah segitiga dibatasi oleh sumbu‑<span class="m">x</span>, sumbu‑<span class="m">y</span>, dan garis
+            <span class="m">3x + 4y − 12 = 0</span>.</p>
+          <ol class="sub">
+            <li>Tentukan persamaan garis bagi sudut di titik <span class="m">(4, 0)</span>. Dari dua garis bagi yang muncul, jelaskan cara memilih garis bagi sudut dalam segitiga.</li>
+            <li>Tentukan koordinat titik pusat lingkaran dalam segitiga tersebut, lalu tuliskan persamaan lingkaran dalamnya.</li>
+            <li>Tunjukkan bahwa jarak titik pusat itu ke ketiga sisi segitiga sama besar.</li>
+          </ol>
+          <div class="ruang tinggi"></div>
+        </li>
+
+        <li>
+          <span class="tingkat">Mengaplikasikan dan mencipta</span>
+          <p>Pada peta berskala kilometer, dua jalan lurus dinyatakan oleh
+            <span class="m">j₁ : y = 0</span> dan <span class="m">j₂ : 3x − 4y = 0</span>.
+            Pemerintah akan membangun pos pemadam kebakaran di titik <span class="m">T</span> yang terletak pada garis bagi sudut lancip antara kedua jalan, berada di kuadran I, dan berjarak 2 km dari masing‑masing jalan.</p>
+          <ol class="sub">
+            <li>Tentukan persamaan garis bagi yang membagi sudut lancip, dan jelaskan bagaimana Anda memastikan bahwa itu sudut lancip.</li>
+            <li>Tentukan koordinat <span class="m">T</span>.</li>
+            <li>Tentukan persamaan lingkaran berpusat di <span class="m">T</span> yang menyinggung kedua jalan, lalu jelaskan mengapa lingkaran itu pasti menyinggung keduanya.</li>
+          </ol>
+          <div class="ruang tinggi"></div>
+        </li>
+
+        <li>
+          <span class="tingkat">Menganalisis</span>
+          <p>Diketahui <span class="m">g₁ : x + 2y − 5 = 0</span> dan <span class="m">g₂ : 2x − y + k = 0</span>.
+            Salah satu garis bagi sudut dari kedua garis itu melalui titik <span class="m">(1, 1)</span>.</p>
+          <ol class="sub">
+            <li>Tentukan semua nilai <span class="m">k</span> yang mungkin.</li>
+            <li>Jelaskan mengapa Anda mendapat lebih dari satu nilai <span class="m">k</span>, dan tafsirkan secara geometri masing‑masing nilai itu.</li>
+          </ol>
+          <div class="ruang"></div>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- ===================== BAGIAN B ===================== -->
+    <section class="bagian">
+      <h2>Bagian B. Berkas garis</h2>
+      <p class="ket">Untuk soal 5 sampai 7, gunakan <span class="m">g₁ : x + y − 4 = 0</span> dan <span class="m">g₂ : 2x − y − 2 = 0</span>.</p>
+      <ol class="soal" style="counter-reset: no 4;">
+
+        <li>
+          <span class="tingkat">Mengevaluasi</span>
+          <p>Perhatikan berkas garis <span class="m">g₁ + λ g₂ = 0</span>. Titik <span class="m">A(−1, −2)</span> diketahui.</p>
+          <ol class="sub">
+            <li>Tentukan titik pusat berkas.</li>
+            <li>Di antara semua anggota berkas, tentukan persamaan anggota yang jaraknya dari <span class="m">A</span> paling besar, dan nyatakan jarak maksimum itu.</li>
+            <li>Jelaskan secara geometri mengapa anggota berkas yang Anda peroleh memberi jarak terbesar, tanpa menurunkan fungsi jarak terhadap <span class="m">λ</span>.</li>
+          </ol>
+          <div class="ruang tinggi"></div>
+        </li>
+
+        <li>
+          <span class="tingkat">Menganalisis dan mengevaluasi</span>
+          <p>Selidiki apakah ada anggota berkas <span class="m">g₁ + λ g₂ = 0</span> yang bersama kedua sumbu koordinat membentuk segitiga siku‑siku sama kaki (kemiringan garis <span class="m">1</span> atau <span class="m">−1</span>).</p>
+          <ol class="sub">
+            <li>Tentukan semua nilai <span class="m">λ</span> yang memenuhi, jika ada.</li>
+            <li>Salah satu kemiringan di atas tidak menghasilkan nilai <span class="m">λ</span> sama sekali. Jelaskan alasannya, lalu hubungkan dengan fakta bahwa <span class="m">g₂</span> tidak dapat dinyatakan sebagai <span class="m">g₁ + λ g₂ = 0</span> untuk <span class="m">λ</span> berhingga.</li>
+          </ol>
+          <div class="ruang"></div>
+        </li>
+
+        <li>
+          <span class="tingkat">Mengaplikasikan</span>
+          <p>Lingkaran <span class="m">L : x² + y² = 4</span> diberikan. Tentukan semua anggota berkas <span class="m">g₁ + λ g₂ = 0</span> yang menyinggung <span class="m">L</span>, dan nyatakan hasilnya dalam bentuk persamaan garis yang paling sederhana.</p>
+          <p>Kemudian jelaskan hubungan hasil Anda dengan garis singgung dari titik pusat berkas ke lingkaran <span class="m">L</span>.</p>
+          <div class="ruang tinggi"></div>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- ===================== BAGIAN C ===================== -->
+    <section class="bagian">
+      <h2>Bagian C. Penalaran: menghubungkan keduanya</h2>
+      <ol class="soal" style="counter-reset: no 7;">
+
+        <li>
+          <span class="tingkat">Mencipta</span>
+          <p>Misalkan <span class="m">g₁ : a₁x + b₁y + c₁ = 0</span> dan <span class="m">g₂ : a₂x + b₂y + c₂ = 0</span> berpotongan di satu titik.</p>
+          <ol class="sub">
+            <li>Buktikan bahwa kedua garis bagi sudutnya merupakan anggota berkas <span class="m">g₁ + λ g₂ = 0</span>, dan nyatakan nilai <span class="m">λ</span> dalam <span class="m">a₁, b₁, a₂, b₂</span>.</li>
+            <li>Jika <span class="m">g₁</span> dan <span class="m">g₂</span> sejajar, apa yang terjadi pada rumus garis bagi di atas? Tentukan persamaan garis yang berjarak sama dari
+              <span class="m">2x + y − 3 = 0</span> dan <span class="m">2x + y + 7 = 0</span>, lalu jelaskan mengapa hanya satu tanda <span class="m">±</span> yang menghasilkan garis.</li>
+          </ol>
+          <div class="ruang tinggi"></div>
+        </li>
+
+      </ol>
+    </section>
+
+  </main>
+
+  <footer>
+    Latihan ini dapat dicetak langsung dari peramban (Ctrl + P). Ruang berpetak disediakan untuk coretan dan jawaban.
+  </footer>
+
+</div>
+</body>
+</html>
