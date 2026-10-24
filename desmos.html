@@ -171,10 +171,15 @@
     expressions: false,      // daftar rumus bawaan disembunyikan, kita pakai panel sendiri
     settingsMenu: false,
     zoomButtons: false,
+    squareAxes: true,
     keypad: false,
     border: false
   });
 
+// Opsional: tentukan jendela awal dengan rasio yang tepat
+const lebar = 20; // satuan x yang terlihat
+const tinggi = lebar * elemen.clientHeight / elemen.clientWidth;
+calc.setMathBounds({ left: -lebar/2, right: lebar/2, bottom: -tinggi/2, top: tinggi/2 });
   const WARNA = [Desmos.Colors.RED, Desmos.Colors.BLUE, Desmos.Colors.GREEN,
                  Desmos.Colors.PURPLE, Desmos.Colors.ORANGE, Desmos.Colors.BLACK];
   const BATAS_AWAL = { left: -10, right: 10, bottom: -7, top: 7 };
