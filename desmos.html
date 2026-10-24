@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integrasi Desmos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- 1. Muat Desmos API.
+     Kunci di bawah adalah kunci demo. Untuk produksi, minta kunci sendiri di
+     https://www.desmos.com/api/v1.11/docs/index.html -->
+<script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+
+<style>
+  :root {
+    --ink: #172033;
+    --ink-soft: #55607a;
+    --paper: #eef3f8;
+    --panel: #ffffff;
+    --line: #d3dce8;
+    --accent: #c2185b;
+    --accent-ink: #ffffff;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    grid-template-rows: 100%;
+  }
+
+  /* ---------- Panel kontrol ---------- */
+  aside {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  h1 { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
+  h2 { font-size: 0.95rem; font-weight: 600; margin: 0 0 8px; }
+  p.hint { margin: 4px 0 0; font-size: 0.85rem; color: var(--ink-soft); line-height: 1.45; }
+
+  form { display: flex; gap: 8px; }
+  input[type="text"] {
+    flex: 1; min-width: 0;
+    font: inherit; padding: 9px 11px;
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--paper); color: var(--ink);
+  }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    padding: 9px 13px; border-radius: var(--radius);
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  }
+  button:hover { background: var(--paper); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  button.primary:hover { filter: brightness(1.1); }
+  :is(button, input):focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips button { font-weight: 400; padding: 5px 10px; font-size: 0.85rem; }
+
+  ul#daftar { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  ul#daftar li {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 8px; border: 1px solid var(--line); border-radius: var(--radius);
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem;
+  }
+  ul#daftar .swatch { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+  ul#daftar .teks { flex: 1; overflow-wrap: anywhere; }
+  ul#daftar button { padding: 2px 8px; font-size: 0.8rem; }
+  .kosong { color: var(--ink-soft); font-size: 0.85rem; }
+
+  .slider-row { display: grid; grid-template-columns: 22px 1fr 44px; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .slider-row output { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+  .aksi { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ---------- Area grafik ---------- */
+  main { position: relative; min-width: 0; }
+  #kalkulator { position: absolute; inset: 0; }
+  .galat {
+    position: absolute; inset: 0; display: none; place-items: center;
+    padding: 24px; text-align: center; color: var(--ink-soft);
+  }
+
+  @media (max-width: 760px) {
+    body { grid-template-columns: 1fr; grid-template-rows: 55% 45%; }
+    main { order: -1; }
+    aside { border-right: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div>
+    <h1>Grafik Desmos</h1>
+    <p class="hint">Ketik rumus, grafiknya langsung tergambar. Gunakan <b>a</b> dan <b>b</b> untuk parameter.</p>
+  </div>
+
+  <section>
+    <h2>Tambah rumus</h2>
+    <form id="form-rumus" autocomplete="off">
+      <input type="text" id="input-rumus" placeholder="y = a*sin(b*x)" aria-label="Rumus">
+      <button class="primary" type="submit">Tambah</button>
+    </form>
+    <p class="hint">Contoh: <code>y=x^2-4</code>, <code>x^2+y^2=9</code>, <code>y=sqrt(x)</code></p>
+  </section>
+
+  <section>
+    <h2>Contoh cepat</h2>
+    <div class="chips" id="preset"></div>
+  </section>
+
+  <section>
+    <h2>Daftar rumus</h2>
+    <ul id="daftar"></ul>
+  </section>
+
+  <section>
+    <h2>Parameter</h2>
+    <div class="slider-row">
+      <label for="sl-a">a</label>
+      <input type="range" id="sl-a" min="-5" max="5" step="0.1" value="1">
+      <output id="out-a">1</output>
+    </div>
+    <div class="slider-row">
+      <label for="sl-b">b</label>
+      <input type="range" id="sl-b" min="-5" max="5" step="0.1" value="1">
+      <output id="out-b">1</output>
+    </div>
+  </section>
+
+  <section class="aksi">
+    <button id="btn-zoom-in">Perbesar</button>
+    <button id="btn-zoom-out">Perkecil</button>
+    <button id="btn-reset">Reset tampilan</button>
+    <button id="btn-hapus">Hapus semua</button>
+    <button id="btn-png" class="primary">Unduh PNG</button>
+  </section>
+</aside>
+
+<main>
+  <div id="kalkulator"></div>
+  <div class="galat" id="galat">
+    <p>Desmos gagal dimuat. Periksa koneksi internet dan pastikan skrip API tidak diblokir.</p>
+  </div>
+</main>
+
+<script>
+  // ============================================================
+  // 2. Inisialisasi kalkulator
+  // ============================================================
+  if (typeof Desmos === "undefined") {
+    document.getElementById("galat").style.display = "grid";
+    throw new Error("Desmos API tidak tersedia");
+  }
+
+  const elemen = document.getElementById("kalkulator");
+  const calc = Desmos.GraphingCalculator(elemen, {
+    expressions: false,      // daftar rumus bawaan disembunyikan, kita pakai panel sendiri
+    settingsMenu: false,
+    zoomButtons: false,
+    keypad: false,
+    border: false
+  });
+
+  const WARNA = [Desmos.Colors.RED, Desmos.Colors.BLUE, Desmos.Colors.GREEN,
+                 Desmos.Colors.PURPLE, Desmos.Colors.ORANGE, Desmos.Colors.BLACK];
+  const BATAS_AWAL = { left: -10, right: 10, bottom: -7, top: 7 };
+
+  const daftarRumus = [];   // { id, teks, warna }
+  let urutan = 0;
+
+  // ============================================================
+  // 3. Konversi teks biasa -> LaTeX yang dimengerti Desmos
+  // ============================================================
+  function keLatex(teks) {
+    return teks
+      .replace(/sqrt\(([^()]*)\)/g, "\\sqrt{$1}")
+      .replace(/\b(arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|sec|csc|cot|ln|log)\b/g, "\\$1")
+      .replace(/\bpi\b/g, "\\pi")
+      .replace(/\^(-?\d{2,})/g, "^{$1}")
+      .replace(/\*/g, "\\cdot ")
+      .replace(/<=/g, "\\le ")
+      .replace(/>=/g, "\\ge ");
+  }
+
+  // ============================================================
+  // 4. Operasi rumus
+  // ============================================================
+  function tambahRumus(teks) {
+    teks = teks.trim();
+    if (!teks) return;
+    const id = "rumus-" + (++urutan);
+    const warna = WARNA[(urutan - 1) % WARNA.length];
+    calc.setExpression({ id, latex: keLatex(teks), color: warna });
+    daftarRumus.push({ id, teks, warna });
+    gambarDaftar();
+  }
+
+  function hapusRumus(id) {
+    calc.removeExpression({ id });
+    const i = daftarRumus.findIndex(r => r.id === id);
+    if (i >= 0) daftarRumus.splice(i, 1);
+    gambarDaftar();
+  }
+
+  function hapusSemua() {
+    daftarRumus.splice(0).forEach(r => calc.removeExpression({ id: r.id }));
+    gambarDaftar();
+  }
+
+  function gambarDaftar() {
+    const ul = document.getElementById("daftar");
+    ul.innerHTML = "";
+    if (!daftarRumus.length) {
+      ul.innerHTML = '<li class="kosong" style="border:0;padding:0">Belum ada rumus. Tambahkan satu di atas.</li>';
+      return;
+    }
+    daftarRumus.forEach(r => {
+      const li = document.createElement("li");
+      const sw = document.createElement("span");
+      sw.className = "swatch"; sw.style.background = r.warna;
+      const tx = document.createElement("span");
+      tx.className = "teks"; tx.textContent = r.teks;
+      const bt = document.createElement("button");
+      bt.textContent = "Hapus";
+      bt.setAttribute("aria-label", "Hapus rumus " + r.teks);
+      bt.addEventListener("click", () => hapusRumus(r.id));
+      li.append(sw, tx, bt);
+      ul.appendChild(li);
+    });
+  }
+
+  // ============================================================
+  // 5. Parameter a dan b (slider HTML <-> variabel Desmos)
+  // ============================================================
+  ["a", "b"].forEach(nama => {
+    calc.setExpression({ id: "param-" + nama, latex: nama + "=1", hidden: true });
+    const slider = document.getElementById("sl-" + nama);
+    const keluaran = document.getElementById("out-" + nama);
+    slider.addEventListener("input", () => {
+      keluaran.textContent = slider.value;
+      calc.setExpression({ id: "param-" + nama, latex: nama + "=" + slider.value });
+    });
+  });
+
+  // ============================================================
+  // 6. Event form, preset, dan tombol
+  // ============================================================
+  document.getElementById("form-rumus").addEventListener("submit", e => {
+    e.preventDefault();
+    const input = document.getElementById("input-rumus");
+    tambahRumus(input.value);
+    input.value = "";
+    input.focus();
+  });
+
+  const PRESET = [
+    "y=a*sin(b*x)", "y=x^2", "y=a*x+b", "x^2+y^2=9",
+    "y=ln(x)", "y=abs(x)", "y=tan(x)", "y=sqrt(x)"
+  ];
+  const wadahPreset = document.getElementById("preset");
+  PRESET.forEach(p => {
+    const b = document.createElement("button");
+    b.textContent = p;
+    b.addEventListener("click", () => tambahRumus(p));
+    wadahPreset.appendChild(b);
+  });
+
+  function zoom(faktor) {
+    const b = calc.graphpaperBounds.mathCoordinates;
+    const cx = (b.left + b.right) / 2, cy = (b.top + b.bottom) / 2;
+    const w = (b.right - b.left) * faktor / 2, h = (b.top - b.bottom) * faktor / 2;
+    calc.setMathBounds({ left: cx - w, right: cx + w, bottom: cy - h, top: cy + h });
+  }
+  document.getElementById("btn-zoom-in").addEventListener("click", () => zoom(0.7));
+  document.getElementById("btn-zoom-out").addEventListener("click", () => zoom(1 / 0.7));
+  document.getElementById("btn-reset").addEventListener("click", () => calc.setMathBounds(BATAS_AWAL));
+  document.getElementById("btn-hapus").addEventListener("click", hapusSemua);
+
+  document.getElementById("btn-png").addEventListener("click", () => {
+    calc.asyncScreenshot({ width: 1000, height: 700, targetPixelRatio: 2 }, dataUrl => {
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = "grafik-desmos.png";
+      a.click();
+    });
+  });
+
+  // ============================================================
+  // 7. Keadaan awal
+  // ============================================================
+  calc.setMathBounds(BATAS_AWAL);
+  tambahRumus("y=a*sin(b*x)");
+</script>
+</body>
+</html>
