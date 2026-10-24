@@ -171,18 +171,19 @@
     expressions: false,      // daftar rumus bawaan disembunyikan, kita pakai panel sendiri
     settingsMenu: false,
     zoomButtons: false,
-    squareAxes: true,
     keypad: false,
-    border: false
+    border: false,
+    squareAxes: true         // skala sumbu x dan y selalu 1:1
   });
 
-// Opsional: tentukan jendela awal dengan rasio yang tepat
-const lebar = 20; // satuan x yang terlihat
-const tinggi = lebar * elemen.clientHeight / elemen.clientWidth;
-calc.setMathBounds({ left: -lebar/2, right: lebar/2, bottom: -tinggi/2, top: tinggi/2 });
   const WARNA = [Desmos.Colors.RED, Desmos.Colors.BLUE, Desmos.Colors.GREEN,
                  Desmos.Colors.PURPLE, Desmos.Colors.ORANGE, Desmos.Colors.BLACK];
-  const BATAS_AWAL = { left: -10, right: 10, bottom: -7, top: 7 };
+  // Batas awal dihitung dari rasio piksel kontainer supaya 1 satuan x = 1 satuan y
+  function batasAwal(lebarSatuan = 20) {
+    const tinggiSatuan = lebarSatuan * elemen.clientHeight / elemen.clientWidth;
+    return { left: -lebarSatuan / 2, right: lebarSatuan / 2,
+             bottom: -tinggiSatuan / 2, top: tinggiSatuan / 2 };
+  }
 
   const daftarRumus = [];   // { id, teks, warna }
   let urutan = 0;
@@ -292,7 +293,7 @@ calc.setMathBounds({ left: -lebar/2, right: lebar/2, bottom: -tinggi/2, top: tin
   }
   document.getElementById("btn-zoom-in").addEventListener("click", () => zoom(0.7));
   document.getElementById("btn-zoom-out").addEventListener("click", () => zoom(1 / 0.7));
-  document.getElementById("btn-reset").addEventListener("click", () => calc.setMathBounds(BATAS_AWAL));
+  document.getElementById("btn-reset").addEventListener("click", () => calc.setMathBounds(batasAwal()));
   document.getElementById("btn-hapus").addEventListener("click", hapusSemua);
 
   document.getElementById("btn-png").addEventListener("click", () => {
@@ -307,8 +308,11 @@ calc.setMathBounds({ left: -lebar/2, right: lebar/2, bottom: -tinggi/2, top: tin
   // ============================================================
   // 7. Keadaan awal
   // ============================================================
-  calc.setMathBounds(BATAS_AWAL);
+  calc.setMathBounds(batasAwal());
   tambahRumus("y=a*sin(b*x)");
+
+  // Saat ukuran jendela berubah, hitung ulang ukuran kalkulator (rasio 1:1 tetap terjaga)
+  window.addEventListener("resize", () => calc.resize());
 </script>
 </body>
 </html>
