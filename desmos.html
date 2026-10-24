@@ -139,6 +139,12 @@
       <input type="range" id="sl-b" min="-5" max="5" step="0.1" value="1">
       <output id="out-b">1</output>
     </div>
+    <div class="slider-row">
+      <label for="sl-c">c</label>
+      <input type="range" id="sl-c" min="1" max="10" step="0.1" value="1">
+      <output id="out-c">1</output>
+    </div>
+
   </section>
 
   <section class="aksi">
@@ -252,7 +258,7 @@
   // ============================================================
   // 5. Parameter a dan b (slider HTML <-> variabel Desmos)
   // ============================================================
-  ["a", "b"].forEach(nama => {
+  ["a", "b","c"].forEach(nama => {
     calc.setExpression({ id: "param-" + nama, latex: nama + "=1", hidden: true });
     const slider = document.getElementById("sl-" + nama);
     const keluaran = document.getElementById("out-" + nama);
