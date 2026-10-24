@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blok Geometri Analitik</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/blockly_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/blocks_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/javascript_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/msg/id.js"></script>
+<script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+<style>
+  :root { --ink:#172033; --soft:#55607a; --paper:#eef3f8; --panel:#fff; --line:#d3dce8; --accent:#c2185b; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { font-family: "Bricolage Grotesque", system-ui, sans-serif; color: var(--ink); background: var(--paper);
+         display: grid; grid-template-columns: var(--kiri, 55%) 6px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: 100dvh; }
+  .kiri, .kanan { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; overflow: hidden; }
+  #pemisah { background: var(--line); cursor: col-resize; touch-action: none; }
+  #pemisah:hover, #pemisah.tarik { background: var(--accent); }
+  .alat { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 10px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .alat button { padding: 4px 11px; font-size: .85rem; }
+  header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  h1 { font-size: 1.1rem; font-weight: 800; margin: 0 auto 0 0; letter-spacing: -0.01em; }
+  button { font: inherit; font-weight: 600; cursor: pointer; padding: 7px 13px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+  button:hover { background: var(--paper); }
+  button.utama { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.utama:hover { filter: brightness(1.1); }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #blok { flex: 1; min-height: 0; }
+  header { flex-wrap: nowrap; }
+  select { font: inherit; padding: 7px 9px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); max-width: 210px; }
+  #grafik { flex: 1; min-height: 0; }
+  .bawah { height: clamp(110px, 24vh, 190px); background: var(--panel); border-top: 1px solid var(--line); display: flex; flex-direction: column; }
+  .tab { display: flex; gap: 4px; padding: 6px 10px 0; }
+  .tab button { border-radius: 8px 8px 0 0; border-bottom: 0; padding: 4px 12px; font-size: .85rem; }
+  .tab button.aktif { background: var(--ink); color: #fff; border-color: var(--ink); }
+  pre { flex: 1; margin: 0; padding: 10px 14px; overflow: auto; font: 0.85rem/1.5 ui-monospace, Menlo, Consolas, monospace; }
+  #keluaran .galat { color: #b3261e; font-weight: 600; }
+  #kode { display: none; }
+  @media (max-width: 800px) { body { grid-template-columns: minmax(0, 1fr); grid-template-rows: 58% 42%; } #pemisah { display: none; } .bawah { height: 110px; } h1 { font-size: .95rem; } }
+</style>
+</head>
+<body>
+<section class="kiri">
+  <header>
+    <h1>Blok Geometri</h1>
+    <select id="pilih-contoh" aria-label="Muat contoh"></select>
+    <button id="btn-jalan" class="utama">▶ Jalankan</button>
+  </header>
+  <div id="blok"></div>
+</section>
+<div id="pemisah" role="separator" aria-orientation="vertical" aria-label="Geser untuk mengubah lebar panel"></div>
+<section class="kanan">
+  <div class="alat">
+    <button id="btn-hapus">Hapus gambar</button>
+    <button id="btn-simpan">Simpan</button>
+    <button id="btn-buka">Buka</button>
+    <button id="btn-png">Unduh PNG</button>
+    <input type="file" id="file-buka" accept=".json" hidden>
+  </div>
+  <div id="grafik"></div>
+  <div class="bawah">
+    <div class="tab">
+      <button id="tab-out" class="aktif">Keluaran</button>
+      <button id="tab-kode">Kode JavaScript</button>
+    </div>
+    <pre id="keluaran" aria-live="polite"></pre>
+    <pre id="kode"></pre>
+  </div>
+</section>
+
+<script>
+if (typeof Blockly === "undefined" || typeof Desmos === "undefined") {
+  document.body.innerHTML = "<p style='padding:24px'>Pustaka Blockly atau Desmos gagal dimuat. Periksa koneksi internet.</p>";
+  throw new Error("Pustaka tidak tersedia");
+}
+
+/* ============ 1. Desmos ============ */
+const elemen = document.getElementById("grafik");
+const calc = Desmos.GraphingCalculator(elemen, { expressions:false, settingsMenu:false, keypad:false, zoomButtons:false, border:false, squareAxes:true });
+function batas(lebar = 20) { const t = lebar * elemen.clientHeight / elemen.clientWidth; return { left:-lebar/2, right:lebar/2, bottom:-t/2, top:t/2 }; }
+calc.setMathBounds(batas());
+
+/* ============ 2. Fungsi runtime (dipanggil oleh kode hasil blok) ============ */
+const f = n => String(+Number(n).toFixed(6));
+let ids = [], urut = 0, warnaAktif = "#2d70b3", ext = null, teks = [];
+const out = document.getElementById("keluaran");
+function lacak(x, y) { ext = ext ? { x0:Math.min(ext.x0,x), x1:Math.max(ext.x1,x), y0:Math.min(ext.y0,y), y1:Math.max(ext.y1,y) } : { x0:x, x1:x, y0:y, y1:y }; }
+function cek(p) { if (!p || typeof p.x !== "number" || isNaN(p.x)) throw new Error("Ada blok yang belum diisi, atau titik tidak ada (misalnya garis sejajar)."); return p; }
+function tambah(latex, extra = {}) { if (ids.length >= 300) throw new Error("Terlalu banyak gambar (maksimum 300)."); const id = "g" + (++urut); ids.push(id); calc.setExpression({ id, latex, color: warnaAktif, ...extra }); }
+function tampil(v) { return v && typeof v.x === "number" ? `(${+v.x.toFixed(4)}, ${+v.y.toFixed(4)})` : typeof v === "number" ? String(+v.toFixed(4)) : String(v); }
+
+function ang(...v) { if (v.some(x => typeof x !== "number" || isNaN(x))) throw new Error("Nilai harus berupa angka. Periksa blok yang kosong."); }
+function latexDariTeks(t) {
+  return t.replace(/sqrt\(([^()]*)\)/g, "\\sqrt{$1}")
+    .replace(/\b(arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|ln|log)\b/g, "\\$1")
+    .replace(/\bpi\b/g, "\\pi").replace(/\^(-?\d{2,})/g, "^{$1}").replace(/\*/g, "\\cdot ")
+    .replace(/<=/g, "\\le ").replace(/>=/g, "\\ge ");
+}
+const kuad = (v, c) => `\\left(${v}-\\left(${f(c)}\\right)\\right)^2`;
+const R = {
+  titik(x, y) { if (typeof x !== "number" || typeof y !== "number" || isNaN(x + y)) throw new Error("Koordinat titik harus berupa angka."); return { x, y }; },
+  tengah(a, b) { cek(a); cek(b); return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 }; },
+  jarak(a, b) { cek(a); cek(b); return Math.hypot(a.x-b.x, a.y-b.y); },
+  gradien(a, b) { cek(a); cek(b); return (b.y-a.y)/(b.x-a.x); },
+  koordinat(p, s) { return cek(p)[s]; },
+  potong(a, b, c, d) {
+    cek(a); cek(b); cek(c); cek(d);
+    const den = (a.x-b.x)*(c.y-d.y) - (a.y-b.y)*(c.x-d.x);
+    if (Math.abs(den) < 1e-12) return null;
+    const p = a.x*b.y - a.y*b.x, q = c.x*d.y - c.y*d.x;
+    return { x:(p*(c.x-d.x) - (a.x-b.x)*q)/den, y:(p*(c.y-d.y) - (a.y-b.y)*q)/den };
+  },
+  warna(c) { warnaAktif = c; },
+  bagi(a, b, m, n) { cek(a); cek(b); ang(m, n); if (m + n === 0) throw new Error("Jumlah perbandingan tidak boleh 0."); return { x:(n*a.x+m*b.x)/(m+n), y:(n*a.y+m*b.y)/(m+n) }; },
+  jarakTitikGaris(p, a, b) { cek(p); cek(a); cek(b); return Math.abs((b.x-a.x)*(a.y-p.y) - (a.x-p.x)*(b.y-a.y)) / Math.hypot(b.x-a.x, b.y-a.y); },
+  luas(a, b, c) { cek(a); cek(b); cek(c); return Math.abs((b.x-a.x)*(c.y-a.y) - (c.x-a.x)*(b.y-a.y)) / 2; },
+  sejajar(a, b, c, d) { cek(a); cek(b); cek(c); cek(d); const u = [b.x-a.x, b.y-a.y], w = [d.x-c.x, d.y-c.y]; return Math.abs(u[0]*w[1]-u[1]*w[0]) < 1e-9 * Math.hypot(...u) * Math.hypot(...w); },
+  tegakLurus(a, b, c, d) { cek(a); cek(b); cek(c); cek(d); const u = [b.x-a.x, b.y-a.y], w = [d.x-c.x, d.y-c.y]; return Math.abs(u[0]*w[0]+u[1]*w[1]) < 1e-9 * Math.hypot(...u) * Math.hypot(...w); },
+  translasi(p, dx, dy) { cek(p); ang(dx, dy); return { x:p.x+dx, y:p.y+dy }; },
+  rotasi(p, o, deg) { cek(p); cek(o); ang(deg); const t = deg*Math.PI/180, c = Math.cos(t), s = Math.sin(t), X = p.x-o.x, Y = p.y-o.y; return { x:o.x+X*c-Y*s, y:o.y+X*s+Y*c }; },
+  dilatasi(p, o, k) { cek(p); cek(o); ang(k); return { x:o.x+k*(p.x-o.x), y:o.y+k*(p.y-o.y) }; },
+  refleksiSumbu(p, j) { cek(p); return j === "x" ? { x:p.x, y:-p.y } : j === "y" ? { x:-p.x, y:p.y } : j === "yx" ? { x:p.y, y:p.x } : { x:-p.y, y:-p.x }; },
+  refleksiGaris(p, a, b) { cek(p); cek(a); cek(b); const dx = b.x-a.x, dy = b.y-a.y, t = ((p.x-a.x)*dx + (p.y-a.y)*dy) / (dx*dx + dy*dy); return { x:2*(a.x+t*dx)-p.x, y:2*(a.y+t*dy)-p.y }; },
+  gambarTitik(p, label) { cek(p); lacak(p.x, p.y); tambah(`\\left(${f(p.x)},${f(p.y)}\\right)`, { label, showLabel: !!label }); },
+  gambarGaris(a, b, ruas) {
+    cek(a); cek(b);
+    if (a.x === b.x && a.y === b.y) throw new Error("Dua titik harus berbeda untuk membuat garis.");
+    lacak(a.x, a.y); lacak(b.x, b.y);
+    const bx = `\\left\\{${f(Math.min(a.x,b.x))}\\le x\\le ${f(Math.max(a.x,b.x))}\\right\\}`;
+    const by = `\\left\\{${f(Math.min(a.y,b.y))}\\le y\\le ${f(Math.max(a.y,b.y))}\\right\\}`;
+    if (Math.abs(a.x-b.x) < 1e-9) return tambah(`x=${f(a.x)}` + (ruas ? by : ""));
+    const m = (b.y-a.y)/(b.x-a.x);
+    tambah(`y=${f(m)}\\left(x-\\left(${f(a.x)}\\right)\\right)+\\left(${f(a.y)}\\right)` + (ruas ? bx : ""));
+  },
+  gambarLingkaran(p, r) {
+    cek(p); if (typeof r !== "number" || !(r > 0)) throw new Error("Jari-jari lingkaran harus bilangan positif.");
+    lacak(p.x-r, p.y-r); lacak(p.x+r, p.y+r);
+    tambah(`\\left(x-\\left(${f(p.x)}\\right)\\right)^2+\\left(y-\\left(${f(p.y)}\\right)\\right)^2=${f(r)}^2`);
+  },
+  gambarGarisGradien(p, m) { cek(p); ang(m); lacak(p.x-2, p.y-2); lacak(p.x+2, p.y+2); tambah(`y=${f(m)}\\left(x-\\left(${f(p.x)}\\right)\\right)+\\left(${f(p.y)}\\right)`); },
+  gambarGarisUmum(a, b, c) { ang(a, b, c); if (a === 0 && b === 0) throw new Error("a dan b tidak boleh keduanya 0."); tambah(`\\left(${f(a)}\\right)x+\\left(${f(b)}\\right)y+\\left(${f(c)}\\right)=0`); },
+  gambarSegitiga(a, b, c) { R.gambarGaris(a, b, true); R.gambarGaris(b, c, true); R.gambarGaris(c, a, true); },
+  gambarPersamaan(t) { if (!t || !t.trim()) throw new Error("Persamaan masih kosong."); tambah(latexDariTeks(t)); },
+  gambarParabola(p, a, arah) {
+    cek(p); ang(a); if (a === 0) throw new Error("Koefisien a parabola tidak boleh 0.");
+    lacak(p.x-4, p.y-4); lacak(p.x+4, p.y+4);
+    tambah(arah === "V" ? `y=${f(a)}${kuad("x", p.x)}+\\left(${f(p.y)}\\right)` : `x=${f(a)}${kuad("y", p.y)}+\\left(${f(p.x)}\\right)`);
+  },
+  gambarElips(p, a, b) {
+    cek(p); ang(a, b); if (a <= 0 || b <= 0) throw new Error("a dan b elips harus positif.");
+    lacak(p.x-a, p.y-b); lacak(p.x+a, p.y+b);
+    tambah(`\\frac{${kuad("x", p.x)}}{${f(a)}^2}+\\frac{${kuad("y", p.y)}}{${f(b)}^2}=1`);
+  },
+  gambarHiperbola(p, a, b, arah) {
+    cek(p); ang(a, b); if (a <= 0 || b <= 0) throw new Error("a dan b hiperbola harus positif.");
+    lacak(p.x-2*a, p.y-2*b); lacak(p.x+2*a, p.y+2*b);
+    const X = `\\frac{${kuad("x", p.x)}}{${f(a)}^2}`, Y = `\\frac{${kuad("y", p.y)}}{${f(b)}^2}`;
+    tambah(arah === "H" ? `${X}-${Y}=1` : `${Y}-${X}=1`);
+  },
+  hapusGambar() { ids.forEach(id => calc.removeExpression({ id })); ids = []; ext = null; },
+  cetak(v) { teks.push(tampil(v)); out.textContent = teks.join("\n"); }
+};
+
+/* ============ 3. Definisi blok ============ */
+const T = "Titik";
+const J = (type, message0, args0, extra) => ({ type, message0, args0, colour: extra.c, tooltip: extra.tip || "", ...extra.o });
+const v = (name, check) => ({ type:"input_value", name, check });
+Blockly.defineBlocksWithJsonArray([
+  J("titik_buat", "titik ( %1 , %2 )", [v("X","Number"), v("Y","Number")], { c:200, o:{ output:T }, tip:"Membuat titik (x, y)" }),
+  J("titik_tengah", "titik tengah %1 dan %2", [v("A",T), v("B",T)], { c:200, o:{ output:T } }),
+  J("titik_potong", "titik potong garis %1 – %2 dan garis %3 – %4", [v("A",T), v("B",T), v("C",T), v("D",T)], { c:200, o:{ output:T }, tip:"Kosong jika kedua garis sejajar" }),
+  J("koordinat", "koordinat %1 dari %2", [{ type:"field_dropdown", name:"S", options:[["x","x"],["y","y"]] }, v("P",T)], { c:200, o:{ output:"Number" } }),
+  J("jarak", "jarak %1 ke %2", [v("A",T), v("B",T)], { c:200, o:{ output:"Number" } }),
+  J("gradien", "gradien garis %1 ke %2", [v("A",T), v("B",T)], { c:200, o:{ output:"Number" } }),
+  J("atur_warna", "atur warna %1", [{ type:"field_dropdown", name:"C", options:[["biru","#2d70b3"],["merah","#c74440"],["hijau","#388c46"],["ungu","#6042a6"],["oranye","#fa7e19"],["hitam","#000000"]] }], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_titik", "gambar titik %1 label %2", [v("P",T), { type:"field_input", name:"L", text:"A" }], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_garis", "gambar garis melalui %1 dan %2", [v("A",T), v("B",T)], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_ruas", "gambar ruas garis %1 ke %2", [v("A",T), v("B",T)], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_lingkaran", "gambar lingkaran pusat %1 jari-jari %2", [v("P",T), v("R","Number")], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("hapus_gambar", "hapus semua gambar", [], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("cetak", "cetak %1", [v("V")], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("titik_bagi", "titik pada %1 – %2 dengan perbandingan %3 : %4", [v("A",T), v("B",T), v("M","Number"), v("N","Number")], { c:200, o:{ output:T }, tip:"Titik P pada AB dengan AP : PB = m : n" }),
+  J("jarak_titik_garis", "jarak titik %1 ke garis %2 – %3", [v("P",T), v("A",T), v("B",T)], { c:210, o:{ output:"Number" } }),
+  J("luas_segitiga", "luas segitiga %1 %2 %3", [v("A",T), v("B",T), v("C",T)], { c:210, o:{ output:"Number" } }),
+  J("sejajar", "garis %1 – %2 sejajar garis %3 – %4 ?", [v("A",T), v("B",T), v("C",T), v("D",T)], { c:210, o:{ output:"Boolean" } }),
+  J("tegak_lurus", "garis %1 – %2 tegak lurus garis %3 – %4 ?", [v("A",T), v("B",T), v("C",T), v("D",T)], { c:210, o:{ output:"Boolean" } }),
+  J("translasi", "geser %1 sejauh ( %2 , %3 )", [v("P",T), v("X","Number"), v("Y","Number")], { c:260, o:{ output:T } }),
+  J("rotasi", "putar %1 terhadap pusat %2 sebesar %3 °", [v("P",T), v("O",T), v("D","Number")], { c:260, o:{ output:T }, tip:"Berlawanan arah jarum jam" }),
+  J("dilatasi", "dilatasi %1 pusat %2 faktor %3", [v("P",T), v("O",T), v("K","Number")], { c:260, o:{ output:T } }),
+  J("refleksi_sumbu", "cerminkan %1 terhadap %2", [v("P",T), { type:"field_dropdown", name:"S", options:[["sumbu x","x"],["sumbu y","y"],["garis y = x","yx"],["garis y = −x","ymx"]] }], { c:260, o:{ output:T } }),
+  J("refleksi_garis", "cerminkan %1 terhadap garis %2 – %3", [v("P",T), v("A",T), v("B",T)], { c:260, o:{ output:T } }),
+  J("gambar_garis_gradien", "gambar garis gradien %1 melalui %2", [v("M","Number"), v("P",T)], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_garis_umum", "gambar garis %1 x + %2 y + %3 = 0", [v("A","Number"), v("B","Number"), v("C","Number")], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_segitiga", "gambar segitiga %1 %2 %3", [v("A",T), v("B",T), v("C",T)], { c:20, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_persamaan", "gambar persamaan %1", [{ type:"field_input", name:"T", text:"y=x^2-4" }], { c:20, o:{ previousStatement:null, nextStatement:null }, tip:"Contoh: y=2x+1, x^2+y^2=9, y=sin(x)" }),
+  J("gambar_parabola", "gambar parabola puncak %1 a = %2 %3", [v("P",T), v("A","Number"), { type:"field_dropdown", name:"ARAH", options:[["membuka atas/bawah","V"],["membuka kanan/kiri","H"]] }], { c:45, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_elips", "gambar elips pusat %1 a = %2 b = %3", [v("P",T), v("A","Number"), v("B","Number")], { c:45, o:{ previousStatement:null, nextStatement:null } }),
+  J("gambar_hiperbola", "gambar hiperbola pusat %1 a = %2 b = %3 %4", [v("P",T), v("A","Number"), v("B","Number"), { type:"field_dropdown", name:"ARAH", options:[["sumbu mendatar","H"],["sumbu tegak","V"]] }], { c:45, o:{ previousStatement:null, nextStatement:null } })
+]);
+
+/* ============ 4. Generator kode JavaScript ============ */
+const G = Blockly.JavaScript;
+const O = G.Order || { NONE: G.ORDER_NONE, FUNCTION_CALL: G.ORDER_FUNCTION_CALL };
+G.addReservedWords(Object.keys(R).join(","));
+const a = (b, g, n) => g.valueToCode(b, n, O.NONE) || "null";
+const F = G.forBlock;
+F.titik_buat = (b,g) => [`titik(${a(b,g,"X")}, ${a(b,g,"Y")})`, O.FUNCTION_CALL];
+F.titik_tengah = (b,g) => [`tengah(${a(b,g,"A")}, ${a(b,g,"B")})`, O.FUNCTION_CALL];
+F.titik_potong = (b,g) => [`potong(${a(b,g,"A")}, ${a(b,g,"B")}, ${a(b,g,"C")}, ${a(b,g,"D")})`, O.FUNCTION_CALL];
+F.koordinat = (b,g) => [`koordinat(${a(b,g,"P")}, "${b.getFieldValue("S")}")`, O.FUNCTION_CALL];
+F.jarak = (b,g) => [`jarak(${a(b,g,"A")}, ${a(b,g,"B")})`, O.FUNCTION_CALL];
+F.gradien = (b,g) => [`gradien(${a(b,g,"A")}, ${a(b,g,"B")})`, O.FUNCTION_CALL];
+F.atur_warna = b => `warna("${b.getFieldValue("C")}");\n`;
+F.gambar_titik = (b,g) => `gambarTitik(${a(b,g,"P")}, ${JSON.stringify(b.getFieldValue("L"))});\n`;
+F.gambar_garis = (b,g) => `gambarGaris(${a(b,g,"A")}, ${a(b,g,"B")}, false);\n`;
+F.gambar_ruas = (b,g) => `gambarGaris(${a(b,g,"A")}, ${a(b,g,"B")}, true);\n`;
+F.gambar_lingkaran = (b,g) => `gambarLingkaran(${a(b,g,"P")}, ${a(b,g,"R")});\n`;
+F.hapus_gambar = () => "hapusGambar();\n";
+F.cetak = (b,g) => `cetak(${a(b,g,"V")});\n`;
+const fn = (nama, ...k) => (b,g) => [`${nama}(${k.map(x => x.startsWith("@") ? JSON.stringify(b.getFieldValue(x.slice(1))) : a(b,g,x)).join(", ")})`, O.FUNCTION_CALL];
+const st = (nama, ...k) => (b,g) => `${nama}(${k.map(x => x.startsWith("@") ? JSON.stringify(b.getFieldValue(x.slice(1))) : a(b,g,x)).join(", ")});\n`;
+F.titik_bagi = fn("bagi", "A","B","M","N");
+F.jarak_titik_garis = fn("jarakTitikGaris", "P","A","B");
+F.luas_segitiga = fn("luas", "A","B","C");
+F.sejajar = fn("sejajar", "A","B","C","D");
+F.tegak_lurus = fn("tegakLurus", "A","B","C","D");
+F.translasi = fn("translasi", "P","X","Y");
+F.rotasi = fn("rotasi", "P","O","D");
+F.dilatasi = fn("dilatasi", "P","O","K");
+F.refleksi_sumbu = fn("refleksiSumbu", "P","@S");
+F.refleksi_garis = fn("refleksiGaris", "P","A","B");
+F.gambar_garis_gradien = st("gambarGarisGradien", "P","M");
+F.gambar_garis_umum = st("gambarGarisUmum", "A","B","C");
+F.gambar_segitiga = st("gambarSegitiga", "A","B","C");
+F.gambar_persamaan = st("gambarPersamaan", "@T");
+F.gambar_parabola = st("gambarParabola", "P","A","@ARAH");
+F.gambar_elips = st("gambarElips", "P","A","B");
+F.gambar_hiperbola = st("gambarHiperbola", "P","A","B","@ARAH");
+
+/* ============ 5. Toolbox & workspace ============ */
+const sh = n => ({ shadow: { type:"math_number", fields:{ NUM:n } } });
+const blk = (type, inputs) => ({ kind:"block", type, ...(inputs ? { inputs } : {}) });
+const ws = Blockly.inject("blok", {
+  toolbox: { kind:"categoryToolbox", contents: [
+    { kind:"category", name:"Titik", colour:"200", contents:[
+      blk("titik_buat", { X:sh(0), Y:sh(0) }), blk("titik_tengah"), blk("titik_bagi", { M:sh(1), N:sh(1) }), blk("titik_potong"), blk("koordinat") ] },
+    { kind:"category", name:"Ukuran", colour:"210", contents:[
+      blk("jarak"), blk("gradien"), blk("jarak_titik_garis"), blk("luas_segitiga"), blk("sejajar"), blk("tegak_lurus") ] },
+    { kind:"category", name:"Transformasi", colour:"260", contents:[
+      blk("translasi", { X:sh(1), Y:sh(1) }), blk("rotasi", { D:sh(90) }), blk("dilatasi", { K:sh(2) }), blk("refleksi_sumbu"), blk("refleksi_garis") ] },
+    { kind:"category", name:"Gambar", colour:"20", contents:[
+      blk("atur_warna"), blk("gambar_titik"), blk("gambar_garis"), blk("gambar_ruas"), blk("gambar_segitiga"), blk("gambar_lingkaran", { R:sh(3) }),
+      blk("gambar_garis_gradien", { M:sh(1) }), blk("gambar_garis_umum", { A:sh(1), B:sh(-1), C:sh(0) }), blk("gambar_persamaan"), blk("hapus_gambar"), blk("cetak") ] },
+    { kind:"category", name:"Irisan kerucut", colour:"45", contents:[
+      blk("gambar_parabola", { A:sh(1) }), blk("gambar_elips", { A:sh(5), B:sh(3) }), blk("gambar_hiperbola", { A:sh(3), B:sh(2) }) ] },
+    { kind:"category", name:"Matematika", colour:"230", contents:[
+      blk("math_number"), blk("math_arithmetic", { A:sh(1), B:sh(1) }), blk("math_single", { NUM:sh(9) }), blk("math_constant") ] },
+    { kind:"category", name:"Kontrol", colour:"120", contents:[
+      blk("controls_repeat_ext", { TIMES:sh(5) }), blk("controls_for", { FROM:sh(1), TO:sh(5), BY:sh(1) }), blk("controls_if"), blk("logic_compare"), blk("logic_operation") ] },
+    { kind:"category", name:"Variabel", colour:"330", custom:"VARIABLE" },
+    { kind:"category", name:"Fungsi", colour:"290", custom:"PROCEDURE" }
+  ] },
+  grid: { spacing: 24, length: 2, colour: "#d3dce8", snap: true },
+  zoom: { controls: true, wheel: true, startScale: 0.9 },
+  trashcan: true
+});
+
+/* ============ 6. Jalankan ============ */
+const kode = document.getElementById("kode");
+function jalankan() {
+  R.hapusGambar(); teks = []; out.textContent = ""; warnaAktif = "#2d70b3";
+  const src = G.workspaceToCode(ws);
+  kode.textContent = src || "// (belum ada blok)";
+  try {
+    new Function(...Object.keys(R), src)(...Object.values(R));
+    if (ext) {
+      const W = elemen.clientWidth, H = elemen.clientHeight;
+      const w = Math.max(ext.x1-ext.x0, (ext.y1-ext.y0)*W/H, 2) * 1.5, h = w*H/W;
+      const cx = (ext.x0+ext.x1)/2, cy = (ext.y0+ext.y1)/2;
+      calc.setMathBounds({ left:cx-w/2, right:cx+w/2, bottom:cy-h/2, top:cy+h/2 });
+    }
+    if (!teks.length) out.textContent = src.trim() ? "Selesai dijalankan." : "Susun blok dulu, lalu tekan Jalankan.";
+  } catch (e) {
+    out.innerHTML = ""; const s = document.createElement("span"); s.className = "galat"; s.textContent = "Galat: " + e.message; out.appendChild(s);
+  }
+}
+document.getElementById("btn-jalan").onclick = jalankan;
+document.getElementById("btn-hapus").onclick = () => { R.hapusGambar(); calc.setMathBounds(batas()); };
+const tabOut = document.getElementById("tab-out"), tabKode = document.getElementById("tab-kode");
+tabOut.onclick = () => { out.style.display = ""; kode.style.display = "none"; tabOut.className = "aktif"; tabKode.className = ""; };
+tabKode.onclick = () => { out.style.display = "none"; kode.style.display = "block"; tabKode.className = "aktif"; tabOut.className = ""; kode.textContent = G.workspaceToCode(ws) || "// (belum ada blok)"; };
+window.addEventListener("resize", () => { Blockly.svgResize(ws); calc.resize(); });
+
+/* ============ 7. Contoh ============ */
+const n = x => `<block type="math_number"><field name="NUM">${x}</field></block>`;
+const gv = nm => `<block type="variables_get"><field name="VAR" id="v_${nm}">${nm}</field></block>`;
+const B = (type, fields = {}, inputs = {}) => `<block type="${type}">` + Object.entries(fields).map(([k, x]) => `<field name="${k}">${x}</field>`).join("") + Object.entries(inputs).map(([k, x]) => `<value name="${k}">${x}</value>`).join("") + `</block>`;
+const SET = (nm, val) => `<block type="variables_set"><field name="VAR" id="v_${nm}">${nm}</field><value name="VALUE">${val}</value></block>`;
+const chain = list => list.reduceRight((rest, b) => rest ? b.slice(0, -8) + `<next>${rest}</next></block>` : b, "");
+const pt = (x, y) => B("titik_buat", {}, { X:n(x), Y:n(y) });
+const warna = c => B("atur_warna", { C:c });
+const lab = (nm, l) => B("gambar_titik", { L:l }, { P:gv(nm) });
+const tengah = (p, q) => B("titik_tengah", {}, { A:gv(p), B:gv(q) });
+const ruas = (p, q) => B("gambar_ruas", {}, { A:gv(p), B:gv(q) });
+const jarakPQ = (p, q) => B("jarak", {}, { A:gv(p), B:gv(q) });
+const MERAH = "#c74440", BIRU = "#2d70b3", HIJAU = "#388c46", HITAM = "#000000";
+const tri = suf => B("gambar_segitiga", {}, { A:gv("P"+suf), B:gv("Q"+suf), C:gv("R"+suf) });
+const tf = (suf, fnc) => ["P", "Q", "R"].map(k => SET(k+suf, fnc(gv(k))));
+
+const CONTOH = {
+  "Lingkaran dengan diameter AB": () => [
+    SET("A", pt(-3, -2)), SET("B", pt(4, 3)), SET("M", tengah("A", "B")),
+    warna(MERAH), ruas("A", "B"), warna(BIRU),
+    B("gambar_lingkaran", {}, { P:gv("M"), R:B("math_arithmetic", { OP:"DIVIDE" }, { A:jarakPQ("A", "B"), B:n(2) }) }),
+    warna(HITAM), lab("A", "A"), lab("B", "B"), lab("M", "M"), B("cetak", {}, { V:jarakPQ("A", "B") })],
+  "Titik berat segitiga": () => [
+    SET("A", pt(-4, -2)), SET("B", pt(5, -1)), SET("C", pt(0, 6)),
+    warna(MERAH), B("gambar_segitiga", {}, { A:gv("A"), B:gv("B"), C:gv("C") }),
+    SET("D", tengah("B", "C")), SET("E", tengah("C", "A")),
+    warna(BIRU), ruas("A", "D"), ruas("B", "E"),
+    SET("G", B("titik_potong", {}, { A:gv("A"), B:gv("D"), C:gv("B"), D:gv("E") })),
+    warna(HITAM), lab("A", "A"), lab("B", "B"), lab("C", "C"), lab("G", "G"), B("cetak", {}, { V:gv("G") })],
+  "Irisan kerucut": () => [
+    warna(MERAH), B("gambar_parabola", { ARAH:"V" }, { P:pt(0, -3), A:n(0.5) }),
+    warna(BIRU), B("gambar_elips", {}, { P:pt(0, 0), A:n(6), B:n(3) }),
+    warna(HIJAU), B("gambar_hiperbola", { ARAH:"H" }, { P:pt(0, 0), A:n(3), B:n(2) })],
+  "Transformasi segitiga": () => [
+    SET("P", pt(1, 1)), SET("Q", pt(4, 1)), SET("R", pt(2, 3)),
+    warna(HITAM), tri(""),
+    ...tf("1", p => B("translasi", {}, { P:p, X:n(5), Y:n(-3) })), warna(MERAH), tri("1"),
+    ...tf("2", p => B("rotasi", {}, { P:p, O:pt(0, 0), D:n(90) })), warna(BIRU), tri("2"),
+    ...tf("3", p => B("refleksi_sumbu", { S:"y" }, { P:p })), warna(HIJAU), tri("3")],
+  "Pola lingkaran konsentris": () => [
+    SET("O", pt(0, 0)), SET("r", n(1)),
+    `<block type="controls_repeat_ext"><value name="TIMES">${n(8)}</value><statement name="DO">${chain([
+      B("gambar_lingkaran", {}, { P:gv("O"), R:gv("r") }),
+      SET("r", B("math_arithmetic", { OP:"ADD" }, { A:gv("r"), B:n(1) }))])}</statement></block>`]
+};
+const pilih = document.getElementById("pilih-contoh");
+pilih.innerHTML = '<option value="">Muat contoh…</option>' + Object.keys(CONTOH).map(k => `<option>${k}</option>`).join("");
+function muatContoh(nama) {
+  const xmlBlok = chain(CONTOH[nama]()).replace("<block", '<block x="20" y="20"');
+  const nama_v = [...new Set([...xmlBlok.matchAll(/id="v_(\w+)"/g)].map(m => m[1]))];
+  const xml = `<xml xmlns="https://developers.google.com/blockly/xml"><variables>${nama_v.map(x => `<variable id="v_${x}">${x}</variable>`).join("")}</variables>${xmlBlok}</xml>`;
+  ws.clear();
+  Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xml), ws);
+  jalankan();
+}
+pilih.onchange = () => { if (pilih.value) muatContoh(pilih.value); };
+
+/* ============ 8. Simpan, buka, PNG, simpan otomatis ============ */
+function unduh(url, nama) { const l = document.createElement("a"); l.href = url; l.download = nama; l.click(); }
+document.getElementById("btn-simpan").onclick = () => {
+  const blob = new Blob([JSON.stringify(Blockly.serialization.workspaces.save(ws))], { type:"application/json" });
+  unduh(URL.createObjectURL(blob), "susunan-blok.json");
+};
+const fileBuka = document.getElementById("file-buka");
+document.getElementById("btn-buka").onclick = () => fileBuka.click();
+fileBuka.onchange = async () => {
+  try { Blockly.serialization.workspaces.load(JSON.parse(await fileBuka.files[0].text()), ws); jalankan(); }
+  catch (e) { out.textContent = "Galat: berkas tidak dapat dibuka."; }
+  fileBuka.value = "";
+};
+document.getElementById("btn-png").onclick = () => calc.asyncScreenshot({ width:1000, height:700, targetPixelRatio:2 }, u => unduh(u, "grafik.png"));
+
+const KUNCI = "blok-geometri-analitik";
+ws.addChangeListener(e => {
+  if (e.isUiEvent || e.type === Blockly.Events.FINISHED_LOADING) return;
+  try { localStorage.setItem(KUNCI, JSON.stringify(Blockly.serialization.workspaces.save(ws))); } catch (_) {}
+});
+try { Blockly.serialization.workspaces.load(JSON.parse(localStorage.getItem(KUNCI)), ws); jalankan(); }
+catch (_) { muatContoh("Lingkaran dengan diameter AB"); }
+
+/* ============ 9. Ukuran otomatis & pemisah panel ============ */
+const ro = new ResizeObserver(() => { Blockly.svgResize(ws); calc.resize(); });
+ro.observe(document.getElementById("blok")); ro.observe(elemen);
+const pemisah = document.getElementById("pemisah");
+pemisah.addEventListener("pointerdown", e => { pemisah.setPointerCapture(e.pointerId); pemisah.classList.add("tarik"); });
+pemisah.addEventListener("pointermove", e => {
+  if (!pemisah.classList.contains("tarik")) return;
+  document.body.style.setProperty("--kiri", Math.min(Math.max(e.clientX, 320), innerWidth - 320) + "px");
+});
+pemisah.addEventListener("pointerup", () => pemisah.classList.remove("tarik"));
+</script>
+</body>
+</html>
