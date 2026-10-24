@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingkaran: Definisi dan Unsur-unsurnya — Geometri Analitik</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7ef;--card:#fff;--ink:#16324a;--mut:#5d7186;--teal:#0f8b8d;--coral:#ec5f4a;--amber:#f2a93b;--line:#e3dccb;--grid:#e9e2d2;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1c2b;--card:#162a3d;--ink:#e8eef5;--mut:#9db0c3;--teal:#3cc3c5;--coral:#ff8470;--amber:#f7c05f;--line:#27405a;--grid:#1f364d}}
+:root[data-theme="dark"]{--bg:#0e1c2b;--card:#162a3d;--ink:#e8eef5;--mut:#9db0c3;--teal:#3cc3c5;--coral:#ff8470;--amber:#f7c05f;--line:#27405a;--grid:#1f364d}
+html{scroll-behavior:smooth;scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 'DM Sans',system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+h1,h2{font-family:'Fraunces',Georgia,serif;line-height:1.15;margin:0}
+header{padding:48px 20px 40px;text-align:center;background:radial-gradient(circle at 80% 0,color-mix(in srgb,var(--teal) 25%,transparent),transparent 55%),radial-gradient(circle at 10% 100%,color-mix(in srgb,var(--coral) 22%,transparent),transparent 50%)}
+.tag{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:700}
+h1{font-size:clamp(32px,6vw,54px);font-weight:800;margin:10px 0}
+header p{max-width:560px;margin:0 auto;color:var(--mut)}
+.orb{width:96px;height:96px;margin:0 auto 18px;border:5px solid var(--teal);border-radius:50%;position:relative;animation:spin 14s linear infinite}
+.orb::before{content:"";position:absolute;left:50%;top:50%;width:46%;height:3px;background:var(--coral);transform-origin:left center}
+.orb::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px;background:var(--amber);border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 14px;justify-content:center}
+nav a{white-space:nowrap;text-decoration:none;color:var(--mut);padding:6px 14px;border-radius:99px;font-weight:500;font-size:14px}
+nav a.on{background:var(--ink);color:var(--bg)}
+#bar{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--teal),var(--coral))}
+main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;margin:22px 0}
+h2{font-size:28px;margin-bottom:6px}
+.sub{color:var(--mut);margin:0 0 16px}
+.def{border-left:5px solid var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0}
+.math{font-family:'Fraunces',Georgia,serif;font-size:1.12em}
+canvas,svg.fig{width:100%;display:block;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+canvas{height:340px;touch-action:none}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:12px 0}
+label{font-size:14px;color:var(--mut);display:flex;gap:8px;align-items:center}
+input[type=range]{accent-color:var(--teal)}
+.out{font-weight:700;color:var(--ink);min-width:2ch}
+.pill{display:inline-block;padding:3px 12px;border-radius:99px;font-weight:700;font-size:14px;color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:99px;font:500 14px 'DM Sans',sans-serif;cursor:pointer;transition:.2s}
+.chip:hover{border-color:var(--teal)}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.info{min-height:84px;padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--teal) 10%,transparent)}
+.info b{font-family:'Fraunces',Georgia,serif;font-size:20px;color:var(--teal)}
+.fig .el{cursor:pointer;transition:opacity .3s;fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round}
+.fig text{fill:var(--ink);font:600 13px 'DM Sans',sans-serif;stroke:none}
+.fig .fl{fill:color-mix(in srgb,var(--teal) 30%,transparent);stroke:var(--teal)}
+.fig.dim .el{opacity:.12}.fig.dim .el.on{opacity:1}
+.fig .el.on{stroke:var(--coral)}.fig .el.on .fl{fill:color-mix(in srgb,var(--coral) 35%,transparent);stroke:var(--coral)}.fig .el.on text{fill:var(--coral)}
+.eq{font-size:1.3em;text-align:center;padding:12px;background:var(--bg);border-radius:12px;margin:10px 0}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:8px 0}
+summary{cursor:pointer;font-weight:700}
+.q{margin:18px 0;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--teal)}
+.opt.ok{background:color-mix(in srgb,var(--teal) 22%,transparent);border-color:var(--teal)}
+.opt.no{background:color-mix(in srgb,var(--coral) 22%,transparent);border-color:var(--coral)}
+.fb{font-size:14px;margin-top:6px;color:var(--mut)}
+#score{font-size:20px;font-weight:700;text-align:center;padding:12px}
+footer{text-align:center;color:var(--mut);font-size:14px;padding:10px 20px 40px}
+</style>
+</head>
+<body>
+<header>
+  <div class="orb"></div>
+  <span class="tag">Geometri Analitik</span>
+  <h1>Lingkaran</h1>
+  <p>Definisi dan unsur-unsurnya: jelajahi, geser, dan ubah sendiri pada bidang koordinat.</p>
+</header>
+<nav id="nav">
+  <a href="#definisi">1. Definisi</a><a href="#unsur">2. Unsur-unsur</a><a href="#persamaan">3. Persamaan</a><a href="#kuis">4. Kuis</a>
+  <div id="bar"></div>
+</nav>
+<main>
+
+<section id="definisi">
+  <h2>1. Definisi Lingkaran</h2>
+  <p class="sub">Geser titik P dan geser <i>slider</i> jari-jari untuk melihat apa yang membuat sebuah titik “berada pada lingkaran”.</p>
+  <div class="def"><b>Lingkaran</b> adalah himpunan semua titik pada bidang yang berjarak sama terhadap sebuah titik tetap. Titik tetap itu disebut <b>pusat</b>, dan jarak tersebut disebut <b>jari-jari</b> (r).<br>
+  <span class="math">L = { P(x, y) | OP = r }</span></div>
+  <canvas id="c1"></canvas>
+  <div class="row">
+    <label>Jari-jari r = <input id="r1" type="range" min="1" max="5" step="0.5" value="4"><span class="out" id="r1v">4</span></label>
+    <span>OP = <b id="d1">0</b></span>
+    <span class="pill" id="st1"></span>
+  </div>
+  <p class="sub" style="margin:0">Pusat O(0, 0). Titik P berada <b>pada</b> lingkaran jika OP = r, <b>di dalam</b> jika OP &lt; r, dan <b>di luar</b> jika OP &gt; r.</p>
+</section>
+
+<section id="unsur">
+  <h2>2. Unsur-unsur Lingkaran</h2>
+  <p class="sub">Pilih unsur pada tombol, atau klik langsung bagian gambarnya.</p>
+  <svg class="fig" id="fig" viewBox="0 0 400 320" role="img" aria-label="Lingkaran dengan unsur-unsurnya">
+    <circle cx="200" cy="160" r="110" style="fill:var(--card);stroke:var(--mut);stroke-width:2"/>
+    <g class="el" data-k="juring"><path class="fl" d="M200 160 L303.4 122.4 A110 110 0 0 0 237.6 56.6 Z"/><text x="246" y="114" style="font-size:11px">juring</text></g>
+    <g class="el" data-k="tembereng"><path class="fl" d="M162.4 263.4 A110 110 0 0 0 237.6 263.4 Z"/><text x="168" y="292">tembereng</text></g>
+    <g class="el" data-k="busur"><path d="M190.4 50.4 A110 110 0 0 0 122.2 82.2" style="stroke-width:5"/><text x="125" y="48">busur</text></g>
+    <g class="el" data-k="diameter"><line x1="104.7" y1="105" x2="295.3" y2="215"/><text x="268" y="192">d</text></g>
+    <g class="el" data-k="jari"><line x1="200" y1="160" x2="91.7" y2="179.1"/><text x="136" y="162">r</text></g>
+    <g class="el" data-k="tali"><line x1="162.4" y1="263.4" x2="237.6" y2="263.4"/><text x="172" y="256">tali busur</text></g>
+    <g class="el" data-k="apotema"><line x1="200" y1="160" x2="200" y2="263.4"/><path d="M200 252 L212 252 L212 263.4" style="stroke-width:1.5"/><text x="205" y="210">apotema</text></g>
+    <g class="el" data-k="pusat"><circle cx="200" cy="160" r="6" style="fill:var(--ink)"/><text x="208" y="150">O</text></g>
+  </svg>
+  <div class="chips" id="chips"></div>
+  <div class="info" id="info"><b>Pilih sebuah unsur</b><br>Setiap unsur akan disorot pada gambar beserta penjelasan dan rumusnya.</div>
+</section>
+
+<section id="persamaan">
+  <h2>3. Persamaan Lingkaran</h2>
+  <p class="sub">Ubah pusat (a, b) dan jari-jari r. Perhatikan bagaimana persamaannya ikut berubah.</p>
+  <canvas id="c2"></canvas>
+  <div class="row">
+    <label>a <input id="a" type="range" min="-5" max="5" step="1" value="2"><span class="out" id="av">2</span></label>
+    <label>b <input id="b" type="range" min="-5" max="5" step="1" value="-1"><span class="out" id="bv">-1</span></label>
+    <label>r <input id="r2" type="range" min="1" max="6" step="1" value="3"><span class="out" id="r2v">3</span></label>
+  </div>
+  <div class="eq math" id="eq1"></div>
+  <div class="eq math" id="eq2" style="font-size:1.1em"></div>
+  <details><summary>Rangkuman rumus</summary>
+    <p><b>Bentuk baku:</b> <span class="math">(x − a)² + (y − b)² = r²</span>, pusat (a, b), jari-jari r.<br>
+    <b>Pusat di O:</b> <span class="math">x² + y² = r²</span>.<br>
+    <b>Bentuk umum:</b> <span class="math">x² + y² + Ax + By + C = 0</span> dengan pusat (−A/2, −B/2) dan <span class="math">r = √(A²/4 + B²/4 − C)</span>.</p>
+  </details>
+</section>
+
+<section id="kuis">
+  <h2>4. Kuis Cepat</h2>
+  <p class="sub">Jawab untuk melihat umpan balik langsung.</p>
+  <div id="quiz"></div>
+  <div id="score"></div>
+</section>
+</main>
+<footer>Disusun oleh Martin Bernard, M.Pd. · IKIP Siliwangi</footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const V=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function setup(c){const d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return[x,w,h]}
+function grid(x,w,h,u){x.clearRect(0,0,w,h);const ox=w/2,oy=h/2;x.lineWidth=1;x.font='11px DM Sans, sans-serif';x.fillStyle=V('--mut');
+ for(let i=-Math.ceil(ox/u);i<=Math.ceil(ox/u);i++){x.strokeStyle=i?V('--grid'):V('--mut');x.beginPath();x.moveTo(ox+i*u,0);x.lineTo(ox+i*u,h);x.stroke();if(i&&i%2==0)x.fillText(i,ox+i*u-3,oy+13)}
+ for(let j=-Math.ceil(oy/u);j<=Math.ceil(oy/u);j++){x.strokeStyle=j?V('--grid'):V('--mut');x.beginPath();x.moveTo(0,oy-j*u);x.lineTo(w,oy-j*u);x.stroke();if(j&&j%2==0)x.fillText(j,ox+5,oy-j*u+4)}}
+function dot(x,px,py,r,col){x.fillStyle=col;x.beginPath();x.arc(px,py,r,0,7);x.fill()}
+
+/* ---------- 1. Definisi ---------- */
+let P={x:3,y:2};
+function draw1(){const c=$('#c1'),[x,w,h]=setup(c),u=h/13,ox=w/2,oy=h/2,r=+$('#r1').value;grid(x,w,h,u);
+ x.strokeStyle=V('--teal');x.lineWidth=3;x.beginPath();x.arc(ox,oy,r*u,0,7);x.stroke();
+ const d=Math.hypot(P.x,P.y),on=Math.abs(d-r)<0.1,col=on?V('--teal'):d<r?V('--amber'):V('--coral');
+ x.setLineDash([6,5]);x.strokeStyle=col;x.lineWidth=2;x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+P.x*u,oy-P.y*u);x.stroke();x.setLineDash([]);
+ dot(x,ox,oy,6,V('--ink'));x.fillStyle=V('--ink');x.font='700 14px DM Sans, sans-serif';x.fillText('O',ox+8,oy+18);
+ dot(x,ox+P.x*u,oy-P.y*u,9,col);x.fillStyle=V('--ink');x.fillText('P('+P.x.toFixed(1)+', '+P.y.toFixed(1)+')',ox+P.x*u+12,oy-P.y*u-10);
+ $('#d1').textContent=d.toFixed(2);const s=$('#st1');s.textContent=on?'pada lingkaran':d<r?'di dalam lingkaran':'di luar lingkaran';s.style.background=col}
+(function(){const c=$('#c1');let drag=false;
+ const mv=e=>{if(!drag)return;const b=c.getBoundingClientRect(),u=b.height/13;P.x=Math.max(-6,Math.min(6,(e.clientX-b.left-b.width/2)/u));P.y=Math.max(-6,Math.min(6,-(e.clientY-b.top-b.height/2)/u));
+  const r=+$('#r1').value,d=Math.hypot(P.x,P.y);if(Math.abs(d-r)<0.18&&d>0){P.x*=r/d;P.y*=r/d}draw1()};
+ c.addEventListener('pointerdown',e=>{drag=true;c.setPointerCapture(e.pointerId);mv(e)});c.addEventListener('pointermove',mv);c.addEventListener('pointerup',()=>drag=false);
+ $('#r1').oninput=e=>{$('#r1v').textContent=e.target.value;draw1()}})();
+
+/* ---------- 2. Unsur ---------- */
+const EL={
+pusat:['Pusat (O)','Titik tetap yang jaraknya sama ke setiap titik pada lingkaran. Pada bidang koordinat ditulis (a, b).'],
+jari:['Jari-jari (r)','Ruas garis dari pusat ke sebarang titik pada lingkaran. Semua jari-jari sama panjang.<br><span class="math">OP = r</span>'],
+diameter:['Diameter (d)','Tali busur terpanjang, yaitu yang melalui pusat.<br><span class="math">d = 2r</span>'],
+tali:['Tali busur','Ruas garis yang menghubungkan dua titik pada lingkaran. Diameter adalah tali busur terpanjang.'],
+busur:['Busur','Bagian kurva lingkaran di antara dua titik.<br><span class="math">panjang busur = (θ/360°) × 2πr</span>'],
+juring:['Juring','Daerah yang dibatasi dua jari-jari dan satu busur.<br><span class="math">luas juring = (θ/360°) × πr²</span>'],
+tembereng:['Tembereng','Daerah yang dibatasi oleh tali busur dan busur.<br><span class="math">luas = luas juring − luas segitiga</span>'],
+apotema:['Apotema','Jarak tegak lurus dari pusat ke tali busur; membagi tali busur menjadi dua sama panjang.<br><span class="math">apotema = √(r² − (t/2)²)</span>']};
+const chips=$('#chips');
+Object.keys(EL).forEach(k=>{const b=document.createElement('button');b.className='chip';b.textContent=EL[k][0].replace(/ \(.*/,'');b.dataset.k=k;b.onclick=()=>pick(k);chips.append(b)});
+$$('#fig .el').forEach(g=>g.onclick=()=>pick(g.dataset.k));
+function pick(k){$('#fig').classList.add('dim');$$('#fig .el').forEach(g=>g.classList.toggle('on',g.dataset.k==k));$$('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k==k));$('#info').innerHTML='<b>'+EL[k][0]+'</b><br>'+EL[k][1]}
+
+/* ---------- 3. Persamaan ---------- */
+const sg=(n,t)=>n?(n>0?' + ':' − ')+Math.abs(n)+t:'';
+const tm=(v,t)=>v?'('+t+(v>0?' − '+v:' + '+(-v))+')':t;
+function draw2(){const c=$('#c2'),[x,w,h]=setup(c),u=h/20,ox=w/2,oy=h/2,a=+$('#a').value,b=+$('#b').value,r=+$('#r2').value;grid(x,w,h,u);
+ x.fillStyle=V('--teal')+'33';x.strokeStyle=V('--teal');x.lineWidth=3;x.beginPath();x.arc(ox+a*u,oy-b*u,r*u,0,7);x.fill();x.stroke();
+ x.setLineDash([5,4]);x.strokeStyle=V('--coral');x.lineWidth=2;x.beginPath();x.moveTo(ox+a*u,oy-b*u);x.lineTo(ox+(a+r)*u,oy-b*u);x.stroke();x.setLineDash([]);
+ dot(x,ox+a*u,oy-b*u,6,V('--ink'));x.fillStyle=V('--ink');x.font='700 13px DM Sans, sans-serif';x.fillText('('+a+', '+b+')',ox+a*u+8,oy-b*u-10);x.fillStyle=V('--coral');x.fillText('r = '+r,ox+(a+r/2)*u-14,oy-b*u+16);
+ ['a','b','r2'].forEach(i=>$('#'+i+'v').textContent=$('#'+i).value);
+ $('#eq1').innerHTML=tm(a,'x')+'² + '+tm(b,'y')+'² = '+r*r;
+ const C=a*a+b*b-r*r;$('#eq2').innerHTML='x² + y²'+sg(-2*a,'x')+sg(-2*b,'y')+sg(C,'')+' = 0'}
+['a','b','r2'].forEach(i=>$('#'+i).oninput=draw2);
+
+/* ---------- 4. Kuis ---------- */
+const Q=[
+['Lingkaran adalah himpunan titik yang …',['berjarak sama terhadap sebuah titik tetap','berjarak sama terhadap dua titik tetap','membentuk sudut 90° terhadap pusat','memiliki jumlah jarak tetap terhadap dua titik'],0,'Titik tetap itu disebut pusat, jaraknya disebut jari-jari.'],
+['Tali busur terpanjang pada sebuah lingkaran disebut …',['apotema','diameter','juring','tembereng'],1,'Diameter melalui pusat sehingga panjangnya 2r.'],
+['Persamaan lingkaran berpusat di (2, −3) dengan jari-jari 5 adalah …',['(x − 2)² + (y − 3)² = 25','(x + 2)² + (y + 3)² = 25','(x − 2)² + (y + 3)² = 25','(x − 2)² + (y + 3)² = 5'],2,'(x − a)² + (y − b)² = r² dengan a = 2, b = −3, r² = 25.'],
+['Titik (6, 0) terhadap lingkaran x² + y² = 25 berada …',['di dalam lingkaran','pada lingkaran','di luar lingkaran','di pusat lingkaran'],2,'6² + 0² = 36 > 25, jadi jaraknya lebih besar dari r = 5.'],
+['Lingkaran berjari-jari 13 memiliki tali busur 24. Panjang apotemanya …',['5','7','12','10'],0,'√(13² − 12²) = √25 = 5.']];
+let sc=0,dn=0;const qz=$('#quiz');
+Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';d.innerHTML='<b>'+(i+1)+'. '+q[0]+'</b>';
+ q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>{
+  [...d.querySelectorAll('.opt')].forEach(x=>x.disabled=true);const ok=j==q[2];b.classList.add(ok?'ok':'no');
+  if(!ok)d.querySelectorAll('.opt')[q[2]].classList.add('ok');sc+=ok;dn++;
+  const f=document.createElement('div');f.className='fb';f.textContent=(ok?'Benar. ':'Belum tepat. ')+q[3];d.append(f);
+  $('#score').textContent=dn==Q.length?'Skor akhir: '+sc+' / '+Q.length+(sc==Q.length?' — sempurna!':''):'Terjawab '+dn+' dari '+Q.length}
+  d.append(b)});qz.append(d)});
+
+/* ---------- Navigasi ---------- */
+const links=$$('#nav a'),secs=$$('section');
+secs.forEach(s=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.hash=='#'+e.target.id))}),{rootMargin:'-30% 0px -60% 0px'}).observe(s));
+addEventListener('scroll',()=>{const m=document.documentElement;$('#bar').style.width=100*scrollY/(m.scrollHeight-innerHeight)+'%'},{passive:true});
+function all(){draw1();draw2()}
+addEventListener('resize',all);matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);
+document.fonts&&document.fonts.ready.then(all);all();
+</script>
+</body>
+</html>
