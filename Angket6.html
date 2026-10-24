@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Angket Kemampuan Abstraksi: Garis Sudut Bagi dan Ruas Garis</title>
+<style>
+:root{--bg:#f3f5fa;--card:#fff;--ink:#1f2937;--muted:#6b7280;--brand:#2563eb;--brand-d:#1d4ed8;--ok:#16a34a;--err:#dc2626;--line:#e5e7eb}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.bar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:.6rem 1rem}
+.bar-in{max-width:760px;margin:auto}
+.track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--brand);transition:width .25s}
+.bar small{display:block;margin-top:.3rem;color:var(--muted);font-size:.82rem}
+main{max-width:760px;margin:1.2rem auto 3rem;padding:0 1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem;margin-bottom:1rem;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+h1{font-size:1.35rem;margin:.1rem 0 .5rem}
+h2{font-size:1.05rem;margin:0 0 .2rem;color:var(--brand-d)}
+p{margin:.35rem 0}.muted{color:var(--muted);font-size:.9rem}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem .9rem;margin-top:.6rem;font-size:.88rem}
+.legend b{color:var(--brand-d)}
+label.f{display:block;font-weight:600;margin-top:.8rem}
+input[type=text]{width:100%;margin-top:.25rem;padding:.6rem .75rem;border:1px solid #cbd5e1;border-radius:10px;font:inherit}
+input[type=text]:focus{outline:2px solid var(--brand);border-color:transparent}
+fieldset.q{border:1px solid var(--line);border-radius:12px;margin:.9rem 0 0;padding:.8rem .9rem}
+fieldset.q.missing{border-color:var(--err);background:#fef2f2}
+legend{padding:0 .3rem;font-weight:500}
+.no{display:inline-block;min-width:1.7rem;height:1.7rem;line-height:1.7rem;text-align:center;border-radius:50%;background:#e0e7ff;color:var(--brand-d);font-size:.85rem;font-weight:700;margin-right:.35rem}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.6rem}
+.opts label{cursor:pointer}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.opts span{display:flex;flex-direction:column;align-items:center;padding:.5rem .2rem;border:1.5px solid #cbd5e1;border-radius:10px;font-weight:700;transition:.15s;text-align:center}
+.opts span small{font-weight:500;font-size:.72rem;color:var(--muted);margin-top:.1rem}
+.opts label:hover span{border-color:var(--brand)}
+.opts input:checked+span{background:var(--brand);border-color:var(--brand);color:#fff}
+.opts input:checked+span small{color:#dbeafe}
+.opts input:focus-visible+span{outline:3px solid #93c5fd}
+button{width:100%;padding:.85rem;border:0;border-radius:12px;background:var(--brand);color:#fff;font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+button:hover{background:var(--brand-d)}button:disabled{opacity:.6;cursor:wait}
+#status{margin-top:.7rem;font-size:.92rem;min-height:1.2rem}
+#status.err{color:var(--err)}
+#sukses{display:none;text-align:center;padding:2rem 1.2rem}
+#sukses .ck{font-size:2.6rem;color:var(--ok)}
+@media(max-width:480px){.opts{gap:.3rem}.opts span small{font-size:.65rem}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="bar-in">
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <small id="progTxt">0 dari 20 butir terjawab</small>
+</div></div>
+
+<main>
+<div id="wrap">
+  <div class="card">
+    <h1>Angket Kemampuan Abstraksi</h1>
+    <p><b>Materi:</b> Geometri analitik, garis sudut bagi dan ruas garis, dengan bantuan video pembelajaran dan media pembelajaran online.</p>
+    <p class="muted">Bacalah setiap pernyataan, lalu pilih jawaban yang paling sesuai dengan pengalaman Anda. Tidak ada jawaban benar atau salah, dan jawaban hanya dipakai untuk keperluan penelitian.</p>
+    <div class="legend">
+      <span><b>1</b> = Sangat Tidak Setuju (STS)</span>
+      <span><b>2</b> = Tidak Setuju (TS)</span>
+      <span><b>3</b> = Setuju (S)</span>
+      <span><b>4</b> = Sangat Setuju (SS)</span>
+    </div>
+  </div>
+
+  <form id="angket" novalidate>
+    <div class="card">
+      <h2>Identitas Responden</h2>
+      <label class="f" for="nama">Nama lengkap *</label>
+      <input type="text" id="nama" autocomplete="name" required>
+      <label class="f" for="kelas">Kelas / NIM</label>
+      <input type="text" id="kelas">
+    </div>
+
+    <div id="butir"></div>
+
+    <div class="card">
+      <button type="submit" id="kirim">Kirim Jawaban</button>
+      <div id="status" role="status" aria-live="polite"></div>
+    </div>
+  </form>
+</div>
+
+<div class="card" id="sukses">
+  <div class="ck">&#10004;</div>
+  <h1>Terima kasih!</h1>
+  <p>Jawaban Anda sudah terkirim.</p>
+  <p class="muted" id="demoNote"></p>
+</div>
+</main>
+
+<script>
+/* ================== KONFIGURASI GOOGLE FORM ==================
+   1. Buat Google Form dengan 22 pertanyaan berurutan:
+      Nama, Kelas/NIM, lalu 20 butir (pilihan ganda berisi 1, 2, 3, 4 atau jawaban singkat).
+   2. Ganti GANTI_FORM_ID dengan ID formulir (ada di URL: /forms/d/e/<ID>/viewform).
+   3. Isi kode entry.xxxxx tiap pertanyaan: menu titik tiga > "Dapatkan link terisi otomatis",
+      isi semua kolom, klik "Dapatkan link", lalu lihat parameter entry.xxxxx pada link tersebut.
+   Selama masih memuat "GANTI", angket berjalan dalam mode uji (data hanya di konsol browser). */
+const CONFIG = {
+  FORM_URL: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeccDoCy0MRbs8O20WIAOx5G-GG4J3tSABfJqBDOM3oYB2HWQ/formResponse",
+  ENTRY_NAMA:  "entry.1039565239",
+  ENTRY_KELAS: "entry.1361795911",
+  ENTRY_BUTIR: [
+    "entry.1402320982","entry.96488288","entry.431554435","entry.1466524756","entry.1693548078",
+    "entry.872902603","entry.1010962404","entry.405903917","entry.1533755517","entry.419555922",
+    "entry.1994928293","entry.199911561","entry.885429964","entry.1956052317","entry.1385302221",
+    "entry.813395239","entry.960370693","entry.2118089509","entry.251903658","entry.1798580963"
+  ]
+};
+
+/* ================== BUTIR ANGKET (5 indikator x 4 butir) ================== */
+const KELOMPOK = [
+  { judul: "A. Mengenali dan mengidentifikasi konsep", butir: [
+    "Video pembelajaran membantu saya mengenali ciri garis sudut bagi, yaitu garis yang membagi sebuah sudut menjadi dua bagian sama besar.",
+    "Setelah melihat animasi di media online, saya dapat membedakan garis sudut bagi dari garis lain yang melalui titik potong dua garis.",
+    "Dengan video pembelajaran, saya dapat mengidentifikasi ruas garis sebagai bagian garis yang dibatasi dua titik ujung pada bidang koordinat.",
+    "Saya mampu menentukan unsur penting ruas garis (titik ujung, titik tengah, dan panjang) dari tayangan visual yang diberikan."
+  ]},
+  { judul: "B. Merepresentasikan secara visual dan simbolik", butir: [
+    "Setelah menonton video pembelajaran, saya dapat menggambar dua garis berpotongan beserta garis sudut baginya pada bidang koordinat.",
+    "Saya mampu mengubah gambar ruas garis pada bidang koordinat ke bentuk simbol, misalnya A(x\u2081, y\u2081) dan B(x\u2082, y\u2082).",
+    "Media pembelajaran online membantu saya menyatakan garis sudut bagi dalam bentuk persamaan garis.",
+    "Saya dapat berpindah dari gambar ke rumus, dan dari rumus ke gambar, ketika mempelajari ruas garis."
+  ]},
+  { judul: "C. Menggeneralisasi dan menemukan pola", butir: [
+    "Animasi pada video membantu saya menyimpulkan bahwa setiap titik pada garis sudut bagi berjarak sama terhadap kedua garis pembentuk sudut.",
+    "Dari beberapa contoh pada video, saya dapat menemukan sendiri pola rumus titik tengah suatu ruas garis.",
+    "Saya mampu merumuskan langkah umum untuk menentukan persamaan garis sudut bagi dari dua garis sembarang.",
+    "Setelah mengamati banyak contoh di media online, saya dapat menyatakan aturan umum pembagian ruas garis dengan perbandingan tertentu."
+  ]},
+  { judul: "D. Menghubungkan dan membangun dengan konsep lain", butir: [
+    "Saya dapat menghubungkan konsep jarak titik ke garis dengan konsep garis sudut bagi.",
+    "Saya mampu menghubungkan konsep gradien dan kedudukan dua garis ketika menentukan garis sudut bagi.",
+    "Video pembelajaran membantu saya mengaitkan rumus jarak dua titik dengan panjang ruas garis.",
+    "Saya dapat memakai konsep persamaan garis dan sistem persamaan untuk menyelesaikan masalah yang memuat garis sudut bagi dan ruas garis sekaligus."
+  ]},
+  { judul: "E. Merefleksi dan menerapkan pada situasi baru", butir: [
+    "Saya dapat memeriksa kebenaran jawaban dengan membandingkannya dengan visualisasi pada media online.",
+    "Saya mampu menerapkan konsep garis sudut bagi pada soal cerita atau konteks nyata.",
+    "Saya dapat menjelaskan kepada teman, dengan kata-kata sendiri, hubungan antara ruas garis dan titik yang membaginya.",
+    "Saya merasa mampu menyelesaikan soal garis sudut bagi dan ruas garis yang bentuknya baru tanpa bantuan video."
+  ]}
+];
+const SKALA = [[1,"STS"],[2,"TS"],[3,"S"],[4,"SS"]];
+const TOTAL = 20;
+
+/* ================== RENDER ================== */
+const wadah = document.getElementById("butir");
+let nomor = 0;
+KELOMPOK.forEach(k => {
+  const kartu = document.createElement("div");
+  kartu.className = "card";
+  kartu.innerHTML = "<h2>" + k.judul + "</h2>";
+  k.butir.forEach(teks => {
+    nomor++;
+    const fs = document.createElement("fieldset");
+    fs.className = "q";
+    fs.id = "q" + nomor;
+    fs.innerHTML =
+      '<legend><span class="no">' + nomor + "</span>" + teks + "</legend>" +
+      '<div class="opts">' +
+      SKALA.map(s =>
+        '<label><input type="radio" name="b' + nomor + '" value="' + s[0] + '"><span>' +
+        s[0] + "<small>" + s[1] + "</small></span></label>"
+      ).join("") + "</div>";
+    kartu.appendChild(fs);
+  });
+  wadah.appendChild(kartu);
+});
+
+/* ================== PROGRES ================== */
+const form = document.getElementById("angket");
+function hitung() {
+  let n = 0;
+  for (let i = 1; i <= TOTAL; i++) {
+    if (form.querySelector('input[name="b' + i + '"]:checked')) n++;
+  }
+  document.getElementById("fill").style.width = (n / TOTAL * 100) + "%";
+  document.getElementById("progTxt").textContent = n + " dari " + TOTAL + " butir terjawab";
+  return n;
+}
+form.addEventListener("change", e => {
+  if (e.target.type === "radio") {
+    e.target.closest("fieldset").classList.remove("missing");
+    hitung();
+  }
+});
+
+/* ================== KIRIM ================== */
+const status = document.getElementById("status");
+function pesan(teks, galat) {
+  status.textContent = teks;
+  status.className = galat ? "err" : "";
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const nama = document.getElementById("nama").value.trim();
+  if (!nama) {
+    pesan("Nama lengkap wajib diisi.", true);
+    document.getElementById("nama").focus();
+    return;
+  }
+
+  const jawaban = [];
+  let pertamaKosong = null;
+  for (let i = 1; i <= TOTAL; i++) {
+    const dipilih = form.querySelector('input[name="b' + i + '"]:checked');
+    const fs = document.getElementById("q" + i);
+    if (dipilih) {
+      jawaban.push(dipilih.value);
+    } else {
+      fs.classList.add("missing");
+      if (!pertamaKosong) pertamaKosong = fs;
+    }
+  }
+  if (pertamaKosong) {
+    pesan("Masih ada butir yang belum dijawab (ditandai merah).", true);
+    pertamaKosong.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  const data = new URLSearchParams();
+  data.append(CONFIG.ENTRY_NAMA, nama);
+  data.append(CONFIG.ENTRY_KELAS, document.getElementById("kelas").value.trim());
+  jawaban.forEach((v, i) => data.append(CONFIG.ENTRY_BUTIR[i], v));
+
+  const tombol = document.getElementById("kirim");
+  tombol.disabled = true;
+  pesan("Mengirim jawaban...", false);
+
+  const modeUji = CONFIG.FORM_URL.indexOf("GANTI") !== -1;
+  try {
+    if (modeUji) {
+      console.log("MODE UJI, data yang akan dikirim:", Object.fromEntries(data));
+      document.getElementById("demoNote").textContent =
+        "Mode uji: URL Google Form belum diisi, sehingga data hanya dicetak di konsol browser.";
+    } else {
+      // no-cors: Google Form tidak mengirim balasan yang bisa dibaca, tetapi data tetap tersimpan.
+      await fetch(CONFIG.FORM_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: data.toString()
+      });
+    }
+    document.getElementById("wrap").style.display = "none";
+    document.getElementById("sukses").style.display = "block";
+    document.querySelector(".bar").style.display = "none";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    console.error(err);
+    pesan("Gagal mengirim. Periksa koneksi internet lalu coba lagi.", true);
+    tombol.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
