@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeoAlBlockly · Pemrograman Blok untuk Geometri · Martin Bernard</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#1b2430;--mute:#5b6675;--line:#d5dae1;--teal:#0f5c63;--teal2:#0b474d;--amber:#e0a100;--err:#b3261e;--code:#eef1f4}
+@media (prefers-color-scheme:dark){:root{--bg:#12171d;--panel:#1a2129;--ink:#e8edf2;--mute:#9aa6b4;--line:#2d3743;--teal:#4cb8c0;--teal2:#7fd0d6;--amber:#f0b429;--err:#ff8a80;--code:#222b35}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.5}
+header{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding:16px 20px;color:#fff;background:linear-gradient(120deg,#0b474d 0%,#0f5c63 55%,#1a8590 100%);border-bottom:4px solid var(--amber)}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:52px;height:52px;flex:none}
+h1{font-size:1.7rem;line-height:1.1;margin:0;letter-spacing:.2px}
+h1 span{color:#ffd166}
+header p{margin:4px 0 0;color:#d6eef0;font-size:.92rem}
+.by{background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.45);border-radius:16px;padding:10px 22px;text-align:center;line-height:1.3}
+.by small{display:block;font-size:.95rem;color:#d6eef0}
+.by strong{display:block;font-size:1.5rem;color:#ffd166;letter-spacing:.3px}
+.by em{display:block;font-style:normal;font-size:1rem}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 20px}
+button{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:6px;cursor:pointer}
+button:hover{border-color:var(--teal)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+button.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+@media (prefers-color-scheme:dark){button.primary{color:#0b1217}}
+button.primary:hover{background:var(--teal2)}
+label.auto{margin-left:auto;font-size:.9rem;color:var(--mute);display:flex;gap:6px;align-items:center}
+main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px;padding:0 20px 12px}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;min-width:0}
+.panel h2{font-size:.95rem;margin:0;padding:8px 12px;border-bottom:1px solid var(--line)}
+#blocklyDiv{height:560px}
+#ggb-wrap{height:560px;width:100%;overflow:hidden}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 20px}
+@media (max-width:900px){.info{grid-template-columns:1fr}}
+pre{margin:0;padding:10px 12px;background:var(--code);font:.82rem/1.5 ui-monospace,Consolas,monospace;height:170px;overflow:auto;white-space:pre-wrap}
+#status{padding:6px 12px;font-size:.85rem;color:var(--mute);border-top:1px solid var(--line)}
+#status.err{color:var(--err)}
+footer{padding:0 20px 20px;color:var(--mute);font-size:.82rem}
+.blocklyToolboxDiv{background:var(--panel) !important;border-right:1px solid var(--line)}
+.blocklyTreeLabel,.blocklyToolboxCategoryLabel{color:var(--ink) !important}
+.blocklyToolboxSelected .blocklyTreeLabel,.blocklyToolboxSelected .blocklyToolboxCategoryLabel{color:#fff !important}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 52 52" aria-hidden="true">
+      <rect width="52" height="52" rx="14" fill="rgba(255,255,255,.15)"/>
+      <polygon points="11,40 42,40 11,12" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M11 33 H18 V40" fill="none" stroke="#ffd166" stroke-width="2.2"/>
+      <path d="M31 40 A11 11 0 0 0 33.5 33" fill="none" stroke="#ffd166" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="11" cy="12" r="3" fill="#ffd166"/><circle cx="42" cy="40" r="3" fill="#ffd166"/><circle cx="11" cy="40" r="3" fill="#ffd166"/>
+    </svg>
+    <div>
+      <h1>Geo<span>Al</span>Blockly</h1>
+      <p>Susun blok, lihat geometri tercipta. Setiap blok menjadi perintah GeoGebra di kanvas kanan.</p>
+    </div>
+  </div>
+  <div class="by"><small>Buatan</small><strong>Martin Bernard, M.Pd.</strong><em>IKIP Siliwangi</em></div>
+</header>
+
+<div class="bar">
+  <button class="primary" id="btnRun">Jalankan</button>
+  <button id="btnClear">Bersihkan kanvas</button>
+  <button id="btnExample">Muat contoh</button>
+  <button id="btnReset">Kosongkan blok</button>
+  <button id="btnSave">Simpan</button>
+  <button id="btnLoad">Buka file</button>
+  <input type="file" id="fileLoad" accept=".json" hidden>
+  <label class="auto"><input type="checkbox" id="auto" checked> Jalankan otomatis saat blok berubah</label>
+</div>
+
+<main>
+  <section class="panel"><h2>Ruang kerja Blockly</h2><div id="blocklyDiv"></div><div id="status">Menyiapkan GeoGebra…</div></section>
+  <section class="panel"><h2>Kanvas GeoGebra</h2><div id="ggb-wrap"><div id="ggb-element"></div></div></section>
+</main>
+
+<div class="info">
+  <section class="panel"><h2>Kode JavaScript hasil blok</h2><pre id="codeOut"></pre></section>
+  <section class="panel"><h2>Perintah yang dikirim ke GeoGebra</h2><pre id="logOut"></pre></section>
+</div>
+<footer>GeoAlBlockly · Buatan Martin Bernard, M.Pd. · IKIP Siliwangi</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/blockly_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/blocks_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/javascript_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/msg/id.js"></script>
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+<script>
+/* ============ 1. Jembatan ke GeoGebra ============ */
+let api = null;
+const logLines = [];
+const $ = id => document.getElementById(id);
+
+function ggbEval(cmd){
+  if(!api) throw new Error("GeoGebra belum siap.");
+  const ok = api.evalCommand(cmd);
+  logLines.push((ok === false ? "✗ " : "✓ ") + cmd);
+}
+function ggbColor(name, hex){
+  if(!api) return;
+  const v = parseInt(hex.slice(1), 16);
+  api.setColor(name, (v >> 16) & 255, (v >> 8) & 255, v & 255);
+  logLines.push("✓ setColor(" + name + ", " + hex + ")");
+}
+function ggbClear(){ if(api){ api.newConstruction(); logLines.push("✓ newConstruction()"); } }
+
+const status = (t, err) => { const s = $("status"); s.textContent = t; s.className = err ? "err" : ""; };
+
+function startGeoGebra(){
+  const wrap = $("ggb-wrap");
+  const params = {
+    appName: "classic", width: wrap.clientWidth, height: wrap.clientHeight,
+    showToolBar: false, showAlgebraInput: false, showMenuBar: false,
+    enableRightClick: true, showResetIcon: true,
+    appletOnLoad: function(a){ api = a; status("GeoGebra siap. Susun blok lalu tekan Jalankan."); run(); }
+  };
+  try { new GGBApplet(params, true).inject("ggb-element"); }
+  catch(e){ status("GeoGebra gagal dimuat. Periksa koneksi internet.", true); }
+}
+
+/* ============ 2. Definisi blok kustom ============ */
+const S = "String", N = "Number";
+const iv = (name, check) => ({type:"input_value", name, check});
+const stmt = {previousStatement:null, nextStatement:null};
+
+Blockly.defineBlocksWithJsonArray([
+ /* Objek dasar */
+ {type:"ggb_point", message0:"titik %1 x %2 y %3", args0:[iv("NAME",S), iv("X",N), iv("Y",N)],
+  ...stmt, colour:200, tooltip:"Membuat titik (x, y)"},
+ {type:"ggb_segment", message0:"ruas garis %1 dari titik %2 ke titik %3", args0:[iv("NAME",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:200, tooltip:"Segment(A, B)"},
+ {type:"ggb_line", message0:"garis %1 melalui titik %2 dan titik %3", args0:[iv("NAME",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:200, tooltip:"Line(A, B): garis lurus melalui dua titik"},
+ {type:"ggb_line_eq", message0:"garis %1 : y = %2 x + %3", args0:[iv("NAME",S), iv("M",N), iv("C",N)],
+  ...stmt, colour:200, tooltip:"Garis dengan gradien m dan konstanta c"},
+ {type:"ggb_ray", message0:"sinar %1 melalui titik %2 dan titik %3", args0:[iv("NAME",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:200, tooltip:"Ray(A, B): sinar dari A melalui B"},
+ {type:"ggb_perpotongan", message0:"titik potong %1 objek 1: %2 dan objek 2: %3", args0:[iv("NAME",S), iv("g",S), iv("k",S)],
+  ...stmt, colour:200, tooltip:"Intersect(g, k): perpotongan dua objek"},
+ {type:"ggb_titikTengah", message0:"titik tengah %1 dari titik %2 dan titik %3", args0:[iv("NAME",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:200, tooltip:"Midpoint(A, B): titik tengah dua titik"},
+ {type:"ggb_function", message0:"fungsi %1 (x) = %2", args0:[iv("NAME",S), {type:"field_input",name:"EXPR",text:"x^2 - 2"}],
+  ...stmt, colour:200, tooltip:"Tulis rumus dengan sintaks GeoGebra"},
+ {type:"ggb_slider", message0:"slider %1 dari %2 sampai %3", args0:[iv("NAME",S), iv("MIN",N), iv("MAX",N)],
+  ...stmt, colour:200, tooltip:"Slider(min, max)"},
+ {type:"ggb_teks", message0:"teks %1 isi %2 posisi titik %3 substitusi variabel %4 LaTeX %5",
+  args0:[iv("NAME",S), iv("TXT",S), iv("POS",S), {type:"field_checkbox",name:"SUBST",checked:false}, {type:"field_checkbox",name:"LATEX",checked:false}],
+  ...stmt, colour:200, tooltip:"Text(\"isi\", titik, substitusi, LaTeX)"},
+
+ /* Segi banyak */
+ {type:"ggb_polyline", message0:"garis patah %1 melalui titik-titik %2 tertutup? %3",
+  args0:[iv("NAME",S), iv("PTS",S), {type:"field_checkbox",name:"CLOSED",checked:false}],
+  ...stmt, colour:260, tooltip:"Polyline(A, B, C, ...): pisahkan nama titik dengan koma"},
+ {type:"ggb_polygon", message0:"poligon %1 dengan titik-titik %2", args0:[iv("NAME",S), iv("PTS",S)],
+  ...stmt, colour:260, tooltip:"Polygon(A, B, C, ...): pisahkan nama titik dengan koma"},
+ {type:"ggb_polyBeraturan", message0:"poligon beraturan %1 sisi dari titik %2 ke titik %3 banyak sisi %4",
+  args0:[iv("NAME",S), iv("A",S), iv("B",S), iv("N",N)],
+  ...stmt, colour:260, tooltip:"Polygon(A, B, n): poligon beraturan n sisi"},
+
+ /* Lingkaran */
+ {type:"ggb_circle", message0:"lingkaran %1 pusat titik %2 jari-jari %3", args0:[iv("NAME",S), iv("C",S), iv("R",N)],
+  ...stmt, colour:290, tooltip:"Circle(pusat, r)"},
+ {type:"ggb_circle_xy", message0:"lingkaran %1 pusat x %2 y %3 jari-jari %4", args0:[iv("NAME",S), iv("X",N), iv("Y",N), iv("R",N)],
+  ...stmt, colour:290, tooltip:"Circle((x, y), r)"},
+ {type:"ggb_circle_pp", message0:"lingkaran %1 pusat titik %2 melalui titik %3", args0:[iv("NAME",S), iv("pusat",S), iv("titik",S)],
+  ...stmt, colour:290, tooltip:"Circle(A, B): pusat A, melalui titik B"},
+ {type:"ggb_circle_3p", message0:"lingkaran %1 melalui titik %2 , %3 , %4", args0:[iv("NAME",S), iv("A",S), iv("B",S), iv("C",S)],
+  ...stmt, colour:290, tooltip:"Circle(A, B, C): lingkaran melalui tiga titik"},
+ {type:"ggb_semicircle", message0:"setengah lingkaran %1 diameter dari titik %2 ke titik %3", args0:[iv("NAME",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:290, tooltip:"Semicircle(A, B): setengah lingkaran dengan AB sebagai diameter"},
+ {type:"ggb_juring", message0:"juring %1 pusat titik %2 dari titik %3 ke titik %4 (berlawanan arah jarum jam)", args0:[iv("NAME",S), iv("M",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:290, tooltip:"CircularSector(M, A, B): juring berpusat di M, dari A ke B"},
+ {type:"ggb_juring_sudut", message0:"juring %1 pusat titik %2 mulai dari titik %3 besar sudut %4 derajat", args0:[iv("NAME",S), iv("M",S), iv("A",S), iv("ANG",N)],
+  ...stmt, colour:290, tooltip:"CircularSector(M, A, sudut): juring berpusat di M, mulai dari A, berlawanan arah jarum jam"},
+ {type:"ggb_busur_sudut", message0:"busur %1 pusat titik %2 mulai dari titik %3 besar sudut %4 derajat", args0:[iv("NAME",S), iv("M",S), iv("A",S), iv("ANG",N)],
+  ...stmt, colour:290, tooltip:"CircularArc(M, A, sudut): busur berpusat di M, mulai dari A, berlawanan arah jarum jam"},
+ {type:"ggb_busur3", message0:"busur %1 melalui titik %2 , %3 , %4 (busur luar lingkaran)", args0:[iv("NAME",S), iv("A",S), iv("B",S), iv("C",S)],
+  ...stmt, colour:290, tooltip:"CircumcircularArc(A, B, C): busur dari A melalui B sampai C"},
+ {type:"ggb_juring3", message0:"juring %1 melalui titik %2 , %3 , %4 (juring luar lingkaran)", args0:[iv("NAME",S), iv("A",S), iv("B",S), iv("C",S)],
+  ...stmt, colour:290, tooltip:"CircumcircularSector(A, B, C): juring dari A melalui B sampai C"},
+ {type:"ggb_busur", message0:"busur %1 pusat titik %2 dari titik %3 ke titik %4 (berlawanan arah jarum jam)", args0:[iv("NAME",S), iv("M",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:290, tooltip:"CircularArc(M, A, B): busur berpusat di M, dari A ke B"},
+
+ /* Konstruksi */
+ {type:"ggb_tgl", message0:"garis %1 tegak lurus garis %3 melalui titik %2", args0:[iv("NAME",S), iv("A",S), iv("g",S)],
+  ...stmt, colour:50, tooltip:"PerpendicularLine(titik, garis)"},
+ {type:"ggb_sejajar", message0:"garis %1 sejajar garis %3 melalui titik %2", args0:[iv("NAME",S), iv("A",S), iv("g",S)],
+  ...stmt, colour:50, tooltip:"Line(titik, garis): garis sejajar"},
+ {type:"ggb_sembunyi", message0:"objek %1 tampil di kanvas? %2", args0:[iv("NAME",S), {type:"field_checkbox",name:"SHOW",checked:true}],
+  ...stmt, colour:50, tooltip:"SetVisibleInView(objek, 1, true/false)"},
+
+ /* Gaya */
+ {type:"ggb_color", message0:"warnai objek %1 dengan %2", args0:[iv("NAME",S), {type:"field_colour",name:"COLOR",colour:"#c0392b"}],
+  ...stmt, colour:20, tooltip:"Mengubah warna objek"},
+ {type:"ggb_gayaGaris", message0:"gaya garis objek %1 : %2",
+  args0:[iv("NAME",S), {type:"field_dropdown",name:"STYLE",options:[
+    ["penuh","0"],["putus-putus panjang","1"],["putus-putus pendek","2"],["titik-titik","3"],["garis-titik","4"]]}],
+  ...stmt, colour:180, tooltip:"SetLineStyle(objek, gaya)"},
+ {type:"ggb_tebalGaris", message0:"tebal garis objek %1 tebal: %2", args0:[iv("NAME",S), iv("A1",N)],
+  ...stmt, colour:180, tooltip:"SetLineThickness(objek, nilai)"},
+
+ /* Ukuran */
+ {type:"ggb_sudut", message0:"sudut %1 : titik %2 , titik sudut %3 , titik %4", args0:[iv("NAME",S), iv("A",S), iv("B",S), iv("C",S)],
+  ...stmt, colour:0, tooltip:"Angle(A, B, C): sudut di B dari BA ke BC, berlawanan arah jarum jam"},
+ {type:"ggb_sudut_ukuran", message0:"sudut %1 : dari titik %2 , titik sudut %3 , besar %4 derajat", args0:[iv("NAME",S), iv("A",S), iv("B",S), iv("ANG",N)],
+  ...stmt, colour:0, tooltip:"Angle(A, B, ukuran): membuat sudut dengan besar tertentu di titik B, dimulai dari BA. Titik baru A' dibuat otomatis"},
+ {type:"ggb_jarak", message0:"jarak %1 antara titik %2 dan titik %3", args0:[iv("NAME",S), iv("A",S), iv("B",S)],
+  ...stmt, colour:0, tooltip:"Distance(A, B): jarak dua titik"},
+ {type:"ggb_panjang", message0:"panjang %1 dari objek %2", args0:[iv("NAME",S), iv("OBJ",S)],
+  ...stmt, colour:0, tooltip:"Length(objek): panjang ruas garis, vektor, atau kurva"},
+ {type:"ggb_luas", message0:"luas %1 dari objek %2", args0:[iv("NAME",S), iv("OBJ",S)],
+  ...stmt, colour:0, tooltip:"Area(objek): luas poligon, lingkaran, atau juring"},
+ {type:"ggb_gradien", message0:"gradien %1 dari garis %2", args0:[iv("NAME",S), iv("OBJ",S)],
+  ...stmt, colour:0, tooltip:"Slope(garis): gradien garis"},
+
+ /* Umum */
+ {type:"ggb_cmd", message0:"perintah GeoGebra %1", args0:[iv("CMD",S)],
+  ...stmt, colour:20, tooltip:"Perintah bebas, mis. Midpoint(A,B)"},
+ {type:"ggb_clear", message0:"bersihkan kanvas", ...stmt, colour:20}
+]);
+
+/* ============ 3. Generator: blok -> JavaScript ============ */
+const G = Blockly.JavaScript, ATOM = 0;
+const val = (b, g, n, d) => g.valueToCode(b, n, ATOM) || d;
+const cmd2 = (fn, a, b2) => (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=${fn}(" + ${val(b,g,a,"''")} + "," + ${val(b,g,b2,"''")} + ")");\n`;
+
+G.forBlock["ggb_point"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=(" + ${val(b,g,"X","0")} + "," + ${val(b,g,"Y","0")} + ")");\n`;
+G.forBlock["ggb_segment"]     = cmd2("Segment", "A", "B");
+G.forBlock["ggb_line"]        = cmd2("Line", "A", "B");
+G.forBlock["ggb_ray"]         = cmd2("Ray", "A", "B");
+G.forBlock["ggb_perpotongan"] = cmd2("Intersect", "g", "k");
+G.forBlock["ggb_titikTengah"] = cmd2("Midpoint", "A", "B");
+G.forBlock["ggb_tgl"]         = cmd2("PerpendicularLine", "A", "g");
+G.forBlock["ggb_sejajar"]     = cmd2("Line", "A", "g");
+G.forBlock["ggb_circle"]      = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=Circle(" + ${val(b,g,"C","''")} + "," + ${val(b,g,"R","1")} + ")");\n`;
+G.forBlock["ggb_circle_pp"]   = cmd2("Circle", "pusat", "titik");
+G.forBlock["ggb_circle_xy"]   = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=Circle((" + ${val(b,g,"X","0")} + "," + ${val(b,g,"Y","0")} + ")," + ${val(b,g,"R","1")} + ")");\n`;
+G.forBlock["ggb_circle_3p"]   = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=Circle(" + ${val(b,g,"A","''")} + "," + ${val(b,g,"B","''")} + "," + ${val(b,g,"C","''")} + ")");\n`;
+G.forBlock["ggb_semicircle"]  = cmd2("Semicircle", "A", "B");
+const cmd3 = fn => (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=${fn}(" + ${val(b,g,"M","''")} + "," + ${val(b,g,"A","''")} + "," + ${val(b,g,"B","''")} + ")");\n`;
+G.forBlock["ggb_juring"] = cmd3("CircularSector");
+G.forBlock["ggb_busur"]  = cmd3("CircularArc");
+G.forBlock["ggb_busur_sudut"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=CircularArc(" + ${val(b,g,"M","''")} + "," + ${val(b,g,"A","''")} + ",(" + ${val(b,g,"ANG","60")} + ")\\u00B0)");\n`;
+const cmd3p = fn => (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=${fn}(" + ${val(b,g,"A","''")} + "," + ${val(b,g,"B","''")} + "," + ${val(b,g,"C","''")} + ")");\n`;
+G.forBlock["ggb_busur3"]  = cmd3p("CircumcircularArc");
+G.forBlock["ggb_juring3"] = cmd3p("CircumcircularSector");
+G.forBlock["ggb_juring_sudut"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=CircularSector(" + ${val(b,g,"M","''")} + "," + ${val(b,g,"A","''")} + ",(" + ${val(b,g,"ANG","60")} + ")\\u00B0)");\n`;
+G.forBlock["ggb_line_eq"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","'g'")} + ": y=(" + ${val(b,g,"M","1")} + ")*x+(" + ${val(b,g,"C","0")} + ")");\n`;
+G.forBlock["ggb_function"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","'f'")} + "(x)=" + ${JSON.stringify(b.getFieldValue("EXPR"))});\n`;
+G.forBlock["ggb_slider"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","'a'")} + "=Slider(" + ${val(b,g,"MIN","0")} + "," + ${val(b,g,"MAX","10")} + ")");\n`;
+G.forBlock["ggb_teks"] = (b, g) => {
+  const sub = b.getFieldValue("SUBST") === "TRUE", tex = b.getFieldValue("LATEX") === "TRUE";
+  return `ggbEval(${val(b,g,"NAME","''")} + "=Text(\\"" + ${val(b,g,"TXT","''")} + "\\"," + ${val(b,g,"POS","'(0,0)'")} + ",${sub},${tex})");\n`;
+};
+G.forBlock["ggb_polyline"] = (b, g) => {
+  const closed = b.getFieldValue("CLOSED") === "TRUE";
+  const pts = val(b,g,"PTS","''");
+  const tail = closed ? ` + "," + String(${pts}).split(",")[0].trim()` : "";
+  return `ggbEval(${val(b,g,"NAME","''")} + "=Polyline(" + ${pts}${tail} + ")");\n`;
+};
+G.forBlock["ggb_polygon"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=Polygon(" + ${val(b,g,"PTS","''")} + ")");\n`;
+G.forBlock["ggb_polyBeraturan"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=Polygon(" + ${val(b,g,"A","''")} + "," + ${val(b,g,"B","''")} + "," + ${val(b,g,"N","3")} + ")");\n`;
+G.forBlock["ggb_sudut"] = cmd3p("Angle");
+G.forBlock["ggb_jarak"] = cmd2("Distance", "A", "B");
+G.forBlock["ggb_sudut_ukuran"] = (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=Angle(" + ${val(b,g,"A","''")} + "," + ${val(b,g,"B","''")} + ",(" + ${val(b,g,"ANG","60")} + ")\\u00B0)");\n`;
+const cmd1 = fn => (b, g) =>
+  `ggbEval(${val(b,g,"NAME","''")} + "=${fn}(" + ${val(b,g,"OBJ","''")} + ")");\n`;
+G.forBlock["ggb_panjang"] = cmd1("Length");
+G.forBlock["ggb_luas"]    = cmd1("Area");
+G.forBlock["ggb_gradien"] = cmd1("Slope");
+G.forBlock["ggb_color"] = (b, g) =>
+  `ggbColor(${val(b,g,"NAME","''")}, ${JSON.stringify(b.getFieldValue("COLOR"))});\n`;
+G.forBlock["ggb_gayaGaris"] = (b, g) =>
+  `ggbEval("SetLineStyle(" + ${val(b,g,"NAME","''")} + "," + ${b.getFieldValue("STYLE")} + ")");\n`;
+G.forBlock["ggb_tebalGaris"] = (b, g) =>
+  `ggbEval("SetLineThickness(" + ${val(b,g,"NAME","''")} + "," + ${val(b,g,"A1","1")} + ")");\n`;
+G.forBlock["ggb_sembunyi"] = (b, g) =>
+  `ggbEval("SetVisibleInView(" + ${val(b,g,"NAME","''")} + ",1,${b.getFieldValue("SHOW")==="TRUE"})");\n`;
+G.forBlock["ggb_cmd"] = (b, g) => `ggbEval(${val(b,g,"CMD","''")});\n`;
+G.forBlock["ggb_clear"] = () => "ggbClear();\n";
+
+/* ============ 4. Toolbox & ruang kerja ============ */
+const t = s => `<shadow type="text"><field name="TEXT">${s}</field></shadow>`;
+const n = v => `<shadow type="math_number"><field name="NUM">${v}</field></shadow>`;
+const toolbox = `<xml>
+<category name="GeoGebra" colour="200">
+  <block type="ggb_point"><value name="NAME">${t("A")}</value><value name="X">${n(1)}</value><value name="Y">${n(2)}</value></block>
+  <block type="ggb_segment"><value name="NAME">${t("s")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_line"><value name="NAME">${t("g")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_line_eq"><value name="NAME">${t("h")}</value><value name="M">${n(2)}</value><value name="C">${n(-1)}</value></block>
+  <block type="ggb_ray"><value name="NAME">${t("i")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_perpotongan"><value name="NAME">${t("C")}</value><value name="g">${t("g")}</value><value name="k">${t("k")}</value></block>
+  <block type="ggb_titikTengah"><value name="NAME">${t("M")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_function"><value name="NAME">${t("f")}</value></block>
+  <block type="ggb_slider"><value name="NAME">${t("a")}</value><value name="MIN">${n(0)}</value><value name="MAX">${n(10)}</value></block>
+  <block type="ggb_teks"><value name="NAME">${t("ket")}</value><value name="TXT">${t("Halo")}</value><value name="POS">${t("A")}</value></block>
+  <block type="ggb_cmd"><value name="CMD">${t("Midpoint(A,B)")}</value></block>
+  <block type="ggb_clear"></block>
+</category>
+
+<category name="Segi Banyak" colour="260">
+  <block type="ggb_polyline"><value name="NAME">${t("p")}</value><value name="PTS">${t("A,B,C,D")}</value></block>
+  <block type="ggb_polygon"><value name="NAME">${t("poli")}</value><value name="PTS">${t("A,B,C,D")}</value></block>
+  <block type="ggb_polyBeraturan"><value name="NAME">${t("seg")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value><value name="N">${n(5)}</value></block>
+</category>
+
+<category name="Lingkaran" colour="290">
+  <block type="ggb_circle"><value name="NAME">${t("c")}</value><value name="C">${t("A")}</value><value name="R">${n(2)}</value></block>
+  <block type="ggb_circle_xy"><value name="NAME">${t("c")}</value><value name="X">${n(0)}</value><value name="Y">${n(0)}</value><value name="R">${n(3)}</value></block>
+  <block type="ggb_circle_pp"><value name="NAME">${t("c")}</value><value name="pusat">${t("A")}</value><value name="titik">${t("B")}</value></block>
+  <block type="ggb_circle_3p"><value name="NAME">${t("c")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value><value name="C">${t("C")}</value></block>
+  <block type="ggb_semicircle"><value name="NAME">${t("sc")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_juring"><value name="NAME">${t("j")}</value><value name="M">${t("M")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_juring_sudut"><value name="NAME">${t("j2")}</value><value name="M">${t("M")}</value><value name="A">${t("A")}</value><value name="ANG">${n(60)}</value></block>
+  <block type="ggb_busur_sudut"><value name="NAME">${t("bs2")}</value><value name="M">${t("M")}</value><value name="A">${t("A")}</value><value name="ANG">${n(90)}</value></block>
+  <block type="ggb_busur3"><value name="NAME">${t("bc")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value><value name="C">${t("C")}</value></block>
+  <block type="ggb_juring3"><value name="NAME">${t("jc")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value><value name="C">${t("C")}</value></block>
+  <block type="ggb_busur"><value name="NAME">${t("bs")}</value><value name="M">${t("M")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+</category>
+
+<category name="Konstruksi" colour="50">
+  <block type="ggb_tgl"><value name="NAME">${t("i")}</value><value name="A">${t("A")}</value><value name="g">${t("g")}</value></block>
+  <block type="ggb_sejajar"><value name="NAME">${t("j")}</value><value name="A">${t("A")}</value><value name="g">${t("g")}</value></block>
+  <block type="ggb_sembunyi"><value name="NAME">${t("A")}</value></block>
+</category>
+
+<category name="Gaya" colour="180">
+  <block type="ggb_color"><value name="NAME">${t("A")}</value></block>
+  <block type="ggb_gayaGaris"><value name="NAME">${t("g")}</value></block>
+  <block type="ggb_tebalGaris"><value name="NAME">${t("g")}</value><value name="A1">${n(3)}</value></block>
+</category>
+
+<category name="Ukuran" colour="0">
+  <block type="ggb_sudut"><value name="NAME">${t("sd")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value><value name="C">${t("C")}</value></block>
+  <block type="ggb_sudut_ukuran"><value name="NAME">${t("su")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value><value name="ANG">${n(60)}</value></block>
+  <block type="ggb_jarak"><value name="NAME">${t("jr")}</value><value name="A">${t("A")}</value><value name="B">${t("B")}</value></block>
+  <block type="ggb_panjang"><value name="NAME">${t("pj")}</value><value name="OBJ">${t("s")}</value></block>
+  <block type="ggb_luas"><value name="NAME">${t("ls")}</value><value name="OBJ">${t("poli")}</value></block>
+  <block type="ggb_gradien"><value name="NAME">${t("gr")}</value><value name="OBJ">${t("g")}</value></block>
+</category>
+
+<category name="Perulangan" colour="120"><block type="controls_for"><value name="FROM">${n(1)}</value><value name="TO">${n(5)}</value><value name="BY">${n(1)}</value></block><block type="controls_repeat_ext"><value name="TIMES">${n(5)}</value></block></category>
+<category name="Logika" colour="210"><block type="controls_if"></block><block type="logic_compare"></block></category>
+<category name="Matematika" colour="230"><block type="math_number"></block><block type="math_arithmetic"></block><block type="math_single"></block><block type="math_random_int"><value name="FROM">${n(1)}</value><value name="TO">${n(10)}</value></block></category>
+<category name="Teks" colour="160"><block type="text"></block><block type="text_join"></block></category>
+<category name="Variabel" colour="330" custom="VARIABLE"></category>
+<category name="Fungsi dan Prosedur" colour="310" custom="PROCEDURE"></category>
+</xml>`;
+
+/* Contoh: parabola f(x)=x^2-4 dan titik P-3..P3 di atas kurva */
+const exampleXml = `<xml><variables><variable id="vi">i</variable></variables>
+<block type="ggb_function" x="20" y="20"><field name="EXPR">x^2 - 4</field><value name="NAME">${t("f")}</value>
+<next><block type="controls_for"><field name="VAR" id="vi">i</field>
+<value name="FROM">${n(-3)}</value><value name="TO">${n(3)}</value><value name="BY">${n(1)}</value>
+<statement name="DO"><block type="ggb_point">
+ <value name="NAME"><block type="text_join"><mutation items="2"></mutation><value name="ADD0">${t("P")}</value><value name="ADD1"><block type="variables_get"><field name="VAR" id="vi">i</field></block></value></block></value>
+ <value name="X"><block type="variables_get"><field name="VAR" id="vi">i</field></block></value>
+ <value name="Y"><block type="math_arithmetic"><field name="OP">MINUS</field>
+   <value name="A"><block type="math_arithmetic"><field name="OP">MULTIPLY</field><value name="A"><block type="variables_get"><field name="VAR" id="vi">i</field></block></value><value name="B"><block type="variables_get"><field name="VAR" id="vi">i</field></block></value></block></value>
+   <value name="B">${n(4)}</value></block></value>
+</block></statement></block></next></block></xml>`;
+
+const ws = Blockly.inject("blocklyDiv", {
+  toolbox: toolbox, trashcan: true, zoom: {controls: true, wheel: true, startScale: .95},
+  grid: {spacing: 24, length: 2, colour: "#c8cfd8", snap: true}
+});
+
+/* ============ 5. Jalankan ============ */
+function run(){
+  const code = G.workspaceToCode(ws);
+  $("codeOut").textContent = code || "// Belum ada blok.";
+  if(!api) return;
+  logLines.length = 0;
+  try{
+    ggbClear();
+    new Function("ggbEval", "ggbColor", "ggbClear", code)(ggbEval, ggbColor, ggbClear);
+    status("Selesai: " + logLines.length + " perintah dijalankan.");
+  }catch(e){ status("Kesalahan: " + e.message, true); }
+  $("logOut").textContent = logLines.join("\n");
+}
+
+let timer;
+ws.addChangeListener(e => {
+  if(e.isUiEvent || !$("auto").checked) return;
+  clearTimeout(timer); timer = setTimeout(run, 350);
+});
+$("btnRun").onclick = run;
+$("btnClear").onclick = () => { ggbClear(); $("logOut").textContent = ""; status("Kanvas dibersihkan."); };
+$("btnReset").onclick = () => { ws.clear(); run(); };
+$("btnExample").onclick = () => {
+  ws.clear(); Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(exampleXml), ws); run();
+};
+window.addEventListener("resize", () => Blockly.svgResize(ws));
+
+/* ============ 6. Simpan & buka berkas ============ */
+$("btnSave").onclick = () => {
+  const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g, "-");
+  const text = JSON.stringify({app:"blockly-geogebra", versi:1, blok: Blockly.serialization.workspaces.save(ws)}, null, 2);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type:"application/json"}));
+  a.download = "blok-geogebra-" + stamp + ".json"; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Berkas disimpan (cek folder Unduhan).");
+};
+$("btnLoad").onclick = () => $("fileLoad").click();
+$("fileLoad").onchange = async () => {
+  const f = $("fileLoad").files[0]; if(!f) return;
+  try{
+    const d = JSON.parse(await f.text());
+    ws.clear(); Blockly.serialization.workspaces.load(d.blok || d, ws); run();
+    status("Berkas dibuka: " + f.name);
+  }catch(e){ status("Berkas tidak valid.", true); }
+  $("fileLoad").value = "";
+};
+
+$("btnExample").click();
+window.addEventListener("load", startGeoGebra);
+</script>
+</body>
+</html>
