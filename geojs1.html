@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor JavaScript + GeoGebra</title>
+<style>
+:root{--bg:#f4f6fa;--panel:#fff;--bd:#d9dee8;--tx:#1e2430;--mu:#6b7385;--pr:#2a6df4;--ok:#1a8a4a;--er:#c62828;--ed:#1b2030;--edtx:#e6eaf5}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--panel:#1a1e28;--bd:#2c3242;--tx:#e6eaf5;--mu:#9aa3b8;--ed:#0e111a}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--bd)}
+header h1{font-size:1.05rem;margin:0 auto 0 0}
+button,select{font:inherit;padding:7px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--panel);color:var(--tx);cursor:pointer}
+button.pr{background:var(--pr);border-color:var(--pr);color:#fff;font-weight:600}
+button:hover{filter:brightness(.95)}
+main{flex:1;display:grid;grid-template-columns:minmax(300px,42%) 1fr;gap:10px;padding:10px;min-height:0}
+.col{display:flex;flex-direction:column;min-height:0;gap:10px}
+.box{background:var(--panel);border:1px solid var(--bd);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.box h2{margin:0;padding:6px 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);border-bottom:1px solid var(--bd)}
+#editor{flex:1;width:100%;border:0;resize:none;padding:12px;background:var(--ed);color:var(--edtx);font:13px/1.55 ui-monospace,Consolas,monospace;tab-size:2;outline:none;white-space:pre}
+#editorBox{flex:3}
+#consoleBox{flex:1;min-height:110px}
+#console{flex:1;overflow:auto;margin:0;padding:8px 12px;font:12.5px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap}
+.log{color:var(--tx)}.err{color:var(--er)}.ok{color:var(--ok)}
+#ggbBox{flex:1}
+#ggbWrap{flex:1;min-height:300px;position:relative}
+#ggb-element{position:absolute;inset:0}
+#loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--mu)}
+@media (max-width:800px){main{grid-template-columns:1fr;overflow:auto}#ggbWrap{min-height:380px}#editorBox{min-height:260px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Editor JavaScript + GeoGebra Oleh Martin Bernard, M.Pd</h1>
+  <select id="contoh" title="Pilih contoh kode"></select>
+  <button id="btnRun" class="pr" title="Ctrl + Enter">▶ Jalankan</button>
+  <button id="btnClear" title="Hapus semua objek GeoGebra">Bersihkan Grafik</button>
+  <button id="btnSave" title="Unduh kode sebagai .js">Simpan Kode</button>
+  <button id="btnPng" title="Unduh gambar grafik">Ekspor PNG</button>
+  <button id="btnJS" title="Tampilkan hasil terjemahan ke JavaScript">Lihat JavaScript</button>
+</header>
+
+<main>
+  <div class="col">
+    <section class="box" id="editorBox">
+      <h2>Editor JavaScript</h2>
+      <textarea id="editor" spellcheck="false" autocomplete="off"></textarea>
+    </section>
+    <section class="box" id="consoleBox">
+      <h2>Konsol</h2>
+      <pre id="console"></pre>
+    </section>
+  </div>
+  <section class="box" id="ggbBox">
+    <h2>GeoGebra</h2>
+    <div id="ggbWrap"><div id="ggb-element"></div><div id="loading">Memuat GeoGebra…</div></div>
+  </section>
+</main>
+
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+<script>
+/* ---------- Contoh kode ---------- */
+const CONTOH = {
+"1. Titik, ruas garis, dan jarak": `// ggbApplet adalah objek GeoGebra
+ggbApplet.evalCommand("A=(1,2)");
+ggbApplet.evalCommand("B=(6,5)");
+ggbApplet.evalCommand("s=Segment(A,B)");
+ggbApplet.evalCommand("M=Midpoint(A,B)");
+ggbApplet.setColor("s", 220, 50, 50);
+ggbApplet.setCaption("M", "Titik tengah");
+ggbApplet.setLabelStyle("M", 3);
+ggbApplet.setLabelVisible("M", true);
+
+const d = ggbApplet.getValue("Distance(A,B)");
+console.log("Panjang AB =", d.toFixed(4));
+ggbApplet.setCoordSystem(-3, 10, -3, 8);`,
+
+"2. Garis sudut bagi": `// Garis sudut bagi dua garis
+ggbApplet.evalCommand("g: 2x - y = 1");
+ggbApplet.evalCommand("h: x + 3y = 9");
+ggbApplet.evalCommand("P=Intersect(g,h)");
+ggbApplet.evalCommand("b1=AngleBisector(g,h)");
+ggbApplet.setColor("g", 40, 90, 200);
+ggbApplet.setColor("h", 40, 150, 80);
+ggbApplet.setColor("b1", 230, 120, 0);
+ggbApplet.setLineThickness("b1", 6);
+console.log("Titik potong:", ggbApplet.getXcoord("P").toFixed(3), ggbApplet.getYcoord("P").toFixed(3));
+ggbApplet.setCoordSystem(-5, 9, -4, 6);`,
+
+"3. Lingkaran dan garis singgung": `// Garis singgung lingkaran dari titik di luar lingkaran
+ggbApplet.evalCommand("O=(0,0)");
+ggbApplet.evalCommand("c=Circle(O,3)");
+ggbApplet.evalCommand("P=(7,2)");
+ggbApplet.evalCommand("t=Tangent(P,c)");
+ggbApplet.evalCommand("T=Intersect(c,t)");
+console.log("Jumlah garis singgung:", 2);
+console.log("Jarak PO =", ggbApplet.getValue("Distance(P,O)").toFixed(3));
+ggbApplet.setCoordSystem(-5, 10, -5, 6);`,
+
+"4. Plot fungsi dengan perulangan": `// Menggambar keluarga fungsi kuadrat dengan for-loop
+for (let a = 1; a <= 4; a++) {
+  const nama = "f" + a;
+  ggbApplet.evalCommand(nama + "(x)=" + (a/2) + "x^2 - " + a);
+  ggbApplet.setColor(nama, 30 * a, 80, 255 - 50 * a);
+}
+console.log("Selesai menggambar 4 fungsi.");
+ggbApplet.setCoordSystem(-6, 6, -6, 10);`,
+
+"5. Slider dan titik bergerak": `// Titik bergerak pada lingkaran, dikendalikan slider
+ggbApplet.evalCommand("r=Slider(1,5,0.5)");
+ggbApplet.evalCommand("c=Circle((0,0),r)");
+ggbApplet.evalCommand("t=Slider(0,2pi,0.05)");
+ggbApplet.evalCommand("Q=(r cos(t), r sin(t))");
+ggbApplet.evalCommand("Trace=Segment((0,0),Q)");
+ggbApplet.setAnimating("t", true);
+ggbApplet.startAnimation();
+console.log("Geser slider r dan t, atau lihat animasinya.");
+ggbApplet.setCoordSystem(-6, 6, -5, 5);`,
+
+"6. Kirim data dari JS (daftar titik)": `// Data dibuat di JavaScript, lalu dikirim ke GeoGebra
+const data = [[1,2],[2,3.8],[3,6.1],[4,7.9],[5,10.2]];
+const n = data.length;
+const sx = data.reduce((s,p)=>s+p[0],0), sy = data.reduce((s,p)=>s+p[1],0);
+const sxy = data.reduce((s,p)=>s+p[0]*p[1],0), sxx = data.reduce((s,p)=>s+p[0]**2,0);
+const m = (n*sxy - sx*sy)/(n*sxx - sx*sx);
+const b = (sy - m*sx)/n;
+data.forEach((p,i)=> ggbApplet.evalCommand("P"+i+"=("+p[0]+","+p[1]+")"));
+ggbApplet.evalCommand("reg(x)=" + m + "x+" + b);
+console.log("Regresi: y =", m.toFixed(3) + "x +", b.toFixed(3));
+ggbApplet.setCoordSystem(-1, 7, -2, 12);`,
+"7. Kata kunci bahasa Indonesia": `// Kata kunci: perulangan, jika, selainitu, selama
+perulangan (let i = 1; i <= 6; i++) {
+  jika (i % 2 == 0) {
+    ggbApplet.evalCommand("A" + i + "=(" + i + "," + (i*i) + ")");
+  } selainitu {
+    ggbApplet.evalCommand("B" + i + "=(" + i + "," + i + ")");
+  }
+}
+
+let n = 0;
+selama (n < 3) {
+  n++;
+}
+console.log("Nilai n =", n);
+ggbApplet.setCoordSystem(-1, 8, -2, 40);`
+};
+
+/* ---------- Elemen ---------- */
+const $ = id => document.getElementById(id);
+const editor = $("editor"), konsol = $("console"), pilih = $("contoh");
+let applet = null;
+
+/* ---------- Konsol ---------- */
+function tulis(teks, kelas="log"){
+  const s = document.createElement("span");
+  s.className = kelas; s.textContent = teks + "\n";
+  konsol.appendChild(s); konsol.scrollTop = konsol.scrollHeight;
+}
+const fmt = a => a.map(x => typeof x === "object" ? JSON.stringify(x) : String(x)).join(" ");
+const konsolPengguna = {
+  log:  (...a) => tulis(fmt(a)),
+  warn: (...a) => tulis("⚠ " + fmt(a)),
+  error:(...a) => tulis("✖ " + fmt(a), "err"),
+  clear:() => { konsol.textContent = ""; }
+};
+
+/* ---------- GeoGebra ---------- */
+function ukuran(){
+  const w = $("ggbWrap");
+  return {w: Math.max(300, w.clientWidth), h: Math.max(300, w.clientHeight)};
+}
+function mulaiGGB(){
+  const {w,h} = ukuran();
+  const params = {
+    appName:"classic", width:w, height:h,
+    showToolBar:true, showAlgebraInput:true, showMenuBar:false,
+    showResetIcon:true, enableRightClick:true, language:"id",
+    borderColor:null, scaleContainerClass:"",scale:1,
+    appletOnLoad(api){
+      applet = api;
+      $("loading").style.display = "none";
+      tulis("GeoGebra siap. Tekan Ctrl+Enter untuk menjalankan kode.", "ok");
+    }
+  };
+  new GGBApplet(params, true).inject("ggb-element");
+}
+let t;
+window.addEventListener("resize", () => {
+  clearTimeout(t);
+  t = setTimeout(() => { if(applet){ const {w,h}=ukuran(); applet.setSize(w,h); } }, 150);
+});
+
+/* ---------- Jalankan kode ---------- */
+function jalankan(){
+  if(!applet){ tulis("GeoGebra belum siap. Pastikan terhubung ke internet.", "err"); return; }
+  konsol.textContent = "";
+  try{
+    const kodeJS = terjemahkan(editor.value);
+    const fn = new Function("ggbApplet", "console", '"use strict";\n' + kodeJS);
+    const hasil = fn(applet, konsolPengguna);
+    if(hasil !== undefined) tulis("→ " + fmt([hasil]));
+    tulis("Selesai tanpa galat.", "ok");
+  }catch(e){
+    tulis(e.name + ": " + e.message, "err");
+  }
+}
+
+/* ---------- Tombol ---------- */
+$("btnRun").onclick = jalankan;
+$("btnClear").onclick = () => { if(applet){ applet.reset(); tulis("Grafik dibersihkan.", "ok"); } };
+$("btnSave").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([editor.value], {type:"text/javascript"}));
+  a.download = "kode-geogebra.js"; a.click(); URL.revokeObjectURL(a.href);
+};
+$("btnPng").onclick = () => {
+  if(!applet) return;
+  const a = document.createElement("a");
+  a.href = "data:image/png;base64," + applet.getPNGBase64(1.5, true, 72);
+  a.download = "grafik-geogebra.png"; a.click();
+};
+/* ---------- Penerjemah kata kunci Indonesia -> JavaScript ---------- */
+const KATA_KUNCI = {
+  perulangan: 'for',
+  jika: 'if',
+  selainitu: 'else',
+  selama: 'while',
+  lakukan: 'do',
+  fungsi: 'function',
+  kembalikan: 'return',
+  henti: 'break',
+  lanjut: 'continue',
+  benar: 'true',
+  salah: 'false'
+};
+
+function terjemahkan(kode){
+  const pola = /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\/\/[^\n]*|\/\*[\s\S]*?\*\/)|\b([A-Za-z_]\w*)\b/g;
+  return kode.replace(pola, (cocok, lewati, kata) => {
+    if(lewati) return lewati;
+    return Object.prototype.hasOwnProperty.call(KATA_KUNCI, kata) ? KATA_KUNCI[kata] : cocok;
+  });
+}
+
+/* ---------- Contoh & papan ketik ---------- */
+Object.keys(CONTOH).forEach(k => pilih.add(new Option(k, k)));
+pilih.onchange = () => { editor.value = CONTOH[pilih.value]; if(applet) applet.reset(); };
+editor.value = CONTOH[pilih.value = Object.keys(CONTOH)[0]];
+
+editor.addEventListener("keydown", e => {
+  if((e.ctrlKey || e.metaKey) && e.key === "Enter"){ e.preventDefault(); jalankan(); }
+  else if(e.key === "Tab"){
+    e.preventDefault();
+    const s = editor.selectionStart;
+    editor.setRangeText("  ", s, editor.selectionEnd, "end");
+  }
+});
+
+window.addEventListener("load", () => {
+  if(typeof GGBApplet === "undefined"){
+    $("loading").textContent = "Gagal memuat GeoGebra (deployggb.js). Periksa koneksi internet.";
+    return;
+  }
+  mulaiGGB();
+});
+</script>
+</body>
+</html>
