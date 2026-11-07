@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soal Geometri Analitik: Titik, Garis, dan Luas (Level Lanjut)</title>
+<style>
+  :root {
+    --paper: #fafbfc;
+    --ink: #14213d;
+    --muted: #5b6b82;
+    --blue: #1f4e8c;
+    --grid: #dce5f0;
+    --rule: #c3d0e0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0f1624;
+      --ink: #e6ecf5;
+      --muted: #9aa8bd;
+      --blue: #7fb0ee;
+      --grid: #1b2740;
+      --rule: #2c3c5a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 1rem; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .page { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem 4rem; }
+
+  header.sheet-head {
+    margin: 0 -1.25rem 2rem;
+    padding: 3rem 1.25rem 2rem;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    border-bottom: 2px solid var(--blue);
+  }
+  .course { margin: 0 0 .5rem; color: var(--muted); font-size: .95rem; }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.7rem, 5vw, 2.5rem);
+    line-height: 1.15;
+    font-weight: 700;
+    color: var(--blue);
+    max-width: 22ch;
+  }
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem 1.5rem;
+    margin-top: 1.75rem;
+    font-size: .95rem;
+  }
+  .field { border-bottom: 1px solid var(--ink); padding-bottom: .15rem; color: var(--muted); background: var(--paper); }
+  .field.wide { grid-column: 1 / -1; }
+
+  .instructions {
+    margin: 1.75rem 0 2.5rem;
+    padding: .9rem 1.1rem;
+    border-left: 4px solid var(--blue);
+    background: color-mix(in srgb, var(--blue) 8%, transparent);
+    font-size: .97rem;
+  }
+  .instructions p { margin: 0 0 .35rem; font-weight: 700; }
+  .instructions ul { margin: 0; padding-left: 1.2rem; }
+
+  section { margin-top: 2.75rem; }
+  section h2 {
+    margin: 0 0 .25rem;
+    font-size: 1.35rem;
+    color: var(--blue);
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  section .desc { margin: .4rem 0 1.25rem; color: var(--muted); font-size: .95rem; font-style: italic; }
+
+  ol.soal { list-style: none; margin: 0; padding: 0; }
+  ol.soal li {
+    counter-increment: nomor;
+    display: grid;
+    grid-template-columns: 2.6rem 1fr;
+    gap: .25rem;
+    padding: 1rem 0;
+    border-bottom: 1px dashed var(--rule);
+    break-inside: avoid;
+  }
+  ol.soal li:last-child { border-bottom: 0; }
+  ol.soal li::before {
+    content: counter(nomor) ".";
+    font-weight: 700;
+    color: var(--blue);
+    text-align: right;
+    padding-right: .6rem;
+  }
+  ol.soal li p { margin: 0; max-width: 62ch; }
+  .sk { white-space: nowrap; }
+
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 2px solid var(--blue); color: var(--muted); font-size: .9rem; }
+
+  #soal-a { counter-reset: nomor 0; }
+  #soal-b { counter-reset: nomor 5; }
+  #soal-c { counter-reset: nomor 10; }
+  #soal-d { counter-reset: nomor 16; }
+
+  @media (max-width: 520px) {
+    .fields { grid-template-columns: 1fr; }
+    ol.soal li { grid-template-columns: 2.1rem 1fr; }
+  }
+  @media print {
+    :root { --paper: #fff; --ink: #000; --muted: #333; --blue: #1f3f73; --grid: #e8eef6; --rule: #aaa; }
+    body { font-size: 11.5pt; line-height: 1.55; }
+    .page { max-width: none; padding: 0; }
+    header.sheet-head { margin: 0 0 1rem; padding: 1rem 0; }
+    section { margin-top: 1.5rem; }
+    section h2 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="sheet-head">
+    <p class="course">Mata Kuliah Geometri Analitik</p>
+    <h1>Titik, Garis, dan Luas: Level Lanjut</h1>
+    <div class="fields">
+      <div class="field">Nama:</div>
+      <div class="field">NIM:</div>
+      <div class="field wide">Kelas / Tanggal:</div>
+    </div>
+  </header>
+
+  <div class="instructions">
+    <p>Petunjuk pengerjaan</p>
+    <ul>
+      <li>Kerjakan seluruh 20 soal dengan langkah penyelesaian yang runtut.</li>
+      <li>Soal pembuktian harus disertai alasan pada setiap langkah.</li>
+      <li>Luas dinyatakan dalam satuan luas dan jarak dalam satuan panjang.</li>
+    </ul>
+  </div>
+
+  <section id="soal-a">
+    <h2>A. Titik</h2>
+    <p class="desc">Perbandingan ruas garis, titik istimewa segitiga, dan lokus titik.</p>
+    <ol class="soal">
+      <li><p>Diketahui A(1, 2) dan B(7, 5). Tentukan koordinat titik P pada garis AB di luar ruas AB sehingga AP : PB = 5 : 2, lalu hitung jarak P ke titik asal.</p></li>
+      <li><p>Pada segitiga ABC dengan A(2, 1), B(8, 3), dan C(4, 9), tentukan koordinat titik berat, ortosentrum, dan pusat lingkaran luar. Buktikan ketiganya kolinear.</p></li>
+      <li><p>Diberikan A(1, 4) dan B(7, 2). Tentukan titik P pada sumbu-x yang meminimumkan PA + PB, beserta nilai minimumnya.</p></li>
+      <li><p>Jajargenjang ABCD memiliki titik sudut A(1, 1), B(5, 2), dan C(7, 6). Tentukan koordinat D, titik potong kedua diagonal, dan luas jajargenjang tersebut.</p></li>
+      <li><p>Titik P(x, y) bergerak sehingga jaraknya ke A(−3, 0) selalu dua kali jaraknya ke B(3, 0). Tentukan persamaan lintasan P dan luas daerah yang dibatasi lintasan itu.</p></li>
+    </ol>
+  </section>
+
+  <section id="soal-b">
+    <h2>B. Garis</h2>
+    <p class="desc">Persamaan garis, garis bagi sudut, pencerminan, dan jarak titik ke garis.</p>
+    <ol class="soal">
+      <li><p>Sebuah garis melalui titik (2, 3) dan memotong sumbu-x serta sumbu-y positif sehingga membentuk segitiga bersama kedua sumbu. Tentukan persamaan garis agar luas segitiga minimum, dan hitung luas minimumnya.</p></li>
+      <li><p>Tentukan persamaan kedua garis bagi sudut yang dibentuk oleh garis 3x + 4y − 12 = 0 dan 5x − 12y + 6 = 0.</p></li>
+      <li><p>Tentukan bayangan titik A(3, −2) oleh pencerminan terhadap garis 2x − y + 4 = 0.</p></li>
+      <li><p>Garis g melalui P(4, 1), memotong sumbu-x positif di A dan sumbu-y positif di B, sehingga AP : PB = 2 : 1. Tentukan persamaan garis g dan luas segitiga OAB.</p></li>
+      <li><p>Tentukan persamaan garis yang melalui titik potong garis x + 2y − 5 = 0 dan 3x − y − 1 = 0, serta berjarak 2 satuan dari titik Q(1, 6). Ada berapa garis yang memenuhi?</p></li>
+    </ol>
+  </section>
+
+  <section id="soal-c">
+    <h2>C. Luas</h2>
+    <p class="desc">Luas dengan determinan, pembagian luas, dan daerah yang dibatasi garis.</p>
+    <ol class="soal">
+      <li><p>Titik-titik A(−1, 2), B(5, −1), dan C(x, 4) membentuk segitiga dengan luas 15 satuan luas. Tentukan semua nilai x yang mungkin.</p></li>
+      <li><p>Tentukan koordinat titik P pada garis x + y = 10 sehingga luas segitiga ABP = 7 satuan luas, dengan A(1, 1) dan B(5, 3).</p></li>
+      <li><p>Hitung luas segiempat ABCD dengan A(0, 0), B(6, 1), C(8, 7), dan D(1, 5) menggunakan metode determinan (shoelace), lalu tunjukkan bahwa segiempat itu konveks.</p></li>
+      <li><p>Titik-titik tengah sisi-sisi sebuah segitiga adalah (2, 1), (5, 4), dan (3, 7). Tentukan koordinat ketiga titik sudutnya dan luas segitiga tersebut.</p></li>
+      <li><p>Tentukan luas daerah di kuadran I yang dibatasi garis x + y = 6, garis y = 2x, dan sumbu-x. Kemudian tentukan persamaan garis yang melalui titik potong kedua garis itu dan membagi luas daerah menjadi dua bagian sama besar.</p></li>
+      <li><p>Segitiga ABC memiliki A(0, 0), B(8, 0), dan C(2, 6). Tentukan persamaan garis yang sejajar AB dan membagi segitiga menjadi dua bagian dengan luas sama.</p></li>
+    </ol>
+  </section>
+
+  <section id="soal-d">
+    <h2>D. Terpadu</h2>
+    <p class="desc">Soal yang memadukan titik, garis, dan luas dalam satu bangun.</p>
+    <ol class="soal">
+      <li><p>Dua sisi sebuah persegi terletak pada garis 3x − 4y + 12 = 0 dan 3x − 4y − 8 = 0, dan salah satu titik sudutnya adalah (0, 3). Tentukan luas persegi dan persamaan kedua sisi lainnya (ada dua kemungkinan).</p></li>
+      <li><p>Segitiga ABC memiliki titik sudut A(1, 2). Garis tinggi dari B adalah x + 2y − 13 = 0 dan garis berat dari C adalah 7x + 2y − 33 = 0. Tentukan koordinat B dan C, serta luas segitiga ABC.</p></li>
+      <li><p>Pada segitiga ABC dengan A(1, 1), B(7, 2), dan C(4, 8), titik berat G. Buktikan bahwa luas segitiga GAB sama dengan sepertiga luas segitiga ABC, lalu tentukan nilai kedua luas tersebut.</p></li>
+      <li><p>Diberikan segitiga dengan titik sudut A(1, 2), B(13, 2), dan C(1, 7). Tentukan koordinat pusat lingkaran dalam, jari-jari lingkaran dalam, dan luas segitiga. Kemudian tentukan luas segitiga yang dibentuk oleh ketiga titik singgung lingkaran dalam dengan sisi-sisinya.</p></li>
+    </ol>
+  </section>
+
+  <footer>Selesai. Periksa kembali jawaban Anda sebelum dikumpulkan.</footer>
+</div>
+</body>
+</html>
