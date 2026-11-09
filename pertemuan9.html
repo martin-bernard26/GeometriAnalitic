@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Garis Singgung Lingkaran — Analisis Geometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F7F4;--card:#fff;--ink:#17212B;--muted:#5A6772;--line:#D5DDD8;--circ:#0E6B73;--tan:#C9382C;--hl:#FFF0B8;--grid:#E4EAE6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11181C;--card:#182126;--ink:#E6ECEF;--muted:#96A4AD;--line:#2A363D;--circ:#4FC0C9;--tan:#FF7A6B;--hl:#3A3417;--grid:#1E2A30;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11181C;--card:#182126;--ink:#E6ECEF;--muted:#96A4AD;--line:#2A363D;--circ:#4FC0C9;--tan:#FF7A6B;--hl:#3A3417;--grid:#1E2A30;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.65 "Source Serif 4",Georgia,serif}
+main{max-width:1040px;margin:0 auto;padding:32px 20px 64px}
+h1,h2,h3{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;line-height:1.15;margin:0}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700;letter-spacing:-.02em;max-width:14ch}
+h2{font-size:1.7rem;margin:56px 0 12px}
+h3{font-size:1.15rem;margin:0 0 6px}
+p{max-width:68ch;margin:0 0 14px}
+.sub{color:var(--muted);font-size:1.1rem;max-width:56ch;margin-top:14px}
+.t{color:var(--tan);font-weight:600}.c{color:var(--circ);font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.card.k{border-left:5px solid var(--tan)}
+.formula{font-family:"Source Serif 4",Georgia,serif;font-style:italic;font-size:1.15rem;background:var(--hl);padding:8px 12px;border-radius:6px;display:inline-block;margin:4px 0}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media(max-width:820px){.lab{grid-template-columns:1fr}}
+.board{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px}
+svg{width:100%;height:auto;display:block;touch-action:none}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;font-size:.95rem;line-height:1.5}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+button{font:inherit;cursor:pointer}
+.tab{font-family:"Bricolage Grotesque",Arial,sans-serif;font-weight:500;font-size:.95rem;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:focus-visible{outline:3px solid var(--circ);outline-offset:2px}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.row label{width:2.4rem;font-style:italic}
+.row input[type=range]{flex:1;accent-color:var(--circ)}
+.row output{width:3.4rem;text-align:right;font-variant-numeric:tabular-nums}
+.res{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.res .eq{background:var(--hl);padding:6px 10px;border-radius:6px;margin:6px 0;font-size:1rem;overflow-x:auto;white-space:nowrap}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);font-size:1rem}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-family:"Bricolage Grotesque",Arial,sans-serif;font-weight:500}
+.scroll{overflow-x:auto}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0}
+summary{cursor:pointer;font-family:"Bricolage Grotesque",Arial,sans-serif;font-weight:500}
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0}
+.opts{display:grid;gap:8px;margin-top:10px}
+.opt{text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.opt.ok{border-color:#1E8E4E;background:rgba(30,142,78,.16)}
+.opt.no{border-color:var(--tan);background:rgba(201,56,44,.14)}
+.fb{margin-top:10px;font-size:.95rem;color:var(--muted)}
+footer{margin-top:56px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Garis Singgung Lingkaran</h1>
+<p class="sub">Materi Analisis Geometri. Pahami mengapa garis singgung selalu tegak lurus jari-jari, lalu turunkan persamaannya sendiri dan uji langsung di laboratorium interaktif.</p>
+</header>
+
+<h2>Gagasan pokok</h2>
+<div class="cards">
+<div class="card k"><h3>Satu titik sentuh</h3><p>Garis singgung menyentuh lingkaran di tepat satu titik, disebut titik singgung. Garis lain memotong di dua titik atau tidak menyentuh sama sekali.</p></div>
+<div class="card k"><h3>Tegak lurus jari-jari</h3><p>Jari-jari yang berakhir di titik singgung membentuk sudut 90° dengan garis singgung. Semua rumus di bawah bersumber dari fakta ini.</p></div>
+<div class="card k"><h3>Jarak = jari-jari</h3><p>Jarak pusat lingkaran ke garis singgung sama dengan <i>r</i>. Dari sinilah rumus bergradien <i>m</i> diperoleh.</p></div>
+</div>
+
+<h2>Laboratorium</h2>
+<p>Atur pusat <i>(a, b)</i> dan jari-jari <i>r</i>, lalu pilih jenis soal. Garis <span class="t">merah</span> adalah garis singgung, lingkaran berwarna <span class="c">hijau kebiruan</span>.</p>
+<div class="tabs" role="tablist" id="tabs">
+<button class="tab" role="tab" data-m="1" aria-selected="true">Titik pada lingkaran</button>
+<button class="tab" role="tab" data-m="2" aria-selected="false">Gradien tertentu</button>
+<button class="tab" role="tab" data-m="3" aria-selected="false">Titik di luar lingkaran</button>
+</div>
+<div class="lab">
+<div class="board"><svg id="svg" viewBox="0 0 480 480" role="img" aria-label="Bidang koordinat dengan lingkaran dan garis singgung"></svg></div>
+<div class="panel">
+<h3>Lingkaran</h3>
+<div class="row"><label>a</label><input type="range" id="a" min="-3" max="3" step="1" value="0"><output id="oa"></output></div>
+<div class="row"><label>b</label><input type="range" id="b" min="-3" max="3" step="1" value="0"><output id="ob"></output></div>
+<div class="row"><label>r</label><input type="range" id="r" min="1" max="5" step="1" value="3"><output id="or"></output></div>
+<div id="ctl" style="margin-top:12px"></div>
+<div class="res" id="res"></div>
+</div>
+</div>
+
+<h2>Rumus persamaan garis singgung</h2>
+<div class="scroll"><table>
+<tr><th>Situasi</th><th>Lingkaran pusat (0,0)</th><th>Lingkaran pusat (a, b)</th></tr>
+<tr><td>Di titik <i>(x₁, y₁)</i> pada lingkaran</td><td><i>x₁x + y₁y = r²</i></td><td><i>(x₁−a)(x−a) + (y₁−b)(y−b) = r²</i></td></tr>
+<tr><td>Bergradien <i>m</i></td><td><i>y = mx ± r√(1+m²)</i></td><td><i>y − b = m(x−a) ± r√(1+m²)</i></td></tr>
+<tr><td>Dari titik <i>Q</i> di luar lingkaran</td><td colspan="2">Panjang garis singgung = <i>√(d² − r²)</i>, dengan <i>d</i> jarak <i>Q</i> ke pusat. Titik singgung ada pada garis kutub <i>x₁x + y₁y = r²</i> (pusat di (0,0)) dengan <i>(x₁, y₁) = Q</i>.</td></tr>
+</table></div>
+
+<h2>Dari mana rumusnya?</h2>
+<p><b>Titik pada lingkaran.</b> Vektor jari-jari dari pusat ke <i>P(x₁, y₁)</i> adalah <i>(x₁−a, y₁−b)</i>. Titik <i>X(x, y)</i> berada pada garis singgung jika <i>PX</i> tegak lurus jari-jari, yaitu hasil kali titiknya nol: <i>(x₁−a)(x−x₁) + (y₁−b)(y−y₁) = 0</i>. Karena <i>P</i> terletak pada lingkaran, bentuk ini dapat disederhanakan menjadi rumus pada tabel.</p>
+<p><b>Gradien <i>m</i>.</b> Garis <i>y = mx + c</i> menyinggung lingkaran jika jarak pusat ke garis sama dengan <i>r</i>. Dengan rumus jarak titik ke garis, <i>|ma − b + c| / √(m²+1) = r</i>, sehingga <i>c = b − ma ± r√(1+m²)</i>. Tanda ± memberi dua garis singgung yang sejajar.</p>
+<p><b>Titik di luar.</b> Segitiga pusat–titik singgung–<i>Q</i> siku-siku di titik singgung. Teorema Pythagoras memberi <i>PQ² = d² − r²</i>.</p>
+
+<h2>Contoh soal</h2>
+<details><summary>Contoh 1: titik singgung diketahui</summary>
+<p>Tentukan garis singgung lingkaran <i>x² + y² = 13</i> di titik <i>(2, 3)</i>.</p>
+<p>Periksa: 4 + 9 = 13, jadi titik berada pada lingkaran. Gunakan <i>x₁x + y₁y = r²</i>:</p>
+<p><span class="formula">2x + 3y = 13</span></p></details>
+<details><summary>Contoh 2: gradien diketahui</summary>
+<p>Tentukan garis singgung lingkaran <i>x² + y² = 20</i> yang bergradien 2.</p>
+<p><i>r√(1+m²) = √20 · √5 = √100 = 10</i>, sehingga:</p>
+<p><span class="formula">y = 2x + 10 dan y = 2x − 10</span></p></details>
+<details><summary>Contoh 3: dari titik di luar lingkaran</summary>
+<p>Dari titik <i>Q(8, 0)</i> ditarik garis singgung ke lingkaran <i>x² + y² = 16</i>. Tentukan panjang garis singgung dan titik singgungnya.</p>
+<p>Panjang: <i>√(8² − 16) = √48 = 4√3</i>. Garis kutub: <i>8x = 16</i>, maka <i>x = 2</i>. Substitusi ke lingkaran: <i>y² = 12</i>, jadi <i>y = ±2√3</i>.</p>
+<p><span class="formula">Titik singgung (2, 2√3) dan (2, −2√3)</span></p></details>
+
+<h2>Latihan</h2>
+<div id="quiz"></div>
+
+<footer>Tip: buka tab “Titik di luar lingkaran” lalu geser titik <i>Q</i> mendekati lingkaran. Panjang garis singgung mengecil menuju nol ketika <i>Q</i> menyentuh lingkaran.</footer>
+</main>
+
+<script>
+(function(){
+var S=30,O=240,svg=document.getElementById('svg'),mode=1;
+var st={a:0,b:0,r:3,th:50,m:1,qx:6,qy:2};
+var X=function(x){return O+S*x},Y=function(y){return O-S*y};
+var f=function(n){var v=Math.round(n*100)/100;if(Object.is(v,-0))v=0;return String(v).replace('-','\u2212')};
+var sg=function(n){return n<0?'\u2212':'+'};
+function eq(A,B,C){return f(A)+'x '+sg(B)+' '+f(Math.abs(B))+'y = '+f(C)}
+function L(p,q,col,w,dash){return '<line x1="'+X(p[0])+'" y1="'+Y(p[1])+'" x2="'+X(q[0])+'" y2="'+Y(q[1])+'" stroke="'+col+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="5 4"':'')+'/>'}
+function D(p,col,rad){return '<circle cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="'+(rad||5)+'" fill="'+col+'"/>'}
+function T(p,s){return '<text x="'+(X(p[0])+8)+'" y="'+(Y(p[1])-8)+'" font-size="14" font-style="italic" fill="var(--ink)">'+s+'</text>'}
+function tanAt(P){ // returns line through P tangent
+  var a=st.a,b=st.b,dx=P[0]-a,dy=P[1]-b,d=[-dy/st.r,dx/st.r];
+  return L([P[0]-d[0]*20,P[1]-d[1]*20],[P[0]+d[0]*20,P[1]+d[1]*20],'var(--tan)',2.5)}
+function grid(){var s='';for(var i=-8;i<=8;i++){s+='<line x1="'+X(i)+'" y1="0" x2="'+X(i)+'" y2="480" stroke="var(--grid)"/><line x1="0" y1="'+Y(i)+'" x2="480" y2="'+Y(i)+'" stroke="var(--grid)"/>'}
+ s+='<line x1="0" y1="240" x2="480" y2="240" stroke="var(--muted)"/><line x1="240" y1="0" x2="240" y2="480" stroke="var(--muted)"/>';
+ return s}
+function draw(){
+ var a=st.a,b=st.b,r=st.r,g=grid(),res='',cp=[a,b];
+ g+='<circle cx="'+X(a)+'" cy="'+Y(b)+'" r="'+S*r+'" fill="var(--circ)" fill-opacity=".08" stroke="var(--circ)" stroke-width="2.5"/>'+D(cp,'var(--circ)',4)+T(cp,'C');
+ if(mode==1){
+  var t=st.th*Math.PI/180,P=[a+r*Math.cos(t),b+r*Math.sin(t)],x1=P[0],y1=P[1],A=x1-a,B=y1-b,C=r*r+A*a+B*b;
+  g+=tanAt(P)+L(cp,P,'var(--ink)',2,true);
+  var u=[-A/r*.4,-B/r*.4],v=[-B/r*.4,A/r*.4];
+  g+='<polyline fill="none" stroke="var(--ink)" stroke-width="1.5" points="'+[[P[0]+u[0],P[1]+u[1]],[P[0]+u[0]+v[0],P[1]+u[1]+v[1]],[P[0]+v[0],P[1]+v[1]]].map(function(q){return X(q[0])+','+Y(q[1])}).join(' ')+'"/>'+D(P,'var(--tan)',6)+T(P,'P');
+  res='<p>Titik singgung <i>P</i> = ('+f(x1)+', '+f(y1)+')</p><p>Rumus: <i>(x₁−a)(x−a) + (y₁−b)(y−b) = r²</i></p><div class="eq">'+f(A)+'(x'+sg(-a)+f(Math.abs(a))+') '+sg(B)+' '+f(Math.abs(B))+'(y'+sg(-b)+f(Math.abs(b))+') = '+f(r*r)+'</div><p>Bentuk sederhana:</p><div class="eq">'+eq(A,B,C)+'</div>'
+ }else if(mode==2){
+  var m=st.m,k=r*Math.sqrt(1+m*m),out='';
+  [1,-1].forEach(function(s){
+   var c=b-m*a+s*k,e=m*a-b+c,fx=a-e/(m*m+1)*m,fy=b+e/(m*m+1);
+   g+=L([-20,m*-20+c],[20,m*20+c],'var(--tan)',2.5)+D([fx,fy],'var(--tan)',5)+L(cp,[fx,fy],'var(--ink)',1.5,true);
+   out+='<div class="eq">y = '+f(m)+'x '+sg(c)+' '+f(Math.abs(c))+'</div>'});
+  res='<p>Rumus: <i>y − b = m(x−a) ± r√(1+m²)</i></p><p>Nilai <i>r√(1+m²)</i> = '+f(k)+'</p>'+out+'<p>Kedua garis sejajar dan berjarak <i>r</i> dari pusat.</p>'
+ }else{
+  var qx=st.qx,qy=st.qy,Q=[qx,qy],dx=qx-a,dy=qy-b,d=Math.hypot(dx,dy);
+  g+=D(Q,'var(--ink)',6)+T(Q,'Q');
+  if(d<=r+1e-9){res='<p>Titik <i>Q</i> berada '+(d<r-1e-9?'di dalam':'pada')+' lingkaran. '+(d<r-1e-9?'Tidak ada garis singgung dari titik di dalam lingkaran. Geser <i>Q</i> ke luar.':'Hanya ada satu garis singgung, yaitu di <i>Q</i> sendiri.')+'</p>'}
+  else{var ph=Math.atan2(dy,dx),al=Math.acos(r/d),out='';
+   [1,-1].forEach(function(s){var P=[a+r*Math.cos(ph+s*al),b+r*Math.sin(ph+s*al)],A=P[0]-a,B=P[1]-b,C=r*r+A*a+B*b;
+    g+=L(Q,[Q[0]+(P[0]-Q[0])*1.6,Q[1]+(P[1]-Q[1])*1.6],'var(--tan)',2.5)+L(cp,P,'var(--ink)',1.5,true)+D(P,'var(--tan)',5);
+    out+='<div class="eq">'+eq(A,B,C)+'</div>'});
+   res='<p>Jarak <i>d</i> = '+f(d)+'</p><p>Panjang garis singgung <i>√(d² − r²)</i> = '+f(Math.sqrt(d*d-r*r))+'</p>'+out}
+ }
+ svg.innerHTML=g;document.getElementById('res').innerHTML=res;
+ ['a','b','r'].forEach(function(k){document.getElementById('o'+k).textContent=st[k]});
+}
+function ctl(){
+ var h='';
+ if(mode==1)h='<div class="row"><label>θ</label><input type="range" id="th" min="0" max="359" step="1" value="'+st.th+'"><output id="oth">'+st.th+'°</output></div><p class="fb">Geser sudut untuk memindahkan titik singgung <i>P</i> mengelilingi lingkaran.</p>';
+ if(mode==2)h='<div class="row"><label>m</label><input type="range" id="m" min="-4" max="4" step="0.25" value="'+st.m+'"><output id="om">'+f(st.m)+'</output></div><p class="fb">Ubah gradien, dua garis singgung sejajar akan mengikuti.</p>';
+ if(mode==3)h='<div class="row"><label>Qₓ</label><input type="range" id="qx" min="-7" max="7" step="0.5" value="'+st.qx+'"><output id="oqx">'+f(st.qx)+'</output></div><div class="row"><label>Qᵧ</label><input type="range" id="qy" min="-7" max="7" step="0.5" value="'+st.qy+'"><output id="oqy">'+f(st.qy)+'</output></div>';
+ document.getElementById('ctl').innerHTML=h;
+ [['th','°'],['m',''],['qx',''],['qy','']].forEach(function(z){var el=document.getElementById(z[0]);if(el)el.oninput=function(){st[z[0]]=+el.value;document.getElementById('o'+z[0]).textContent=f(+el.value)+z[1];draw()}})
+}
+['a','b','r'].forEach(function(k){document.getElementById(k).oninput=function(e){st[k]=+e.target.value;draw()}});
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){mode=+t.dataset.m;document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',x===t)});ctl();draw()}});
+ctl();draw();
+
+var Q=[
+{q:'Persamaan garis singgung lingkaran x² + y² = 25 di titik (3, 4) adalah …',o:['4x + 3y = 25','3x + 4y = 25','3x − 4y = 25','x + y = 25'],c:1,e:'Gunakan x₁x + y₁y = r², sehingga 3x + 4y = 25.'},
+{q:'Garis singgung lingkaran x² + y² = 10 yang bergradien 3 adalah …',o:['y = 3x ± √10','y = 3x ± 30','y = 3x ± 10','y = 3x ± 100'],c:2,e:'r√(1+m²) = √10 · √10 = 10.'},
+{q:'Panjang garis singgung dari titik (5, 0) ke lingkaran x² + y² = 9 adalah …',o:['√34','3','16','4'],c:3,e:'√(d² − r²) = √(25 − 9) = 4.'},
+{q:'Garis singgung lingkaran (x−2)² + (y+1)² = 20 di titik (4, 3) adalah …',o:['2x + y = 10','x + 2y = 20','x + 2y = 10','2x + 4y = 10'],c:2,e:'(4−2)(x−2) + (3+1)(y+1) = 20 menjadi 2x + 4y = 20, yaitu x + 2y = 10.'}];
+var qz=document.getElementById('quiz');
+Q.forEach(function(it,i){
+ var d=document.createElement('div');d.className='q';
+ d.innerHTML='<b>Soal '+(i+1)+'.</b> '+it.q+'<div class="opts"></div><div class="fb" aria-live="polite"></div>';
+ var box=d.querySelector('.opts'),fb=d.querySelector('.fb'),done=false;
+ it.o.forEach(function(t,j){var b=document.createElement('button');b.className='opt';b.textContent=t;
+  b.onclick=function(){if(done)return;
+   if(j==it.c){done=true;b.classList.add('ok');fb.textContent='Benar. '+it.e}
+   else{b.classList.add('no');b.disabled=true;fb.textContent='Belum tepat, coba lagi.'}};
+  box.appendChild(b)});
+ qz.appendChild(d)});
+})();
+</script>
+</body>
+</html>
