@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor JavaScript + GeoGebra (Kolaborasi Firebase)</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mu:#5d6670;--bd:#d9dee4;--ac:#2563eb;--code:#f1f3f6;--ok:#16794c;--er:#b42318}
+@media(prefers-color-scheme:dark){:root{--bg:#14171a;--card:#1d2126;--tx:#e8ebee;--mu:#98a2ad;--bd:#343b43;--ac:#6ea0ff;--code:#12151a;--ok:#4ac78a;--er:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,sans-serif}
+h1{font-size:18px;margin:0 0 8px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+input,textarea{background:var(--code);color:var(--tx);border:1px solid var(--bd);border-radius:8px;font:inherit}
+input{padding:7px 10px;width:150px;background:var(--card)}
+button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font:inherit}
+button.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+button:disabled{opacity:.5;cursor:default}
+.grid{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:900px){.grid{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;min-width:0}
+.card h2{font-size:13px;margin:0 0 6px;color:var(--mu);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+textarea{width:100%;min-height:300px;padding:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;resize:vertical;tab-size:2}
+pre{background:var(--code);border-radius:8px;padding:8px;margin:6px 0 0;min-height:70px;max-height:200px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:13px}
+#ggbwrap{width:100%;min-height:480px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:#fff}
+.st{font-size:13px;color:var(--mu)}
+.note{font-size:12.5px;color:var(--mu);margin-top:10px}
+</style>
+</head>
+<body>
+<h1>Editor JavaScript + GeoGebra (Kolaborasi Firebase)</h1>
+<div class="bar">
+  <input id="name" placeholder="nama Anda" maxlength="20">
+  <input id="room" placeholder="kode ruang" maxlength="30">
+  <button id="join">Masuk ruang</button>
+  <button id="share" class="sec">Salin tautan</button>
+</div>
+<div class="bar"><span id="st" class="st">Belum tersambung.</span></div>
+<div class="grid">
+  <div class="card">
+    <h2><span>Kode JavaScript</span><span><button id="run">Jalankan</button> <button id="clear" class="sec">Kosongkan konsol</button></span></h2>
+    <textarea id="js" spellcheck="false"></textarea>
+    <pre id="out">Konsol: hasil log(...) dan galat tampil di sini.</pre>
+    <div class="st" id="peers" style="margin-top:6px"></div>
+  </div>
+  <div class="card">
+    <h2><span>GeoGebra</span><span><button id="send" class="sec">Kirim konstruksi</button> <button id="load" class="sec" disabled>Muat konstruksi terbaru</button></span></h2>
+    <div id="ggbwrap"><div id="ggb"></div></div>
+  </div>
+</div>
+<p class="note">Kode disinkronkan ke semua peserta, tetapi hanya dijalankan ketika Anda menekan Jalankan, di browser Anda sendiri. Baca kode yang diubah orang lain sebelum menjalankannya. Dalam kode tersedia <code>ggbApplet</code>, <code>cmd("A=(1,2)")</code>, dan <code>log(...)</code>.</p>
+
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js';
+import {getDatabase, ref, onValue, set, update, remove, onDisconnect, serverTimestamp}
+  from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-database.js';
+
+// ====== ISI DENGAN firebaseConfig PROYEK ANDA (sama dengan aplikasi sebelumnya boleh dipakai) ======
+const firebaseConfig = {
+  apiKey: 'AIzaSyCS-04HW1WAL3aLJkA7Zrmz2iedWVeaKKk',
+  authDomain: 'helpful-rope-333907.firebaseapp.com',
+  databaseURL: 'https://helpful-rope-333907-default-rtdb.firebaseio.com',
+  projectId: 'helpful-rope-333907',
+  appId: '1:854982010261:web:586875587b2a81f679829c'
+};
+// ====================================================================================================
+
+const $ = id => document.getElementById(id);
+const st = (t, c) => { $('st').textContent = t; $('st').style.color = c || 'var(--mu)'; };
+const jsEl = $('js');
+const DEFAULT_JS = `// ggbApplet, cmd(...) dan log(...) tersedia di sini.
+ggbApplet.reset();
+
+cmd("A=(1,2)");
+cmd("B=(4,3)");
+cmd("c=Circle(A,B)");
+cmd("P=(7,-1)");
+cmd("t=Tangent(P,c)");
+
+// Titik pada parabola y = x^2 / 4
+for (let i = -4; i <= 4; i++) {
+  cmd("Q_" + (i + 4) + "=(" + i + "," + (i * i / 4) + ")");
+}
+log("Jari-jari lingkaran:", ggbApplet.getValue("Radius(c)"));
+log("Semua objek:", ggbApplet.getAllObjectNames().join(", "));`;
+
+// ---------- GeoGebra ----------
+let ggb = null;
+function startGgb(){
+  const w = Math.max(300, $('ggbwrap').clientWidth);
+  const app = new GGBApplet({
+    appName: 'classic', width: w, height: 480,
+    showToolBar: true, showAlgebraInput: true, showMenuBar: false,
+    enableRightClick: true, borderColor: null,
+    appletOnLoad: api => { ggb = api; }
+  }, true);
+  app.inject('ggb');
+}
+window.addEventListener('load', startGgb);
+window.addEventListener('resize', () => {
+  if (ggb && ggb.setWidth) { ggb.setWidth(Math.max(300, $('ggbwrap').clientWidth)); }
+});
+
+// ---------- Konsol & eksekusi ----------
+const out = $('out');
+const log = (...a) => { out.textContent += (out.textContent.startsWith('Konsol:') ? '' : '\n') + a.map(x => typeof x === 'object' ? JSON.stringify(x) : String(x)).join(' '); out.scrollTop = out.scrollHeight; };
+$('clear').onclick = () => { out.textContent = ''; };
+const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+$('run').onclick = async () => {
+  if (!ggb){ out.textContent = 'GeoGebra belum siap, tunggu sebentar.'; return; }
+  if (out.textContent.startsWith('Konsol:')) out.textContent = '';
+  try{
+    const fn = new AsyncFunction('ggbApplet', 'cmd', 'log', jsEl.value);
+    await fn(ggb, c => ggb.evalCommand(c), log);
+  }catch(e){ log('Galat: ' + (e.message || e)); }
+};
+
+// ---------- Firebase ----------
+let db, uid = null, room = '', unsubs = [], timer = null, lastGgbBy = null, latestXml = null;
+
+function applyRemote(el, next){   // terapkan teks jauh sambil menjaga posisi kursor
+  const old = el.value;
+  if (old === next) return;
+  let p = 0; while (p < old.length && p < next.length && old[p] === next[p]) p++;
+  let s = 0; while (s < old.length - p && s < next.length - p && old[old.length-1-s] === next[next.length-1-s]) s++;
+  const shift = pos => pos <= p ? pos : pos >= old.length - s ? pos + next.length - old.length : p;
+  const a = shift(el.selectionStart), b = shift(el.selectionEnd);
+  el.value = next;
+  if (document.activeElement === el) el.setSelectionRange(a, b);
+}
+
+function start(){
+  if (firebaseConfig.apiKey.startsWith('ISI')){ st('Isi firebaseConfig di bagian atas script terlebih dahulu.', 'var(--er)'); return false; }
+  db = getDatabase(initializeApp(firebaseConfig));
+  uid = sessionStorage.getItem('uid') || Math.random().toString(36).slice(2, 10);
+  sessionStorage.setItem('uid', uid);
+  return true;
+}
+
+async function join(){
+  const code = $('room').value.trim().replace(/[^A-Za-z0-9-]/g, '');
+  if (!code){ st('Isi kode ruang dahulu.', 'var(--er)'); return; }
+  if (!uid && !start()) return;
+  unsubs.forEach(u => u()); unsubs = []; room = code; location.hash = code;
+  const base = 'rooms/' + code;
+
+  // Kode JavaScript: rooms/<kode>/docs/js
+  unsubs.push(onValue(ref(db, base + '/docs/js'), snap => {
+    const d = snap.val();
+    if (!d){ set(ref(db, base + '/docs/js'), {v: jsEl.value, by: uid, t: serverTimestamp()}); return; }
+    if (d.by === uid || timer) return;          // abaikan gema sendiri / saat sedang mengetik
+    applyRemote(jsEl, d.v);
+  }, e => st('Gagal membaca: ' + e.code, 'var(--er)')));
+
+  // Konstruksi GeoGebra yang dikirim peserta: rooms/<kode>/ggb
+  unsubs.push(onValue(ref(db, base + '/ggb'), snap => {
+    const g = snap.val();
+    if (!g || g.by === uid) return;
+    latestXml = g.xml; $('load').disabled = false;
+    $('load').textContent = 'Muat konstruksi ' + g.name;
+  }));
+
+  // Kehadiran
+  const me = ref(db, base + '/presence/' + uid);
+  await set(me, {name: $('name').value.trim() || 'Anon-' + uid.slice(0, 4), t: serverTimestamp()});
+  onDisconnect(me).remove();
+  unsubs.push(() => remove(me));
+  unsubs.push(onValue(ref(db, base + '/presence'), snap => {
+    const names = Object.values(snap.val() || {}).map(p => p.name);
+    $('peers').textContent = names.length + ' online: ' + names.join(', ');
+  }));
+
+  unsubs.push(onValue(ref(db, '.info/connected'), snap =>
+    snap.val() ? st('Tersambung ke ruang "' + code + '". Kode tersinkron langsung.', 'var(--ok)')
+               : st('Terputus dari Firebase. Mencoba menyambung kembali...', 'var(--er)')));
+}
+
+jsEl.addEventListener('input', () => {
+  if (!room) return;
+  clearTimeout(timer);
+  timer = setTimeout(async () => {
+    timer = null;
+    try{ await update(ref(db, 'rooms/' + room + '/docs/js'), {v: jsEl.value, by: uid, t: serverTimestamp()}); }
+    catch(e){ st('Gagal menyimpan: ' + (e.code || e.message), 'var(--er)'); }
+  }, 350);
+});
+jsEl.addEventListener('keydown', e => {
+  if (e.key === 'Tab'){ e.preventDefault(); jsEl.setRangeText('  ', jsEl.selectionStart, jsEl.selectionEnd, 'end'); jsEl.dispatchEvent(new Event('input')); }
+});
+
+$('send').onclick = async () => {
+  if (!room){ st('Masuk ruang dahulu.', 'var(--er)'); return; }
+  if (!ggb){ st('GeoGebra belum siap.', 'var(--er)'); return; }
+  try{
+    await set(ref(db, 'rooms/' + room + '/ggb'), {xml: ggb.getXML(), by: uid, name: $('name').value.trim() || 'peserta', t: serverTimestamp()});
+    st('Konstruksi terkirim ke peserta lain.', 'var(--ok)');
+  }catch(e){ st('Gagal mengirim: ' + (e.code || e.message), 'var(--er)'); }
+};
+$('load').onclick = () => {
+  if (!ggb || !latestXml) return;
+  ggb.setXML(latestXml);
+  $('load').disabled = true; $('load').textContent = 'Muat konstruksi terbaru';
+};
+
+$('join').onclick = join;
+$('room').addEventListener('keydown', e => { if (e.key === 'Enter') join(); });
+$('share').onclick = async () => {
+  const url = location.href.split('#')[0] + (room ? '#' + room : '');
+  try{ await navigator.clipboard.writeText(url); st('Tautan disalin.', 'var(--ok)'); }catch(e){ st('Salin manual: ' + url); }
+};
+
+jsEl.value = DEFAULT_JS;
+const h = location.hash.slice(1);
+if (h){ $('room').value = h; join(); }
+</script>
+</body>
+</html>
