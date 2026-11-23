@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modul Lingkaran: Berkas Lingkaran dan Lingkaran Ortogonal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#faf6ee;--ink:#1f2a24;--mut:#5b6b62;--g:#1f6f5b;--c:#d9573b;--card:#fff;--line:#e3dccb;--ok:#1f8a4c;--bad:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14201b;--ink:#e8efe9;--mut:#9db0a5;--g:#5cc3a4;--c:#ff8b6e;--card:#1c2c25;--line:#2f4238;--ok:#4fd08a;--bad:#ff7b6b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14201b;--ink:#e8efe9;--mut:#9db0a5;--g:#5cc3a4;--c:#ff8b6e;--card:#1c2c25;--line:#2f4238;--ok:#4fd08a;--bad:#ff7b6b;color-scheme:dark}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,system-ui,sans-serif}
+h1,h2,h3{font-family:Lora,Georgia,serif;line-height:1.25;margin:.2em 0 .5em}
+header{background:linear-gradient(135deg,var(--g),#14463a);color:#fff;padding:44px 20px 36px;text-align:center}
+header h1{font-size:clamp(1.6rem,5vw,2.5rem);margin:0 0 .3em}
+header p{margin:.2em 0;opacity:.92}
+nav{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav .in{display:flex;gap:4px;overflow-x:auto;padding:8px 12px;max-width:960px;margin:auto}
+nav a{white-space:nowrap;text-decoration:none;color:var(--mut);padding:6px 12px;border-radius:99px;font-size:.88rem;font-weight:500}
+nav a.on{background:var(--g);color:#fff}
+#bar{height:3px;background:var(--c);width:0}
+main{max-width:960px;margin:auto;padding:20px 16px 60px}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0}
+.box{border-left:4px solid var(--g);background:color-mix(in srgb,var(--g) 9%,transparent);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.box.c{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.f{font-family:Georgia,serif;font-size:1.08rem;text-align:center;margin:10px 0;overflow-x:auto;white-space:nowrap}
+.sim{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:760px){.sim{grid-template-columns:1fr}}
+canvas{width:100%;height:auto;aspect-ratio:4/3;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.ctl label{display:flex;justify-content:space-between;font-size:.9rem;margin-top:8px}
+.ctl input[type=range]{width:100%;accent-color:var(--g)}
+.out{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:.92rem;margin-top:10px;overflow-x:auto}
+button{font:inherit;background:var(--g);color:#fff;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;margin-top:10px}
+button.alt{background:var(--c)}
+details{border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:10px 0}
+summary{cursor:pointer;font-weight:600}
+.q{margin:18px 0;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--line);margin:6px 0;padding:9px 12px}
+.opt.ok{background:var(--ok);color:#fff}.opt.no{background:var(--bad);color:#fff}
+.fb{font-size:.92rem;margin-top:4px}
+footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
+table{border-collapse:collapse;width:100%;font-size:.92rem}td,th{border:1px solid var(--line);padding:6px 10px;text-align:left}
+</style>
+</head>
+<body>
+<header>
+<h1>Berkas Lingkaran dan Lingkaran Ortogonal</h1>
+<p>Modul Geometri Analitik · Bab Lingkaran</p>
+<p>Martin Bernard, M.Pd. · IKIP Siliwangi</p>
+</header>
+<nav><div class="in" id="nv">
+<a href="#tujuan">Tujuan</a><a href="#berkas">Berkas</a><a href="#sim1">Simulasi 1</a><a href="#ortho">Ortogonal</a><a href="#sim2">Simulasi 2</a><a href="#contoh">Contoh</a><a href="#kuis">Kuis</a></div><div id="bar"></div></nav>
+<main>
+
+<section id="tujuan">
+<h2>Tujuan Pembelajaran</h2>
+<ul>
+<li>Menyusun persamaan berkas lingkaran dan menentukan anggotanya.</li>
+<li>Menentukan garis kuasa dua lingkaran.</li>
+<li>Menentukan syarat dua lingkaran saling ortogonal dan menerapkannya.</li>
+</ul>
+<div class="box">Bentuk umum lingkaran dalam modul ini: <b><i>x</i>² + <i>y</i>² + <i>Ax</i> + <i>By</i> + <i>C</i> = 0</b>, dengan pusat (−<i>A</i>/2, −<i>B</i>/2) dan <i>r</i>² = <i>A</i>²/4 + <i>B</i>²/4 − <i>C</i>.</div>
+</section>
+
+<section id="berkas">
+<h2>1. Berkas Lingkaran</h2>
+<p>Misalkan dua lingkaran:</p>
+<div class="f"><i>L</i>₁ : <i>x</i>² + <i>y</i>² + <i>A</i>₁<i>x</i> + <i>B</i>₁<i>y</i> + <i>C</i>₁ = 0 &nbsp;&nbsp; <i>L</i>₂ : <i>x</i>² + <i>y</i>² + <i>A</i>₂<i>x</i> + <i>B</i>₂<i>y</i> + <i>C</i>₂ = 0</div>
+<p><b>Berkas lingkaran</b> adalah himpunan semua lingkaran yang persamaannya berbentuk</p>
+<div class="f"><i>L</i>₁ + λ<i>L</i>₂ = 0, &nbsp; λ ≠ −1</div>
+<p>Setiap anggota berkas melalui titik-titik potong <i>L</i>₁ dan <i>L</i>₂ (jika ada), sebab titik yang memenuhi <i>L</i>₁ = 0 dan <i>L</i>₂ = 0 otomatis memenuhi kombinasi keduanya.</p>
+<div class="box c"><b>Garis kuasa.</b> Untuk λ = −1 suku kuadratnya saling meniadakan dan diperoleh garis
+<div class="f">(<i>A</i>₁ − <i>A</i>₂)<i>x</i> + (<i>B</i>₁ − <i>B</i>₂)<i>y</i> + (<i>C</i>₁ − <i>C</i>₂) = 0</div>
+yang disebut <b>garis kuasa</b>. Garis ini tegak lurus garis yang menghubungkan kedua pusat. Jika kedua lingkaran berpotongan, garis kuasa memuat kedua titik potong.</div>
+<h3>Variasi berkas</h3>
+<table>
+<tr><th>Jenis</th><th>Persamaan</th></tr>
+<tr><td>Dua lingkaran</td><td><i>L</i>₁ + λ<i>L</i>₂ = 0</td></tr>
+<tr><td>Lingkaran dan garis <i>g</i> = 0</td><td><i>L</i> + λ<i>g</i> = 0 (melalui titik potong <i>L</i> dan <i>g</i>)</td></tr>
+<tr><td>Berkas konsentris</td><td><i>x</i>² + <i>y</i>² + <i>Ax</i> + <i>By</i> + <i>k</i> = 0, <i>k</i> berubah</td></tr>
+</table>
+<p><b>Langkah menentukan anggota berkas yang memenuhi syarat:</b> (1) tulis <i>L</i>₁ + λ<i>L</i>₂ = 0; (2) substitusi titik atau syarat yang diketahui untuk mencari λ; (3) masukkan λ ke persamaan berkas dan sederhanakan.</p>
+</section>
+
+<section id="sim1">
+<h2>Simulasi 1: Berkas Lingkaran</h2>
+<p>Atur <i>L</i>₁ dan <i>L</i>₂, lalu geser λ. Garis putus-putus adalah garis kuasa.</p>
+<div class="sim">
+<canvas id="c1" width="560" height="420"></canvas>
+<div class="ctl">
+<label>Jari-jari <i>L</i>₁ <span id="v1a"></span></label><input type="range" id="r1" min="1" max="4" step="0.1" value="2.5">
+<label>Pusat <i>L</i>₂: <i>x</i> <span id="v1b"></span></label><input type="range" id="x2" min="-4" max="4" step="0.1" value="2">
+<label>Pusat <i>L</i>₂: <i>y</i> <span id="v1c"></span></label><input type="range" id="y2" min="-4" max="4" step="0.1" value="1">
+<label>Jari-jari <i>L</i>₂ <span id="v1d"></span></label><input type="range" id="r2" min="1" max="4" step="0.1" value="2">
+<label>λ <span id="v1e"></span></label><input type="range" id="lam" min="-5" max="5" step="0.1" value="1">
+<div class="out" id="o1"></div>
+</div></div>
+<p style="font-size:.88rem;color:var(--mut)">Hijau: <i>L</i>₁ dan <i>L</i>₂ · Jingga: anggota berkas · Putus-putus: garis kuasa. <i>L</i>₁ berpusat di (−1,5; 0).</p>
+</section>
+
+<section id="ortho">
+<h2>2. Lingkaran Ortogonal</h2>
+<p>Dua lingkaran disebut <b>ortogonal</b> jika berpotongan di dua titik dan garis singgung keduanya di setiap titik potong saling tegak lurus. Artinya, jari-jari kedua lingkaran di titik potong juga saling tegak lurus.</p>
+<div class="box"><b>Syarat geometri.</b> Pada segitiga siku-siku dengan sisi <i>r</i>₁, <i>r</i>₂, dan jarak pusat <i>d</i>:
+<div class="f"><i>d</i>² = <i>r</i>₁² + <i>r</i>₂²</div></div>
+<div class="box c"><b>Syarat aljabar.</b> Untuk <i>L</i>₁ dan <i>L</i>₂ bentuk umum di atas:
+<div class="f"><i>A</i>₁<i>A</i>₂ + <i>B</i>₁<i>B</i>₂ = 2(<i>C</i>₁ + <i>C</i>₂)</div></div>
+<p><b>Asal-usul.</b> <i>d</i>² = (<i>A</i>₁−<i>A</i>₂)²/4 + (<i>B</i>₁−<i>B</i>₂)²/4. Samakan dengan <i>r</i>₁² + <i>r</i>₂² = (<i>A</i>₁²+<i>B</i>₁²+<i>A</i>₂²+<i>B</i>₂²)/4 − <i>C</i>₁ − <i>C</i>₂. Suku kuadrat saling habis dan tersisa −(<i>A</i>₁<i>A</i>₂+<i>B</i>₁<i>B</i>₂)/2 = −(<i>C</i>₁+<i>C</i>₂), yaitu syarat di atas.</p>
+</section>
+
+<section id="sim2">
+<h2>Simulasi 2: Uji Ortogonalitas</h2>
+<p><i>L</i>₁ berpusat di titik asal. Geser <i>L</i>₂ dan perhatikan nilai <i>d</i>² dibandingkan <i>r</i>₁² + <i>r</i>₂².</p>
+<div class="sim">
+<canvas id="c2" width="560" height="420"></canvas>
+<div class="ctl">
+<label>Jari-jari <i>L</i>₁ <span id="w1"></span></label><input type="range" id="s1" min="1" max="3.5" step="0.1" value="2">
+<label>Pusat <i>L</i>₂: <i>x</i> <span id="w2"></span></label><input type="range" id="px" min="-5" max="5" step="0.1" value="4">
+<label>Pusat <i>L</i>₂: <i>y</i> <span id="w3"></span></label><input type="range" id="py" min="-4" max="4" step="0.1" value="1">
+<label>Jari-jari <i>L</i>₂ <span id="w4"></span></label><input type="range" id="s2" min="0.5" max="4" step="0.05" value="2">
+<button id="mk">Jadikan ortogonal (ubah <i>r</i>₂)</button>
+<div class="out" id="o2"></div>
+</div></div>
+</section>
+
+<section id="contoh">
+<h2>3. Contoh Soal</h2>
+<details><summary>Contoh 1 — Berkas melalui titik tertentu</summary>
+<p>Tentukan persamaan lingkaran yang melalui titik potong <i>x</i>² + <i>y</i>² − 4<i>x</i> = 0 dan <i>x</i>² + <i>y</i>² − 4<i>y</i> = 0 serta titik (0, −2).</p>
+<p>Berkas: (<i>x</i>²+<i>y</i>²−4<i>x</i>) + λ(<i>x</i>²+<i>y</i>²−4<i>y</i>) = 0. Substitusi (0, −2): 4 + λ(12) = 0, jadi λ = −1/3. Kalikan 3: 3(<i>x</i>²+<i>y</i>²−4<i>x</i>) − (<i>x</i>²+<i>y</i>²−4<i>y</i>) = 0, yaitu</p>
+<div class="f"><i>x</i>² + <i>y</i>² − 6<i>x</i> + 2<i>y</i> = 0</div></details>
+<details><summary>Contoh 2 — Garis kuasa</summary>
+<p>Garis kuasa <i>x</i>² + <i>y</i>² − 4<i>x</i> = 0 dan <i>x</i>² + <i>y</i>² − 4<i>y</i> = 0: kurangkan keduanya, −4<i>x</i> + 4<i>y</i> = 0, sehingga garis kuasanya <b><i>y</i> = <i>x</i></b>.</p></details>
+<details><summary>Contoh 3 — Syarat ortogonal</summary>
+<p>Tentukan <i>k</i> agar <i>x</i>² + <i>y</i>² + 4<i>x</i> − 2<i>y</i> + <i>k</i> = 0 ortogonal dengan <i>x</i>² + <i>y</i>² − 2<i>x</i> − 4<i>y</i> + 1 = 0.</p>
+<p><i>A</i>₁<i>A</i>₂ + <i>B</i>₁<i>B</i>₂ = (−2)(4) + (−4)(−2) = 0, maka 0 = 2(1 + <i>k</i>), sehingga <b><i>k</i> = −1</b>.</p>
+<p>Pemeriksaan: pusat (1, 2) dengan <i>r</i>₁² = 4, pusat (−2, 1) dengan <i>r</i>₂² = 6, <i>d</i>² = 9 + 1 = 10 = 4 + 6. ✓</p></details>
+</section>
+
+<section id="kuis">
+<h2>4. Kuis</h2>
+<div id="quiz"></div>
+<div class="out" id="score">Skor: 0 / 5</div>
+</section>
+</main>
+<footer>Modul disusun oleh Martin Bernard, M.Pd. · IKIP Siliwangi</footer>
+
+<script>
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const $=id=>document.getElementById(id);
+const f=(v,d=2)=>(+v).toFixed(d).replace(".",",");
+function setup(cv){const ctx=cv.getContext("2d"),S=40,W=cv.width,H=cv.height;
+ const X=x=>W/2+x*S,Y=y=>H/2-y*S;
+ return{ctx,X,Y,S,
+  grid(){ctx.clearRect(0,0,W,H);ctx.lineWidth=1;ctx.strokeStyle=css("--line");
+   for(let i=-7;i<=7;i++){ctx.beginPath();ctx.moveTo(X(i),0);ctx.lineTo(X(i),H);ctx.stroke()}
+   for(let j=-5;j<=5;j++){ctx.beginPath();ctx.moveTo(0,Y(j));ctx.lineTo(W,Y(j));ctx.stroke()}
+   ctx.strokeStyle=css("--mut");ctx.beginPath();ctx.moveTo(X(0),0);ctx.lineTo(X(0),H);ctx.moveTo(0,Y(0));ctx.lineTo(W,Y(0));ctx.stroke()},
+  circ(a,b,r,col,w=2.5){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.arc(X(a),Y(b),r*S,0,7);ctx.stroke()},
+  dot(a,b,col,r=4){ctx.fillStyle=col;ctx.beginPath();ctx.arc(X(a),Y(b),r,0,7);ctx.fill()},
+  line(a,b,c,d,col,dash,w=2){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(X(a),Y(b));ctx.lineTo(X(c),Y(d));ctx.stroke();ctx.setLineDash([])}}}
+const g1=setup($("c1")),g2=setup($("c2"));
+
+function sim1(){
+ const r1=+$("r1").value,x2=+$("x2").value,y2=+$("y2").value,r2=+$("r2").value,l=+$("lam").value;
+ [["v1a",r1],["v1b",x2],["v1c",y2],["v1d",r2],["v1e",l]].forEach(([k,v])=>$(k).textContent=f(v,1));
+ const A1=3,B1=0,C1=2.25-r1*r1,A2=-2*x2,B2=-2*y2,C2=x2*x2+y2*y2-r2*r2;
+ g1.grid();g1.circ(-1.5,0,r1,css("--g"));g1.circ(x2,y2,r2,css("--g"));
+ const a=A1-A2,b=B1-B2,c=C1-C2;
+ if(Math.hypot(a,b)>1e-9){const k=12/Math.hypot(a,b),px=-c*a/(a*a+b*b),py=-c*b/(a*a+b*b);
+  g1.line(px-b*k,py+a*k,px+b*k,py-a*k,css("--mut"),[6,5],1.8)}
+ let t=`<i>L</i>₁: <i>x</i>²+<i>y</i>²+3<i>x</i>${C1<0?" − ":" + "}${f(Math.abs(C1))} = 0<br>Garis kuasa: ${f(a)}<i>x</i> ${b<0?"−":"+"} ${f(Math.abs(b))}<i>y</i> ${c<0?"−":"+"} ${f(Math.abs(c))} = 0<br>`;
+ if(Math.abs(1+l)<1e-9){t+=`λ = −1: anggota berkas berupa <b>garis kuasa</b>.`}
+ else{const A=(A1+l*A2)/(1+l),B=(B1+l*B2)/(1+l),C=(C1+l*C2)/(1+l),pa=-A/2,pb=-B/2,rr=pa*pa+pb*pb-C;
+  if(rr>1e-9){g1.circ(pa,pb,Math.sqrt(rr),css("--c"),3);g1.dot(pa,pb,css("--c"));
+   t+=`Anggota berkas: pusat (${f(pa)}; ${f(pb)}), <i>r</i> = ${f(Math.sqrt(rr))}`}
+  else t+=`Anggota berkas: bukan lingkaran nyata (<i>r</i>² ≤ 0).`}
+ const d=Math.hypot(x2+1.5,y2);
+ t+=`<br>Posisi <i>L</i>₁ dan <i>L</i>₂: ${d>r1+r2?"saling lepas":d<Math.abs(r1-r2)?"saling memuat":"berpotongan/bersinggungan"}`;
+ $("o1").innerHTML=t}
+["r1","x2","y2","r2","lam"].forEach(i=>$(i).oninput=sim1);
+
+function sim2(){
+ const r1=+$("s1").value,px=+$("px").value,py=+$("py").value,r2=+$("s2").value;
+ [["w1",r1],["w2",px],["w3",py],["w4",r2]].forEach(([k,v])=>$(k).textContent=f(v,2));
+ const d2=px*px+py*py,d=Math.sqrt(d2),sum=r1*r1+r2*r2,diff=d2-sum,ok=Math.abs(diff)<0.05;
+ g2.grid();g2.circ(0,0,r1,css("--g"));g2.circ(px,py,r2,css("--c"));g2.dot(0,0,css("--g"));g2.dot(px,py,css("--c"));
+ g2.line(0,0,px,py,css("--mut"),[4,4],1.2);
+ if(d>1e-6&&d<r1+r2&&d>Math.abs(r1-r2)){const a=(r1*r1-r2*r2+d2)/(2*d),h=Math.sqrt(Math.max(0,r1*r1-a*a)),mx=a*px/d,my=a*py/d;
+  [1,-1].forEach(s=>{const qx=mx-s*h*py/d,qy=my+s*h*px/d;g2.line(0,0,qx,qy,css("--g"),null,1.6);g2.line(px,py,qx,qy,css("--c"),null,1.6);g2.dot(qx,qy,css("--ink"),4)})}
+ $("o2").innerHTML=`<i>d</i>² = ${f(d2)}<br><i>r</i>₁² + <i>r</i>₂² = ${f(sum)}<br>Selisih = ${f(diff)}<br><b style="color:${ok?"var(--ok)":"var(--bad)"}">${ok?"Ortogonal ✓":"Belum ortogonal"}</b>`}
+["s1","px","py","s2"].forEach(i=>$(i).oninput=sim2);
+$("mk").onclick=()=>{const r1=+$("s1").value,d2=(+$("px").value)**2+(+$("py").value)**2;
+ if(d2>r1*r1){$("s2").value=Math.min(4,Math.sqrt(d2-r1*r1));sim2()}else $("o2").innerHTML+="<br>Pusat <i>L</i>₂ berada di dalam <i>L</i>₁, tidak mungkin ortogonal. Geser pusatnya keluar.";};
+
+const Q=[
+["Berkas lingkaran <i>L</i>₁ + λ<i>L</i>₂ = 0 memuat lingkaran-lingkaran yang…",["melalui titik potong <i>L</i>₁ dan <i>L</i>₂","semuanya berjari-jari sama","semuanya konsentris","saling lepas"],0,"Titik potong memenuhi <i>L</i>₁ = 0 dan <i>L</i>₂ = 0, sehingga memenuhi kombinasinya."],
+["Garis kuasa <i>x</i>²+<i>y</i>²−4<i>x</i>=0 dan <i>x</i>²+<i>y</i>²−4<i>y</i>=0 adalah…",["<i>y</i> = −<i>x</i>","<i>y</i> = <i>x</i>","<i>x</i> = 2","<i>y</i> = 2"],1,"Kurangkan: −4<i>x</i> + 4<i>y</i> = 0, jadi <i>y</i> = <i>x</i>."],
+["Lingkaran melalui titik potong <i>x</i>²+<i>y</i>²=4 dan <i>x</i>+<i>y</i>=2 serta titik asal adalah…",["<i>x</i>²+<i>y</i>²−2<i>x</i>−2<i>y</i>=0","<i>x</i>²+<i>y</i>²+2<i>x</i>+2<i>y</i>=0","<i>x</i>²+<i>y</i>²−4<i>x</i>=0","<i>x</i>²+<i>y</i>²−<i>x</i>−<i>y</i>=0"],0,"Berkas: <i>x</i>²+<i>y</i>²−4 + λ(<i>x</i>+<i>y</i>−2) = 0. Titik asal: −4 − 2λ = 0, λ = −2. Hasilnya <i>x</i>²+<i>y</i>²−2<i>x</i>−2<i>y</i>=0."],
+["Nilai <i>k</i> agar <i>x</i>²+<i>y</i>²−8<i>x</i>+<i>k</i>=0 ortogonal dengan <i>x</i>²+<i>y</i>²=9 adalah…",["7","9","16","−9"],1,"<i>A</i>₁<i>A</i>₂ + <i>B</i>₁<i>B</i>₂ = 0 = 2(−9 + <i>k</i>), maka <i>k</i> = 9."],
+["Dua lingkaran ortogonal berjari-jari 3 dan 4. Jarak kedua pusatnya adalah…",["1","5","7","√7"],1,"<i>d</i>² = 3² + 4² = 25, jadi <i>d</i> = 5."]];
+let sc=0,ans=new Set();
+$("quiz").innerHTML=Q.map((q,i)=>`<div class="q"><b>${i+1}.</b> ${q[0]}${q[1].map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${o}</button>`).join("")}<div class="fb" id="fb${i}"></div></div>`).join("");
+document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const i=+b.dataset.q,j=+b.dataset.o;if(ans.has(i))return;ans.add(i);
+ const q=Q[i],bs=document.querySelectorAll(`[data-q="${i}"]`);bs[q[2]].classList.add("ok");
+ if(j===q[2]){sc++}else b.classList.add("no");
+ $("fb"+i).innerHTML=(j===q[2]?"Benar. ":"Kurang tepat. ")+q[3];$("score").textContent=`Skor: ${sc} / 5`});
+
+const links=[...document.querySelectorAll("#nv a")],secs=links.map(a=>$(a.getAttribute("href").slice(1)));
+function spy(){const y=scrollY+90;let k=0;secs.forEach((s,i)=>{if(s.offsetTop<=y)k=i});links.forEach((a,i)=>a.classList.toggle("on",i===k));
+ $("bar").style.width=(scrollY/(document.documentElement.scrollHeight-innerHeight)*100||0)+"%"}
+addEventListener("scroll",spy);spy();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{sim1();sim2()});
+sim1();sim2();
+</script>
+</body>
+</html>
